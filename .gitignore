@@ -15,12 +15,14 @@ __pycache__/
 *.egg-info/
 .env
 
-# Experiment outputs (generated on cluster, not committed)
-output/
+# Slurm logs (not results -- these are just stdout/stderr, safe to discard)
 slurm/logs/
 *.log
 *.out
 *.err
+
+# output/ (completions_*.json, pilot_results.json) IS committed -- these are
+# the actual pilot results and need to sync back from the cluster.
 
 # Large model/activation files
 *.pt
