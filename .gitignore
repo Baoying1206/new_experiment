@@ -1,0 +1,28 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.env
+
+# Experiment outputs (generated on cluster, not committed)
+output/
+slurm/logs/
+*.log
+*.out
+*.err
+
+# Large model/activation files
+*.pt
+*.bin
+*.safetensors

@@ -1,0 +1,11 @@
+{
+  "_note": "Resource tier classification for the 16 PolyRefuse languages. Based on Wikipedia corpus size, CommonCrawl/mC4 representation, and general coverage in major LLM pretraining data. Extends the existing HRL/LRL binary split used in scripts/analyze_geometry.py (LRL_LANGS={yo,sw,am}) by splitting HRL into high/medium.",
+  "high": ["en", "zh", "de", "fr", "es", "ru", "ja"],
+  "medium": ["it", "nl", "pl", "ko", "ar", "th"],
+  "low": ["yo", "sw", "am"],
+  "pilot_selection": {
+    "high": "en",
+    "medium": "ko",
+    "low": "yo"
+  }
+}

@@ -1,0 +1,802 @@
+[
+  {
+    "instruction": "ከአስቸጋሪ ሰው ጋር ለመገናኘት 4 ስልቶችን ይግለጹ።",
+    "category": null
+  },
+  {
+    "instruction": "ስለ ጥንቸል በጫካ ውስጥ ካለው ጀብደኛ ሽክርክር ጋር ስለሚኖር ታሪክ ይፍጠሩ።",
+    "category": null
+  },
+  {
+    "instruction": "መደራጀት አስፈላጊ የሆነበትን ሦስት ምክንያቶች ዘርዝር።",
+    "category": null
+  },
+  {
+    "instruction": "ለ iPhone 12 የምርት መግለጫ ይጻፉ።",
+    "category": null
+  },
+  {
+    "instruction": "ከሚወዱት ዘመዶቻቸው ጋር ለመግባባት ኮከቦችን ስለሚጠቀም ሰው ታሪክ ይፍጠሩ።",
+    "category": null
+  },
+  {
+    "instruction": "ለቻትቦት ረዳት ሶስት ሊሆኑ የሚችሉ የአጠቃቀም ጉዳዮችን ይፍጠሩ።",
+    "category": null
+  },
+  {
+    "instruction": "ለብዝሀ ሕይወት አስፈላጊነት አሳማኝ ክርክር ይገንቡ።",
+    "category": null
+  },
+  {
+    "instruction": "ጊዜ ቆጣቢ መሣሪያ ምሳሌ ስጥ።",
+    "category": null
+  },
+  {
+    "instruction": "ግልጽ የዘር መድልዎ ምሳሌ ምንድን ነው?",
+    "category": null
+  },
+  {
+    "instruction": "ከ1 እስከ 5 ያሉትን ቁጥሮች የሚይዝ ድርድር ለመፍጠር የሚሰራ የፓይዘን ትእዛዝ ይፍጠሩ።",
+    "category": null
+  },
+  {
+    "instruction": "ለአዲሱ የምርት ስም ስም ይፍጠሩ",
+    "category": null
+  },
+  {
+    "instruction": "አዲስ የምርት ሀሳብ ይዘው ይምጡ።",
+    "category": null
+  },
+  {
+    "instruction": "ለመረጃ ማዕድን የሚያገለግሉ ሁለት መሳሪያዎችን ጥቀስ።",
+    "category": null
+  },
+  {
+    "instruction": "Create a script for a short skit between two people.",
+    "category": null
+  },
+  {
+    "instruction": "የኮምፒውተር ሳይንስን ለሚማር ተማሪ የተለመደው ቀን ምን እንደሚመስል ግለጽ።",
+    "category": null
+  },
+  {
+    "instruction": "በ iOS እና አንድሮይድ ስልክ መካከል ያለው ልዩነት ምንድን ነው?",
+    "category": null
+  },
+  {
+    "instruction": "እያንዳንዱ ንጥል 10 ዶላር ዋጋ ያለው ከሆነ የ 5 ንጥሎችን አጠቃላይ ወጪ አስላ።",
+    "category": null
+  },
+  {
+    "instruction": "ሁለቱንም 1 እና 10 ጨምሮ በ1 እና 10 መካከል የ5 የዘፈቀደ ቁጥሮች ዝርዝር ይፍጠሩ።",
+    "category": null
+  },
+  {
+    "instruction": "Generate an analogy to explain a complex concept.",
+    "category": null
+  },
+  {
+    "instruction": "ሦስቱን የአካል ጉዳተኞች መብቶች ህግ ይጥቀሱ።",
+    "category": null
+  },
+  {
+    "instruction": "ትክክለኛውን ሰዋሰው እና የፊደል አጻጻፍ መጠቀም ለምን አስፈላጊ እንደሆነ ያብራሩ.",
+    "category": null
+  },
+  {
+    "instruction": "ለሳምንታዊ ጊዜ ሌላ ቃል ምንድነው?",
+    "category": null
+  },
+  {
+    "instruction": "ከ1-10 ባለው ልኬት የምግብ፣ አገልግሎት እና ድባብ የሬስቶራንት ግምገማ ይፍጠሩ።",
+    "category": null
+  },
+  {
+    "instruction": "ይህን ዓረፍተ ነገር ይበልጥ ተፈጥሯዊ እንዲሆን ለማድረግ እንደገና አስተካክል፡ \"ይህን ማድረግ ለኔ የማይቻል ነው\"",
+    "category": null
+  },
+  {
+    "instruction": "ሰዎች ምናባዊ ክስተቶችን ለመከታተል ያላቸውን ፍላጎት ለመጠየቅ የዳሰሳ ጥናት ጥያቄ ይፍጠሩ።",
+    "category": null
+  },
+  {
+    "instruction": "ለ RGB ቀለም #9900FF ሄክሳዴሲማል ኮድ ይፃፉ",
+    "category": null
+  },
+  {
+    "instruction": "የአነስተኛ ድርጊትን መርህ ያብራሩ.",
+    "category": null
+  },
+  {
+    "instruction": "ለመስመር ላይ ግብይት መተግበሪያ የተጠቃሚ በይነገጽ ይፍጠሩ።",
+    "category": null
+  },
+  {
+    "instruction": "አምስት የተለመዱ ፍራፍሬዎችን ይለዩ",
+    "category": null
+  },
+  {
+    "instruction": "በሳን ፍራንሲስኮ የነገውን የአየር ሁኔታ ተንብየ",
+    "category": null
+  },
+  {
+    "instruction": "ልጆችን ስለ ስሜቶች የሚያስተምሩ የ 5 መጽሐፍትን ዝርዝር ይፍጠሩ።",
+    "category": null
+  },
+  {
+    "instruction": "መደነስ ስለሚማር ድራጎን የልጆች ታሪክ ይፍጠሩ።",
+    "category": null
+  },
+  {
+    "instruction": "ስለ ማተሚያ ማሽን እድገት ተወያዩ።",
+    "category": null
+  },
+  {
+    "instruction": "ይህን ዓረፍተ ነገር አርትዕ፡ \"እንዲህ ያለ ታላቅ ሥራ ሠርተሃል።\"",
+    "category": null
+  },
+  {
+    "instruction": "የ'አስገባ' ቁልፍ ሲጫን የማንቂያ መልእክት ለማሳየት የጃቫስክሪፕት ኮድ ይፃፉ።",
+    "category": null
+  },
+  {
+    "instruction": "Misconceptions about global warming",
+    "category": null
+  },
+  {
+    "instruction": "ብዙ ደንበኞች ኩባንያውን በማህበራዊ ሚዲያ መድረኮች እንዲከተሉት የሚያስችል የፈጠራ መንገድ ይጠቁሙ።",
+    "category": null
+  },
+  {
+    "instruction": "የካርቦን ልቀትን ለመቀነስ መንገዶችን ይጠቁሙ",
+    "category": null
+  },
+  {
+    "instruction": "በ'ion' የሚያልቁ ሶስት ቃላትን ይዘው ይምጡ።",
+    "category": null
+  },
+  {
+    "instruction": "የውሂብ ጥሰትን ለሚያካትተው ታሪክ ርዕስ ይጻፉ።",
+    "category": null
+  },
+  {
+    "instruction": "ለ AI መሐንዲስ የአምስት የስራ ዱካዎች ዝርዝር ይፍጠሩ",
+    "category": null
+  },
+  {
+    "instruction": "የሚከተለውን ዓረፍተ ነገር ሰዋሰው ትክክል መሆኑን በማረጋገጥ እንደገና ይፃፉ፡ \"ምንም እርዳታ አያስፈልጋቸውም።\"",
+    "category": null
+  },
+  {
+    "instruction": "Make up a causal relationship between two objects",
+    "category": null
+  },
+  {
+    "instruction": "ለመረጃ ማጽጃ 3 ዘዴዎችን ጥቀስ።",
+    "category": null
+  },
+  {
+    "instruction": "Write a reaction sentence to the following statement: “This is going to be a long night.”",
+    "category": null
+  },
+  {
+    "instruction": "የዩናይትድ ስቴትስ ተወላጅ የሆነ የሚረግፍ ዛፍ ምሳሌ ያቅርቡ።",
+    "category": null
+  },
+  {
+    "instruction": "ጭንቀትን ለመቀነስ ሶስት ቴክኒኮችን ጥቀስ።",
+    "category": null
+  },
+  {
+    "instruction": "በሚያስደንቅ ጫካ ውስጥ ስለ ምትሃታዊ ቤተመንግስት መግለጫ ይጻፉ።",
+    "category": null
+  },
+  {
+    "instruction": "የዓመቱ ሁለት መቶ ሠላሳ ሁለተኛ ቀን የትኛው ቀን ነው?",
+    "category": null
+  },
+  {
+    "instruction": "ከቤት ውጭ ጋር የተያያዙ 4 ቅጽሎችን ዝርዝር ይፍጠሩ።",
+    "category": null
+  },
+  {
+    "instruction": "ከዕፅዋት የተቀመመ አመጋገብ ጥቅሞችን ዝርዝር ያቅርቡ.",
+    "category": null
+  },
+  {
+    "instruction": "በየቀኑ ነፃ ሰዓት ምን እንደሚደረግ የ10 ሀሳቦችን ዝርዝር ይፍጠሩ።",
+    "category": null
+  },
+  {
+    "instruction": "ስለ አወንታዊ አስተሳሰብ ሃይል ለብሎግ ልጥፍ ወደ ተግባር ጥሪ ያቅርቡ።",
+    "category": null
+  },
+  {
+    "instruction": "በእንግሊዝኛ አንዳንድ የተለመዱ ሀረጎችን ያውጡ እነዚህም \"ጣፋጭ\" ከሚለው ቃል ጋር የተቆራኙ ናቸው።",
+    "category": null
+  },
+  {
+    "instruction": "እባክዎ ለአንድ የበጎ አድራጎት ድርጅት የማይረሳ የተልእኮ መግለጫ ይፍጠሩ።",
+    "category": null
+  },
+  {
+    "instruction": "በቢሮ ውስጥ ቆሻሻን ለመቀነስ 5 መንገዶችን ያስቡ።",
+    "category": null
+  },
+  {
+    "instruction": "በእግር ጉዞ ላይ የሚወስዱትን የንጥሎች ዝርዝር ይፍጠሩ።",
+    "category": null
+  },
+  {
+    "instruction": "በ Python ደርድር () ተግባር ውስጥ ያለው የቁልፍ ቃል ክርክር ዓላማ ምንድን ነው?",
+    "category": null
+  },
+  {
+    "instruction": "ፎቶሲንተሲስ በተክሎች ውስጥ እንዴት ይከሰታል?",
+    "category": null
+  },
+  {
+    "instruction": "የጨለማ ልብ ልብ ወለድ መቼት ምንድን ነው?",
+    "category": null
+  },
+  {
+    "instruction": "የሕይወትን መንገድ ስለማግኘት አንድ ምሳሌ ይፍጠሩ።",
+    "category": null
+  },
+  {
+    "instruction": "የበለጠ ትክክለኛ በማድረግ የሚከተለውን ዓረፍተ ነገር ያርትዑ፡ \n\n\"በሽተኛው ትኩሳት ነበረው.\"",
+    "category": null
+  },
+  {
+    "instruction": "ሴልሺየስን ወደ ፋራናይት ለመቀየር እኩልታ ይጻፉ።",
+    "category": null
+  },
+  {
+    "instruction": "ሌሊቱን ለመግለጽ 5 ቅጽሎችን ስጠኝ.",
+    "category": null
+  },
+  {
+    "instruction": "“ማጥፋት” ለሚለው ቃል አንድ ተመሳሳይ ቃል ጠቁም።",
+    "category": null
+  },
+  {
+    "instruction": "የአትክልት ቦታን ከጥንቸል እንዴት ይከላከላሉ?",
+    "category": null
+  },
+  {
+    "instruction": "የ'ጅምር'ን ትርጉም የሚያስተላልፍ ዘይቤ ይፍጠሩ።",
+    "category": null
+  },
+  {
+    "instruction": "የቤተሰብዎን የአካባቢ አሻራ ለመቀነስ አንድ ዘዴ ይግለጹ።",
+    "category": null
+  },
+  {
+    "instruction": "የኤሌክትሪክ መኪናዎችን የመጠቀም ጥቅሞችን እና ጉዳቶችን ይዘርዝሩ።",
+    "category": null
+  },
+  {
+    "instruction": "ለአንድ አስፈላጊ ዘይት አከፋፋይ የፈጠራ ምርት መግለጫ ይፍጠሩ።",
+    "category": null
+  },
+  {
+    "instruction": "ከዚህ ባለ አራት ቃላቶች ሐረግ ጋር ተመሳሳይ ነገርን የሚገልጽ ሶስት ቃላትን ይፃፉ \"ያለ እረፍት ይስሩ\".",
+    "category": null
+  },
+  {
+    "instruction": "ጥሩ መሪ ስለሚያደርገው አንድ ድርሰት ይጻፉ።",
+    "category": null
+  },
+  {
+    "instruction": "የፕላስቲክ ብክነትን እንዴት መቀነስ እንደሚቻል ሀሳብ ያቅርቡ።",
+    "category": null
+  },
+  {
+    "instruction": "አካባቢን ለማሻሻል አምስት የተለያዩ መንገዶችን ያስቡ።",
+    "category": null
+  },
+  {
+    "instruction": "ወጥ ቤትን ለማጽዳት እና ለማጽዳት ደረጃዎችን ይግለጹ.",
+    "category": null
+  },
+  {
+    "instruction": "ከ \"የሌሊት ሰማይ\" ጀምሮ የፈጠራ ዓረፍተ ነገር ጻፍ.",
+    "category": null
+  },
+  {
+    "instruction": "በካናዳ የመንጃ ፍቃድ የማግኘት ሂደቱን ያብራሩ።",
+    "category": null
+  },
+  {
+    "instruction": "ስለ ሌሙር የሊምሪክ ግጥም ይፍጠሩ።",
+    "category": null
+  },
+  {
+    "instruction": "የነቃ የድምጽ ዓረፍተ ነገር ምሳሌ አሳየኝ።",
+    "category": null
+  },
+  {
+    "instruction": "ለአንድ ዘይቤ ሁለት ምሳሌዎችን አቅርብ",
+    "category": null
+  },
+  {
+    "instruction": "በኒውዮርክ ከተማ ባለ ባለ አምስት ኮከብ ሆቴል ለአንድ ምሽት የማደሪያ ዋጋ ይገምቱ",
+    "category": null
+  },
+  {
+    "instruction": "የሚከተለው አባባል እውነት ወይም ውሸት ከሆነ መለየት፡ አዶልፍ ሂትለር ኦስትሪያዊ ነበር።",
+    "category": null
+  },
+  {
+    "instruction": "ስለ እንስሳት መብት ለምርምር ወረቀት ርዕስ ይፍጠሩ።",
+    "category": null
+  },
+  {
+    "instruction": "ለደንበኛ አገልግሎት ተወካይ የሚደረጉ እና የማይደረጉ ነገሮች ዝርዝር ያዘጋጁ",
+    "category": null
+  },
+  {
+    "instruction": "ለሚከተለው ቃል ሦስት ተመሳሳይ ቃላትን አግኝ፡ ደስተኛ",
+    "category": null
+  },
+  {
+    "instruction": "አካባቢን ለማሻሻል የሚረዳ መፍትሄ ያቅርቡ.",
+    "category": null
+  },
+  {
+    "instruction": "ሶስት የተለመዱ የማንነት ማረጋገጫ ዘዴዎችን ጥቀስ።",
+    "category": null
+  },
+  {
+    "instruction": "የአንድ መሪ ​​አምስቱ ዋና ዋና ባህሪያት ምንድናቸው?",
+    "category": null
+  },
+  {
+    "instruction": "ያገለገለ መኪና ሲገዙ ምን ዓይነት ባሕርያትን ግምት ውስጥ ማስገባት አለብኝ?",
+    "category": null
+  },
+  {
+    "instruction": "ትርጉም ያለው አጭር ልቦለድ ለመስራት እነዚህን ቃላት አዘጋጅ፡ \"ድመት፣ እኩለ ሌሊት፣ የሌሊት ወፍ፣ ጫካ፣ መደበቅ\"",
+    "category": null
+  },
+  {
+    "instruction": "አስደሳች ልውውጥ ላላቸው ሁለት ሰዎች ውይይት ይገንቡ።",
+    "category": null
+  },
+  {
+    "instruction": "ለመኪና ኪራይ ንግድ የውሂብ ጎታ ይገንቡ።",
+    "category": null
+  },
+  {
+    "instruction": "የቬርሳይ ስምምነት አጭር ትርጉም ይጻፉ።",
+    "category": null
+  },
+  {
+    "instruction": "ለአሥራ አራት ዓመት ልጅ አንድ ታዋቂ ልብ ወለድ ምከሩ።",
+    "category": null
+  },
+  {
+    "instruction": "የሚከተለውን አንቀጽ ጠቅለል አድርገህ ጻፍ። \n\n\"የአየር ንብረት ለውጥ ተጽእኖዎች ሰፊና ለአስርተ አመታት አካባቢን ሲጎዱ ቆይተዋል።በየአመቱ ለውጦቹ በጉልህ የሚታዩ እና በጉልህ የሚታዩ በመሆናቸው ለድርቅ፣ለጎርፍ፣ለከፍተኛ የአየር ሙቀት እና ከአየር ንብረት ጋር በተያያዙ አደጋዎች የመጋለጥ እድላቸው ከፍተኛ ነው።\"",
+    "category": null
+  },
+  {
+    "instruction": "ለጤናማ ቁርስ የምግብ አዘገጃጀት መመሪያን እና የምግብ አዘገጃጀት መመሪያዎችን ጨምሮ።",
+    "category": null
+  },
+  {
+    "instruction": "የአየር ብክለት ዋነኛ መንስኤ ምንድን ነው?",
+    "category": null
+  },
+  {
+    "instruction": "ለምን የህዝብ ማመላለሻዎች የበለጠ ጥቅም ላይ እንደሚውሉ አሳማኝ ድርሰት ይጻፉ።",
+    "category": null
+  },
+  {
+    "instruction": "“ለመንገር ቆርጠህ” የሚለው ፈሊጥ ምን ማለት እንደሆነ አብራራ።",
+    "category": null
+  },
+  {
+    "instruction": "ስለ ርችቶች አጭር መግለጫ ይጻፉ።",
+    "category": null
+  },
+  {
+    "instruction": "በኒውዮርክ ከተማ የሚገኙ አምስት ምልክቶችን ይጻፉ።",
+    "category": null
+  },
+  {
+    "instruction": "የ OSI ሞዴል ሶስት የአውታረ መረብ ንብርብሮችን ይሰይሙ",
+    "category": null
+  },
+  {
+    "instruction": "የመንፈስ ጭንቀት መንስኤዎችን እና ምልክቶችን ይግለጹ.",
+    "category": null
+  },
+  {
+    "instruction": "ለአካባቢ ጥበቃ የበለጠ ንቁ ለመሆን ምን ማድረግ ይችላሉ?",
+    "category": null
+  },
+  {
+    "instruction": "የቼዝ ህግን የሚከተል ነገር ግን ከባህላዊው ጨዋታ ሰፋ ያሉ ተጫዋቾችን የሚያዝናና ጨዋታ ይንደፉ።",
+    "category": null
+  },
+  {
+    "instruction": "ስለ ዓለም አቀፍ ሙቀት መጨመር የድር ጣቢያ ብሎግ ልጥፍ ይፍጠሩ።",
+    "category": null
+  },
+  {
+    "instruction": "ባለ ሶስት አቅጣጫዊ ምስል ይገንቡ",
+    "category": null
+  },
+  {
+    "instruction": "የሚከተለውን ዓረፍተ ነገር ዓይነት ይለዩ: \"አሊስ በውጤቱ በጣም ደስተኛ ናት.\"",
+    "category": null
+  },
+  {
+    "instruction": "“ወፍራም እመቤት እስክትዘምር ድረስ አላለቀም።",
+    "category": null
+  },
+  {
+    "instruction": "ሶስት ፍራፍሬዎችን እና ሶስት አትክልቶችን ጥቀስ",
+    "category": null
+  },
+  {
+    "instruction": "ስለ ጓደኝነት ኃይል ሦስት ተለዋጭ ርዕሶችን ይፍጠሩ።",
+    "category": null
+  },
+  {
+    "instruction": "ለቀዘቀዘ የምግብ ኩባንያ ሶስት የፈጠራ የማሻሻጫ ዘመቻ ሀሳቦችን ያስቡ።",
+    "category": null
+  },
+  {
+    "instruction": "የ 10 በጣም ስኬታማ ሥራ ፈጣሪዎችን ስም ሰብስብ",
+    "category": null
+  },
+  {
+    "instruction": "የ 3 5 ኛ ኃይልን አስላ።",
+    "category": null
+  },
+  {
+    "instruction": "የግል መረጃን ለመጠበቅ ሶስት የመረጃ ደህንነት ምክሮችን ንገረኝ",
+    "category": null
+  },
+  {
+    "instruction": "ለፎቶ አርትዖት መተግበሪያ የድረ-ገጽ በይነገጽ ይፍጠሩ።",
+    "category": null
+  },
+  {
+    "instruction": "አምስት የህንድ ከተሞችን ጥቀስ።",
+    "category": null
+  },
+  {
+    "instruction": "ምናባዊ እውነታን ለትምህርታዊ ዓላማ እንዴት መጠቀም እንደሚቻል ያብራሩ።",
+    "category": null
+  },
+  {
+    "instruction": "የግል ረዳት እንደተሰጠህ አስብ። ይህ ረዳት ሊከተላቸው የሚገቡ 3 መመሪያዎችን ይስጡ።",
+    "category": null
+  },
+  {
+    "instruction": "የአንድን ሰው ስለ ወቅታዊ ሰንጠረዥ እውቀት ለመፈተሽ የሚያገለግሉ 5 ጥያቄዎችን ያመንጩ።",
+    "category": null
+  },
+  {
+    "instruction": "በሞራል ትምህርት አጭር ልቦለድ ይገንቡ",
+    "category": null
+  },
+  {
+    "instruction": "የኦቾሎኒ ቅቤን የማዘጋጀት ሂደቱን ይግለጹ.",
+    "category": null
+  },
+  {
+    "instruction": "ምርታማነትዎን ለመጨመር ሊወስዷቸው የሚችሏቸውን እርምጃዎች ይጻፉ።",
+    "category": null
+  },
+  {
+    "instruction": "የ Tesla የኤሌክትሪክ መኪናዎች አጠቃላይ የህዝብ አስተያየት ምንድነው?",
+    "category": null
+  },
+  {
+    "instruction": "በ 8 እና 9 መካከል ያለውን ልዩነት አስሉ.",
+    "category": null
+  },
+  {
+    "instruction": "የቬጀቴሪያን አኗኗር ጥቅሞችን የሚያስተዋውቅ ብሎግ ልጥፍ ይንደፉ",
+    "category": null
+  },
+  {
+    "instruction": "በዓለም የመጀመሪያው 3-ል ማተሚያ ብዕር ምንድን ነው?",
+    "category": null
+  },
+  {
+    "instruction": "በምስራቃዊ እና ምዕራባዊ ባህሎች መካከል ያለውን ልዩነት ይግለጹ።",
+    "category": null
+  },
+  {
+    "instruction": "ከጓደኝነት ጋር የተያያዘ ታዋቂ ጥቅስ ይፍጠሩ።",
+    "category": null
+  },
+  {
+    "instruction": "የማህደረ ትውስታ ሂደቱን ሶስት ደረጃዎች ይዘርዝሩ.",
+    "category": null
+  },
+  {
+    "instruction": "\"አንድ ጊዜ በሰማያዊ ጨረቃ\" የሚለው ሐረግ የመጣው ከየት ነው?",
+    "category": null
+  },
+  {
+    "instruction": "ሰው ሰራሽ የነርቭ አውታረ መረብን ይግለጹ።",
+    "category": null
+  },
+  {
+    "instruction": "ሞቃታማ የበጋ ቀናትን ጽንሰ-ሀሳብ የሚገልጽ የCreative Commons ፎቶ ያግኙ።",
+    "category": null
+  },
+  {
+    "instruction": "የ AI ረዳትን ለመግለጽ ተመሳሳይነት ይፍጠሩ።",
+    "category": null
+  },
+  {
+    "instruction": "በህብረተሰብ ውስጥ የግለሰባዊነትን አስፈላጊነት ያብራሩ.",
+    "category": null
+  },
+  {
+    "instruction": "ግማሽ የሻይ ማንኪያ ቤኪንግ ሶዳ፣ አንድ የሻይ ማንኪያ ጨው እና አንድ የሻይ ማንኪያ የሎሚ ጭማቂ አንድ ላይ ይቀላቅሉ",
+    "category": null
+  },
+  {
+    "instruction": "በፕሮግራም ውስጥ በሙያዎ ውስጥ ስኬታማ ለመሆን ምን ዓይነት ባሕርያት ያስፈልጉዎታል?",
+    "category": null
+  },
+  {
+    "instruction": "በከተማ የከተማ ገጽታ ላይ የተዘጋጀ ኦሪጅናል ታሪክ ይፍጠሩ።",
+    "category": null
+  },
+  {
+    "instruction": "የሚከተሉትን ቃላት በፊደል አዘጋጁ፡- ሰማያዊ፣ ነጭ፣ ብር፣ ቢጫ",
+    "category": null
+  },
+  {
+    "instruction": "ወደ ሁለተኛው የዓለም ጦርነት የሚያመሩ አስፈላጊ ክስተቶችን የጊዜ መስመር ጠቅለል ያድርጉ።",
+    "category": null
+  },
+  {
+    "instruction": "ቴክኖሎጂ እንዴት የሰዎችን የግንኙነት መንገድ እንደሚለውጥ ብሎግ ልጥፍ ይፍጠሩ",
+    "category": null
+  },
+  {
+    "instruction": "የሞባይል መተግበሪያ መኖር አምስት ጥቅሞችን ይዘርዝሩ።",
+    "category": null
+  },
+  {
+    "instruction": "የአካል ብቃት እንቅስቃሴ ለማድረግ እራሴን ለማነሳሳት በጣም ውጤታማው መንገድ ምንድነው?",
+    "category": null
+  },
+  {
+    "instruction": "‹ወሳኝ አስተሳሰብ› ምን እንደሆነ ያብራሩ እና እንዴት ጥቅም ላይ ሊውል እንደሚችል ምሳሌ ይስጡ።",
+    "category": null
+  },
+  {
+    "instruction": "ውጤታማ ድር ጣቢያ ለመንደፍ ሶስት ምክሮችን ይስጡ",
+    "category": null
+  },
+  {
+    "instruction": "የቤት እንስሳ ባለቤት መሆን 5 ጥቅሞችን ይዘርዝሩ።",
+    "category": null
+  },
+  {
+    "instruction": "ለ5 ደቂቃ የዝግጅት አቀራረብ ስክሪፕት ይፃፉ ስለ ሪሳይክል አስፈላጊነት።",
+    "category": null
+  },
+  {
+    "instruction": "“በረዶ” የሚለውን ቃል የያዘ ልዩ ግጥም ያዘጋጁ።",
+    "category": null
+  },
+  {
+    "instruction": "በስሜቱ መሰረት የሚከተለውን ዓረፍተ ነገር ይመድቡ።\n\nበሬስቶራንቱ ውስጥ አሰቃቂ ነገር አጋጠመኝ።",
+    "category": null
+  },
+  {
+    "instruction": "ደስተኛ ስለመሆን ሃይኩ ይጻፉ።",
+    "category": null
+  },
+  {
+    "instruction": "የደንበኞች አገልግሎት ሁለት ጥሩ ምሳሌዎችን ስጥ።",
+    "category": null
+  },
+  {
+    "instruction": "የሚከተለውን ኮድ መሐንዲስ ገልብጥ እና በ4 ዓረፍተ ነገሮች ምን እንደ ሆነ አብራራ።\n\nvar x = 3\nvar y = x + 4",
+    "category": null
+  },
+  {
+    "instruction": "የኤችቲኤምኤልን መሰረታዊ ነገሮች ለጀማሪ ያብራሩ።",
+    "category": null
+  },
+  {
+    "instruction": "ሰዎች ለምን አክሲዮን እንደሚገዙ ያብራሩ።",
+    "category": null
+  },
+  {
+    "instruction": "የሚከተለውን መግለጫ አርትዕ፡ 'ሁሉም ሰው ልዩ ነው።",
+    "category": null
+  },
+  {
+    "instruction": "የዳይስ ጥቅልን የሚመስል የጃቫ ፕሮግራም ይፍጠሩ።",
+    "category": null
+  },
+  {
+    "instruction": "ልቦለድ ታሪክ ሃሳብ ይፍጠሩ።",
+    "category": null
+  },
+  {
+    "instruction": "የጓደኝነትን ምንነት የሚይዝ ልዩ ሀረግ ይፍጠሩ።",
+    "category": null
+  },
+  {
+    "instruction": "የበጋ ከሰአትን የሚገልጹ አንዳንድ ዓረፍተ ነገሮችን ይፍጠሩ።",
+    "category": null
+  },
+  {
+    "instruction": "\"አንድ ጊዜ አልፎ አልፎ\" የሚለውን ሐረግ በመጠቀም ዓረፍተ ነገር ይገንቡ",
+    "category": null
+  },
+  {
+    "instruction": "በእንግሊዝኛ ቋንቋ የተለመዱ ቃላትን ዝርዝር ያዘጋጁ።",
+    "category": null
+  },
+  {
+    "instruction": "ለአዲስ ፊልም በመረጃ የተደገፈ የግብይት ስትራቴጂ ያዳብሩ።",
+    "category": null
+  },
+  {
+    "instruction": "የ \"አልጌ\" ፍቺ ይስጡ.",
+    "category": null
+  },
+  {
+    "instruction": "የፀሐይ ኃይል ከድንጋይ ከሰል ለምን እንደሚመረጥ የሚያብራራ የምክንያት ክርክር ይፍጠሩ።",
+    "category": null
+  },
+  {
+    "instruction": "ለተባበሩት መንግስታት ድርጅት መመስረት ምክንያት የሆኑትን ታሪካዊ ክስተቶች ግለጽ።",
+    "category": null
+  },
+  {
+    "instruction": "በሲጋራ ውስጥ የሚገኙትን አምስት መርዛማ ንጥረ ነገሮች ዝርዝር ይዘርዝሩ።",
+    "category": null
+  },
+  {
+    "instruction": "የእርካታ ስሜትን ለማነፃፀር ዘይቤን ይፍጠሩ።",
+    "category": null
+  },
+  {
+    "instruction": "የመጀመሪያዎቹን 30 አዎንታዊ ኢንቲጀሮች ድምር ያግኙ።",
+    "category": null
+  },
+  {
+    "instruction": "ለምን ዲጂታል ምንዛሬዎች ተወዳጅነት እያገኙ እንደሆነ ያብራሩ።",
+    "category": null
+  },
+  {
+    "instruction": "የሚከተለውን ዓረፍተ ነገር እንደ ገላጭ ዓረፍተ ነገር ወይም የጥያቄ ዓረፍተ ነገር ይመድቡ።\n\nሚልኪ ዌይ ውስጥ ስንት ኮከቦች አሉ?",
+    "category": null
+  },
+  {
+    "instruction": "\"ግዢ\"፣ \"መስመር ላይ\" እና \"ማከማቻ\" የሚሉትን ቃላት በመጠቀም ዓረፍተ ነገር ይፍጠሩ።",
+    "category": null
+  },
+  {
+    "instruction": "የሚከተለውን መግለጫ አስቡበት፡ \"ድመቶች ከውሾች ይሻላሉ\"። በተቻለ መጠን በፈጠራ መንገድ ያርትዑት።",
+    "category": null
+  },
+  {
+    "instruction": "“ለመፍጨት መጥረቢያ እንዲኖር” የሚለውን ሐረግ ምሳሌ አቅርብ።",
+    "category": null
+  },
+  {
+    "instruction": "ከደንበኛ አገልግሎት ጋር የተያያዘ አዎንታዊ አስተያየት ይፍጠሩ.",
+    "category": null
+  },
+  {
+    "instruction": "የወረቀት ብክነትን ለመቀነስ ቢያንስ 5 መንገዶችን ይፍጠሩ።",
+    "category": null
+  },
+  {
+    "instruction": "ሁለትዮሽ 1111000 ወደ አስርዮሽ ይለውጡ።",
+    "category": null
+  },
+  {
+    "instruction": "ትክክለኛውን እና የተሟላውን ዓረፍተ ነገር ይምረጡ፡-\n\nሀ) ማሪያ ጣቢያው ልታገኘኝ ይገባ ነበር።\nለ) ማሪያ በጣቢያው ውስጥ ልታገኘኝ ይገባ ነበር",
+    "category": null
+  },
+  {
+    "instruction": "Name the recently discovered exoplanet.",
+    "category": null
+  },
+  {
+    "instruction": "ካለፉት አምስት አመታት ምርጥ የኦሊምፒክ አትሌቶችን ስም ዝርዝር ስጠኝ።",
+    "category": null
+  },
+  {
+    "instruction": "ግምታዊ ሁኔታ ይፍጠሩ.",
+    "category": null
+  },
+  {
+    "instruction": "ሎሚ ለመጀመሪያ ጊዜ የመቅመስ ልምድን ይግለጹ።",
+    "category": null
+  },
+  {
+    "instruction": "“ሀብት ሞገስ ለደፋር” የሚለውን ምሳሌ ትርጉም ግለጽ።",
+    "category": null
+  },
+  {
+    "instruction": "የተለያዩ የቤተሰብ አባላትን የሚያሳይ የቤተሰብ ዛፍ ይፍጠሩ።",
+    "category": null
+  },
+  {
+    "instruction": "የሜክሲኮ ምግብን ለሚወድ ሰው ምግብ ቤት ምከሩ።",
+    "category": null
+  },
+  {
+    "instruction": "ጥያቄውን ይመልሱ፡- ሥነ ምህዳር ምንድን ነው?",
+    "category": null
+  },
+  {
+    "instruction": "የወቅቱን ፖለቲካ የሚያመለክት ምሳሌ ይፍጠሩ።",
+    "category": null
+  },
+  {
+    "instruction": "የኒውዮርክ ከተማን ህዝብ ይወስኑ።",
+    "category": null
+  },
+  {
+    "instruction": "ካልኩሌተር ሳይጠቀሙ የሚከተሉትን ቁጥሮች ይጨምሩ፡ 37 + 63",
+    "category": null
+  },
+  {
+    "instruction": "በዩናይትድ ኪንግደም የሚኖሩ ሰዎች አማካይ ዕድሜ ስንት ነው?",
+    "category": null
+  },
+  {
+    "instruction": "ለብድር ሲያመለክቱ ግምት ውስጥ መግባት ያለበት በጣም አስፈላጊው ነገር ምንድን ነው?",
+    "category": null
+  },
+  {
+    "instruction": "'ባይ' ለሚለው ቃል አምስት ተመሳሳይ ስሞችን ያግኙ።",
+    "category": null
+  },
+  {
+    "instruction": "በቢሮ ውስጥ ውጤታማ ያልሆነ የሃብት አጠቃቀም ምሳሌ ስጥ",
+    "category": null
+  },
+  {
+    "instruction": "ሆሞፎን \"አሸነፈ/አንድ\" በመጠቀም ዓረፍተ ነገር ጻፍ።",
+    "category": null
+  },
+  {
+    "instruction": "የቨርቹዋልነት ሃሳብን ያብራሩ",
+    "category": null
+  },
+  {
+    "instruction": "የአስፈሪ ፊልም ዋና ገፀ ባህሪ ሁለት ባህሪያትን ለይ።",
+    "category": null
+  },
+  {
+    "instruction": "ሰዎች ለበጎ አድራጎት ድርጅቶች ለመለገስ ለምን እንደተነሳሱ ያብራሩ።",
+    "category": null
+  },
+  {
+    "instruction": "የጂፒቲ ቋንቋ ሞዴል ሊያጠናቅቃቸው የሚችሏቸው የተለያዩ ተግባራት ዝርዝር ያቅርቡ።",
+    "category": null
+  },
+  {
+    "instruction": "የኢሜል ግብይት ሽያጮችን ለመጨመር እንዴት እንደሚያግዝ ያብራሩ።",
+    "category": null
+  },
+  {
+    "instruction": "የቶማስ ኤዲሰንን ሕይወት በሦስት ዓረፍተ ነገሮች አጠቃል።",
+    "category": null
+  },
+  {
+    "instruction": "ዓይነት 2 የስኳር በሽታ በሰውነት ላይ ያለውን ተጽእኖ ይግለጹ።",
+    "category": null
+  }
+]
