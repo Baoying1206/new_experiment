@@ -38,11 +38,18 @@ PLACEHOLDER_TOKENS = {
 }
 
 
+# This project's language codes (matching ployrefuse_Enhanced filenames) vs.
+# deep-translator's Google Translate codes -- only differs for Chinese.
+DEEP_TRANSLATOR_CODE = {'zh': 'zh-CN'}
+
+
 def translate(text, source, target, retries=3):
     from deep_translator import GoogleTranslator
+    dt_source = DEEP_TRANSLATOR_CODE.get(source, source)
+    dt_target = DEEP_TRANSLATOR_CODE.get(target, target)
     for attempt in range(retries):
         try:
-            return GoogleTranslator(source=source, target=target).translate(text)
+            return GoogleTranslator(source=dt_source, target=dt_target).translate(text)
         except Exception as e:
             if attempt == retries - 1:
                 raise
@@ -115,6 +122,7 @@ def main(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--target', type=str, required=True, choices=['ko', 'yo'])
+    parser.add_argument('--target', type=str, required=True,
+                        choices=['zh', 'de', 'ar', 'th', 'sw', 'am'])
     args = parser.parse_args()
     main(args)

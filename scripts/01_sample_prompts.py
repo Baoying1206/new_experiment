@@ -22,7 +22,7 @@ import random
 ENHANCED_DIR = os.path.join(os.path.dirname(__file__), '..', 'ployrefuse_Enhanced')
 OUT_PATH = os.path.join(os.path.dirname(__file__), '..', 'data', 'sampled_prompts.json')
 
-PILOT_LANGS = ['en', 'ko', 'yo']
+PILOT_LANGS = ['en', 'zh', 'de', 'ko', 'ar', 'th', 'yo', 'sw', 'am']
 TARGET_N = 75
 SEED = 0
 

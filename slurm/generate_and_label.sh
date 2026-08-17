@@ -26,7 +26,7 @@ MODEL_ALIASES=(
     "Meta-Llama-3.1-8B-Instruct"
     "gemma-2-9b-it"
 )
-PILOT_LANGS=(en ko yo)
+PILOT_LANGS=(en zh de ko ar th yo sw am)
 
 MODEL_IDX=${MODEL_IDX:-0}
 MODEL_PATH=${MODEL_PATHS[$MODEL_IDX]}

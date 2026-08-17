@@ -56,7 +56,7 @@ from pipeline.model_utils.model_factory import construct_model_base
 from pipeline.utils.hook_utils import add_hooks  # verify this import path on the cluster
 
 SCRIPT_DIR = os.path.dirname(__file__)
-PILOT_LANGS = ['en', 'ko', 'yo']
+PILOT_LANGS = ['en', 'zh', 'de', 'ko', 'ar', 'th', 'yo', 'sw', 'am']
 MECHANISMS = ['prefix_injection', 'refusal_suppression', 'instruction_hierarchy',
               'persona_roleplay', 'fictional_framing', 'encoding_obfuscation', 'placebo']
 

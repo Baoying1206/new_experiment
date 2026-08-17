@@ -4,8 +4,8 @@
   "medium": ["it", "nl", "pl", "ko", "ar", "th"],
   "low": ["yo", "sw", "am"],
   "pilot_selection": {
-    "high": "en",
-    "medium": "ko",
-    "low": "yo"
+    "high": ["en", "zh", "de"],
+    "medium": ["ko", "ar", "th"],
+    "low": ["yo", "sw", "am"]
   }
 }

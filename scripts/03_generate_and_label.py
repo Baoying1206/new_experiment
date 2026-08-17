@@ -146,7 +146,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--model_path',     type=str, required=True)
     parser.add_argument('--model_alias',    type=str, default=None)
-    parser.add_argument('--lang',           type=str, required=True, choices=['en', 'ko', 'yo'])
+    parser.add_argument('--lang',           type=str, required=True,
+                        choices=['en', 'zh', 'de', 'ko', 'ar', 'th', 'yo', 'sw', 'am'])
     parser.add_argument('--output_dir',     type=str, default=os.path.join(SCRIPT_DIR, '..', 'output'))
     parser.add_argument('--batch_size',     type=int, default=8)
     parser.add_argument('--max_new_tokens', type=int, default=200)

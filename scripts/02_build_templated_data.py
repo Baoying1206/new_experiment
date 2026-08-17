@@ -24,7 +24,7 @@ SAMPLED_PATH = os.path.join(SCRIPT_DIR, '..', 'data', 'sampled_prompts.json')
 TEMPLATE_DIR = os.path.join(SCRIPT_DIR, '..', 'templates')
 OUT_DIR = os.path.join(SCRIPT_DIR, '..', 'data')
 
-PILOT_LANGS = ['en', 'ko', 'yo']
+PILOT_LANGS = ['en', 'zh', 'de', 'ko', 'ar', 'th', 'yo', 'sw', 'am']
 
 
 def load_templates(lang):
