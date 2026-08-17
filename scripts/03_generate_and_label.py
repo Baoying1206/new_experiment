@@ -26,6 +26,41 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 
 from pipeline.model_utils.model_factory import construct_model_base
 
+
+# ── Patch: handle languages absent from REFUSAL_TOKENS_LANG ──────────────────
+# The pipeline's REFUSAL_TOKENS_LANG only covers the original 8 languages; the
+# ployrefuse_Enhanced extension (ar, sw, am, etc.) hits a KeyError otherwise.
+# Same patch as experiment_thesis/scripts/run_baseline.py -- falls back to
+# English tokens; WildGuard (not this) is what actually grades completions.
+def _patch_refusal_toks():
+    for mod_name, cls_name in [
+        ('pipeline.model_utils.qwen2_model', 'Qwen2Model'),
+        ('pipeline.model_utils.llama3_model', 'Llama3Model'),
+        ('pipeline.model_utils.llama_model', 'LlamaModel'),
+        ('pipeline.model_utils.gemma2_model', 'Gemma2Model'),
+        ('pipeline.model_utils.gemma_model', 'GemmaModel'),
+    ]:
+        try:
+            import importlib
+            mod = importlib.import_module(mod_name)
+            cls = getattr(mod, cls_name, None)
+            if cls is None:
+                continue
+            orig = cls._get_refusal_toks
+            def _safe(self, lang, _orig=orig):
+                try:
+                    return _orig(self, lang)
+                except KeyError:
+                    try:
+                        return _orig(self, 'en')
+                    except Exception:
+                        return []
+            cls._get_refusal_toks = _safe
+        except Exception:
+            pass
+
+_patch_refusal_toks()
+
 SCRIPT_DIR = os.path.dirname(__file__)
 DATA_DIR = os.path.join(SCRIPT_DIR, '..', 'data')
 
