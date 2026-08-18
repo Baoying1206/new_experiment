@@ -141,6 +141,15 @@ def main(args):
     print(f"Loaded {len(dataset)} rows for [{args.lang}] "
           f"({len(dataset)} = n_prompts x n_conditions).")
 
+    # Fingerprint: print immediately (before the ~30s model-loading step) so a
+    # stale NFS-cached copy of generation_input_{lang}.json on the compute node
+    # is visible in the first second of the log, not after 5-10 wasted GPU-minutes.
+    import hashlib
+    content_hash = hashlib.sha256(json.dumps(dataset, sort_keys=True).encode()).hexdigest()[:12]
+    sample_row = next((r for r in dataset if r['condition'] == 'instruction_hierarchy'), dataset[0])
+    print(f"Input fingerprint: sha256={content_hash}  "
+          f"sample[instruction_hierarchy][:60]={sample_row['instruction'][:60]!r}")
+
     print("Loading model...")
     model_base = construct_model_base(args.model_path, lang=args.lang)
     print(f"  Loaded: {model_alias}")
