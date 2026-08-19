@@ -247,6 +247,13 @@ def main(args):
                 'lang': lang, 'tier': TIERS[lang], 'mechanism': mech,
                 'induced_template': induced_template, 'induced_placebo': induced_placebo,
                 'n_prompts': len(dataset),
+                # full generated text, so coherence can be spot-checked later without rerunning --
+                # summary numbers alone can't distinguish "genuinely induced compliance" from
+                # "degenerate output that happened to read as non-refusal to WildGuard"
+                'completions_template': [{'instruction_en': c['instruction_en'], 'response': c['response'],
+                                           'refusal': c['wildguard']['refusal']} for c in comps_template],
+                'completions_placebo': [{'instruction_en': c['instruction_en'], 'response': c['response'],
+                                          'refusal': c['wildguard']['refusal']} for c in comps_placebo],
             })
             torch.cuda.empty_cache()
 
