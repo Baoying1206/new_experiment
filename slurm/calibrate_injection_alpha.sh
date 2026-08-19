@@ -48,13 +48,14 @@ MODEL_PATH=${MODEL_PATHS[$MODEL_IDX]}
 MODEL_ALIAS=${MODEL_ALIASES[$MODEL_IDX]}
 ALPHAS=${ALPHAS:-${ALPHA_RANGES[$MODEL_IDX]}}
 ALPHAS=${ALPHAS//;/,}  # allow semicolon-separated override (commas break --export)
+N_SAMPLES=${N_SAMPLES:-10}
 
 cd ~/new_experiment
 mkdir -p slurm/logs
 source ~/thesis_experiment/Multilingual-Refusal/venv/bin/activate
 export PYTHONPATH=/home/h24/baga0553/thesis_experiment/Multilingual-Refusal:/home/h24/baga0553/experiment_thesis:$PYTHONPATH
 
-echo "Model: $MODEL_ALIAS  Alphas: $ALPHAS  Start: $(date)"
+echo "Model: $MODEL_ALIAS  Alphas: $ALPHAS  N_SAMPLES: $N_SAMPLES  Start: $(date)"
 
 python scripts/10a_calibrate_injection_alpha.py \
     --model_path      "$MODEL_PATH" \
@@ -62,7 +63,7 @@ python scripts/10a_calibrate_injection_alpha.py \
     --output_dir      output \
     --lang            en \
     --mechanism       refusal_suppression \
-    --n_samples       10 \
+    --n_samples       "$N_SAMPLES" \
     --alphas          "$ALPHAS" \
     --batch_size      8 \
     --max_new_tokens  200
