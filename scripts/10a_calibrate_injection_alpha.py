@@ -179,11 +179,17 @@ def main(args):
     mid_layer = n_layers // 2
     print(f"  Loaded: {model_alias}  n_layers={n_layers}  mid_layer={mid_layer}\n")
 
-    print(f"Computing raw template_direction[{args.lang}][{args.mechanism}]...")
+    print(f"Computing raw template_direction[{args.lang}][{args.mechanism}] and placebo_direction[{args.lang}]...")
     direction = compute_template_direction(model_base, completions, args.mechanism, args.batch_size)
+    placebo_direction = compute_template_direction(model_base, completions, 'placebo', args.batch_size)
     direction_at_layer = direction[mid_layer].to(model_base.model.device)
+    placebo_at_layer = placebo_direction[mid_layer].to(model_base.model.device)
     layer_norm = direction_at_layer.norm().item()
-    print(f"  ||direction[layer {mid_layer}]|| = {layer_norm:.3f} (this is what alpha=1.0 adds, unscaled)\n")
+    placebo_norm = placebo_at_layer.norm().item()
+    print(f"  ||template_direction[layer {mid_layer}]|| = {layer_norm:.3f}")
+    print(f"  ||placebo_direction[layer {mid_layer}]||  = {placebo_norm:.3f}")
+    print("  (alpha=1.0 adds each at its own unscaled magnitude -- the two are NOT the same length,"
+          " so 'same alpha' does not mean 'same injected norm' between template and placebo)\n")
 
     # ── Select calibration prompts: plain-condition, model refused ──────────
     plain_refused = [
@@ -203,13 +209,13 @@ def main(args):
     alphas = [float(a) for a in args.alphas.split(',')]
     results = {
         'model': model_alias, 'lang': args.lang, 'mechanism': args.mechanism,
-        'mid_layer': mid_layer, 'direction_norm_at_mid_layer': layer_norm,
+        'mid_layer': mid_layer,
+        'direction_norm_at_mid_layer': layer_norm, 'placebo_norm_at_mid_layer': placebo_norm,
         'n_samples': len(dataset), 'by_alpha': {},
     }
 
-    for alpha in alphas:
-        print(f"\n=== alpha={alpha} (injected vector norm = {alpha * layer_norm:.3f}) ===")
-        hook_fn = get_activation_addition_input_pre_hook(vector=direction_at_layer, coeff=alpha)
+    def run_condition(vec, alpha, label):
+        hook_fn = get_activation_addition_input_pre_hook(vector=vec, coeff=alpha)
         fwd_pre_hooks = [(model_base.model_block_modules[mid_layer], hook_fn)]
         comps = model_base.generate_completions(
             dataset, fwd_pre_hooks=fwd_pre_hooks, fwd_hooks=[],
@@ -218,25 +224,46 @@ def main(args):
         for c, item in zip(comps, dataset):
             c['instruction_en'] = item['instruction_en']
         wildguard_evaluate(comps, guard_model, guard_tok, batch_size=16)
-
         induced_bypass = sum(1 - c['wildguard']['refusal'] for c in comps) / len(comps)
-        print(f"  induced_bypass_rate = {induced_bypass:.3f}  ({sum(1 - c['wildguard']['refusal'] for c in comps)}/{len(comps)})")
+        n_flipped = sum(1 - c['wildguard']['refusal'] for c in comps)
+        print(f"  [{label}] induced_bypass_rate = {induced_bypass:.3f}  ({n_flipped}/{len(comps)})")
         for c in comps:
             flipped = 'BYPASSED' if c['wildguard']['refusal'] == 0 else 'refused'
             preview = c['response'][:150].replace('\n', ' ')
-            print(f"    [{flipped}] {preview}...")
+            print(f"      [{flipped}] {preview}...")
+        return induced_bypass, comps
+
+    for alpha in alphas:
+        print(f"\n=== alpha={alpha} ===")
+        print(f"  (injected norm: template={alpha * layer_norm:.3f}  placebo={alpha * placebo_norm:.3f})")
+        induced_template, comps_template = run_condition(direction_at_layer, alpha, 'template')
+        induced_placebo, comps_placebo = run_condition(placebo_at_layer, alpha, 'placebo')
+        print(f"  --> gap (template - placebo) = {induced_template - induced_placebo:+.3f}")
 
         results['by_alpha'][str(alpha)] = {
-            'induced_bypass_rate': induced_bypass,
-            'completions': comps,
+            'induced_bypass_rate_template': induced_template,
+            'induced_bypass_rate_placebo': induced_placebo,
+            'gap': induced_template - induced_placebo,
+            'completions_template': comps_template,
+            'completions_placebo': comps_placebo,
         }
         torch.cuda.empty_cache()
+
+    print(f"\n=== Summary ({model_alias}, {args.lang}, {args.mechanism}) ===")
+    print("alpha   template   placebo   gap")
+    for alpha in alphas:
+        r = results['by_alpha'][str(alpha)]
+        print(f"{alpha:5.2f}   {r['induced_bypass_rate_template']:8.3f}   "
+              f"{r['induced_bypass_rate_placebo']:7.3f}   {r['gap']:+.3f}")
+    print("\nPick the alpha with the largest gap AND coherent generation at both conditions --")
+    print("not just the alpha with the highest template induced_bypass_rate alone (Arditi et al.'s")
+    print("random-direction-control convention: the real direction should beat a magnitude-matched")
+    print("control at the SAME alpha, not just produce a high number in isolation).")
 
     out_path = os.path.join(out_dir, f'calibration_{args.lang}_{args.mechanism}.json')
     with open(out_path, 'w', encoding='utf-8') as f:
         json.dump(results, f, indent=2, ensure_ascii=False)
     print(f"\nSaved: {out_path}")
-    print("Inspect the printed responses above (or the saved file) for coherence before picking alpha for Phase 1.")
 
 
 if __name__ == '__main__':
