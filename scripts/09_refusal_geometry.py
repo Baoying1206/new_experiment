@@ -163,35 +163,43 @@ def main(args):
             print(f"[{lang}] Missing completions, skipping.")
             skipped_langs.append((lang, 'no completions'))
             continue
-        if not os.path.exists(refusal_path) or not os.path.exists(harm_path):
-            print(f"[{lang}] Missing refusal_dir/harmfulness_dir at {args.refusal_dir_root}, skipping. "
+        has_refusal = os.path.exists(refusal_path)
+        has_harm = os.path.exists(harm_path)
+        if not has_refusal and not has_harm:
+            print(f"[{lang}] Missing both refusal_dir and harmfulness_dir at {args.refusal_dir_root}, skipping. "
                   f"Rerun experiment_thesis/scripts/extract_jailbreak_vectors.py for this language.")
             skipped_langs.append((lang, 'no refusal/harmfulness direction'))
             continue
+        if not has_harm:
+            print(f"[{lang}] harmfulness_dir missing (jailbreak_vector likely had 0 usable categories for "
+                  f"this language) -- proceeding with refusal_direction only.")
 
         print(f"[{lang}] Extracting activations...")
         acts = extract_lang_data(model_base, completions_path, args.batch_size)
-        refusal_dir = torch.load(refusal_path, map_location='cpu')
-        harm_dir = torch.load(harm_path, map_location='cpu')
+        refusal_dir = torch.load(refusal_path, map_location='cpu') if has_refusal else None
+        harm_dir = torch.load(harm_path, map_location='cpu') if has_harm else None
 
         for mech in REAL_MECHS:
             d = template_direction(acts, mech)
             if d is None:
                 continue
-            g_ref = geometry_vs_reference(d, refusal_dir)
-            g_harm = geometry_vs_reference(d, harm_dir)
+            g_ref = geometry_vs_reference(d, refusal_dir) if refusal_dir is not None else None
+            g_harm = geometry_vs_reference(d, harm_dir) if harm_dir is not None else None
             records.append({
                 'lang': lang, 'mechanism': mech,
                 'category': mech_to_cat.get(mech, 'unknown'), 'tier': TIERS[lang],
-                'cos_refusal': g_ref['cos_mean'], 'frac_refusal': g_ref['frac_parallel_mean'],
-                'cos_harmfulness': g_harm['cos_mean'], 'frac_harmfulness': g_harm['frac_parallel_mean'],
+                'cos_refusal': g_ref['cos_mean'] if g_ref else None,
+                'frac_refusal': g_ref['frac_parallel_mean'] if g_ref else None,
+                'cos_harmfulness': g_harm['cos_mean'] if g_harm else None,
+                'frac_harmfulness': g_harm['frac_parallel_mean'] if g_harm else None,
             })
-            print(f"  [{lang}][{mech}] cos(refusal)={g_ref['cos_mean']:+.3f}  "
-                  f"cos(harmfulness)={g_harm['cos_mean']:+.3f}")
+            ref_str = f"{g_ref['cos_mean']:+.3f}" if g_ref else "n/a"
+            harm_str = f"{g_harm['cos_mean']:+.3f}" if g_harm else "n/a"
+            print(f"  [{lang}][{mech}] cos(refusal)={ref_str}  cos(harmfulness)={harm_str}")
         torch.cuda.empty_cache()
 
     def group_mean(key, filter_fn):
-        vals = [r[key] for r in records if filter_fn(r)]
+        vals = [r[key] for r in records if filter_fn(r) and r[key] is not None]
         return sum(vals) / len(vals) if vals else None
 
     by_category = {}
@@ -201,11 +209,14 @@ def main(args):
             'cos_harmfulness_mean': group_mean('cos_harmfulness', lambda r, c=cat: r['category'] == c),
             'frac_refusal_mean': group_mean('frac_refusal', lambda r, c=cat: r['category'] == c),
         }
+    def fmt(v):
+        return f"{v:.3f}" if v is not None else "n/a"
+
     print("\n=== By mechanism category ===")
     for cat, stats in by_category.items():
-        print(f"  {cat}: cos(refusal)={stats['cos_refusal_mean']:.3f}  "
-              f"cos(harmfulness)={stats['cos_harmfulness_mean']:.3f}  "
-              f"frac_along_refusal={stats['frac_refusal_mean']:.3f}")
+        print(f"  {cat}: cos(refusal)={fmt(stats['cos_refusal_mean'])}  "
+              f"cos(harmfulness)={fmt(stats['cos_harmfulness_mean'])}  "
+              f"frac_along_refusal={fmt(stats['frac_refusal_mean'])}")
 
     by_tier = {}
     for tier in ['H', 'M', 'L']:
@@ -215,8 +226,8 @@ def main(args):
         }
     print("\n=== By resource tier ===")
     for tier, stats in by_tier.items():
-        print(f"  {tier}: cos(refusal)={stats['cos_refusal_mean']:.3f}  "
-              f"cos(harmfulness)={stats['cos_harmfulness_mean']:.3f}")
+        print(f"  {tier}: cos(refusal)={fmt(stats['cos_refusal_mean'])}  "
+              f"cos(harmfulness)={fmt(stats['cos_harmfulness_mean'])}")
 
     out_path = os.path.join(out_dir, 'refusal_geometry.json')
     with open(out_path, 'w') as f:
