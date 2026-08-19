@@ -1,0 +1,59 @@
+{
+  "model": "Qwen2.5-7B-Instruct",
+  "baseline": {
+    "HL": 0.25836438147558105,
+    "LM": 0.32579458587699467,
+    "continuum_holds": true,
+    "wins": 6
+  },
+  "leave_one_out": {
+    "cbrn": {
+      "HL": 0.2575840616115817,
+      "LM": 0.3251234436476672,
+      "continuum_holds": true,
+      "wins": 6
+    },
+    "crime": {
+      "HL": 0.25321844468514126,
+      "LM": 0.31940652706004957,
+      "continuum_holds": true,
+      "wins": 6
+    },
+    "cybercrime": {
+      "HL": 0.25559741617352877,
+      "LM": 0.3228038290032634,
+      "continuum_holds": true,
+      "wins": 6
+    },
+    "harassment": {
+      "HL": 0.25863520635498893,
+      "LM": 0.32560188406043583,
+      "continuum_holds": true,
+      "wins": 6
+    },
+    "misinfo": {
+      "HL": 0.2633127688809677,
+      "LM": 0.3310427687786244,
+      "continuum_holds": true,
+      "wins": 6
+    },
+    "other": {
+      "HL": 0.2584760144904808,
+      "LM": 0.32678671539933596,
+      "continuum_holds": true,
+      "wins": 6
+    },
+    "sexual": {
+      "HL": 0.25688582231049184,
+      "LM": 0.3248448054547663,
+      "continuum_holds": true,
+      "wins": 6
+    },
+    "violence": {
+      "HL": 0.26025472388223364,
+      "LM": 0.32694638382505486,
+      "continuum_holds": true,
+      "wins": 6
+    }
+  }
+}

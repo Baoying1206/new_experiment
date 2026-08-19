@@ -1,0 +1,59 @@
+{
+  "model": "Meta-Llama-3.1-8B-Instruct",
+  "baseline": {
+    "HL": 0.28561687159041566,
+    "LM": 0.35315208275009086,
+    "continuum_holds": true,
+    "wins": 6
+  },
+  "leave_one_out": {
+    "cbrn": {
+      "HL": 0.2845834279777827,
+      "LM": 0.3519344448491379,
+      "continuum_holds": true,
+      "wins": 6
+    },
+    "crime": {
+      "HL": 0.28417829148195406,
+      "LM": 0.34885735589045064,
+      "continuum_holds": true,
+      "wins": 6
+    },
+    "cybercrime": {
+      "HL": 0.2835764262687277,
+      "LM": 0.3516284428812839,
+      "continuum_holds": true,
+      "wins": 6
+    },
+    "harassment": {
+      "HL": 0.28733043193265245,
+      "LM": 0.3537150000532468,
+      "continuum_holds": true,
+      "wins": 6
+    },
+    "misinfo": {
+      "HL": 0.28405407733387417,
+      "LM": 0.3536381729775005,
+      "continuum_holds": true,
+      "wins": 6
+    },
+    "other": {
+      "HL": 0.2857761538966938,
+      "LM": 0.3523316021870684,
+      "continuum_holds": true,
+      "wins": 6
+    },
+    "sexual": {
+      "HL": 0.2866853786011537,
+      "LM": 0.3544206373669483,
+      "continuum_holds": true,
+      "wins": 6
+    },
+    "violence": {
+      "HL": 0.2851681328482098,
+      "LM": 0.35398468209637535,
+      "continuum_holds": true,
+      "wins": 6
+    }
+  }
+}
