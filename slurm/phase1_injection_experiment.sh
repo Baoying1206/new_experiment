@@ -18,8 +18,15 @@
 # looks broken, this needs its own Phase 0 calibration run first (adapt
 # 10a_calibrate_injection_alpha.py with --model_path/--model_alias).
 #
-# Submit with MODEL_IDX=0/1/2:
-#   sbatch --export=MODEL_IDX=0 slurm/phase1_injection_experiment.sh
+# Submit with MODEL_IDX=0/1/2, optionally overriding ALPHA (per-model
+# calibrated values found so far: Qwen=2.0 clean for fictional_framing but
+# refusal_suppression fails at every alpha tested 0.1-2.0 [real null result,
+# not a calibration issue]; Llama=2.0 clean on en/zh but placebo saturates
+# on ko/ar/yo/am at this alpha -- may need per-language recalibration;
+# Gemma=1.6 is the calibrated clean value for refusal_suppression, NOT 2.0
+# -- the default below -- which showed ~25-50% degenerate/repetitive
+# generations contaminating the apparent effect size):
+#   sbatch --export=MODEL_IDX=2,ALPHA=1.6 slurm/phase1_injection_experiment.sh
 
 MODEL_PATHS=(
     "/home/h24/baga0553/models/Qwen2.5-7B-Instruct"
@@ -35,19 +42,20 @@ MODEL_ALIASES=(
 MODEL_IDX=${MODEL_IDX:-0}
 MODEL_PATH=${MODEL_PATHS[$MODEL_IDX]}
 MODEL_ALIAS=${MODEL_ALIASES[$MODEL_IDX]}
+ALPHA=${ALPHA:-2.0}
 
 cd ~/new_experiment
 mkdir -p slurm/logs
 source ~/thesis_experiment/Multilingual-Refusal/venv/bin/activate
 export PYTHONPATH=/home/h24/baga0553/thesis_experiment/Multilingual-Refusal:/home/h24/baga0553/experiment_thesis:$PYTHONPATH
 
-echo "Model: $MODEL_ALIAS  Start: $(date)"
+echo "Model: $MODEL_ALIAS  Alpha: $ALPHA  Start: $(date)"
 
 python scripts/10b_phase1_injection_experiment.py \
     --model_path      "$MODEL_PATH" \
     --model_alias     "$MODEL_ALIAS" \
     --output_dir      output \
-    --alpha           2.0 \
+    --alpha           "$ALPHA" \
     --n_samples       40 \
     --batch_size      8 \
     --max_new_tokens  200
