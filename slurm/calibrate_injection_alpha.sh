@@ -21,6 +21,11 @@
 #
 # Submit with MODEL_IDX=0/1/2:
 #   sbatch --export=MODEL_IDX=0 slurm/calibrate_injection_alpha.sh
+#
+# To override the alpha sweep, use ALPHAS with SEMICOLONS, not commas --
+# sbatch's --export splits on commas itself, so a comma-separated value
+# passed via --export gets silently truncated at the first comma:
+#   sbatch --export=MODEL_IDX=2,ALPHAS="1.0;1.5;2.0;2.5" slurm/calibrate_injection_alpha.sh
 
 MODEL_PATHS=(
     "/home/h24/baga0553/models/Qwen2.5-7B-Instruct"
@@ -42,6 +47,7 @@ MODEL_IDX=${MODEL_IDX:-0}
 MODEL_PATH=${MODEL_PATHS[$MODEL_IDX]}
 MODEL_ALIAS=${MODEL_ALIASES[$MODEL_IDX]}
 ALPHAS=${ALPHAS:-${ALPHA_RANGES[$MODEL_IDX]}}
+ALPHAS=${ALPHAS//;/,}  # allow semicolon-separated override (commas break --export)
 
 cd ~/new_experiment
 mkdir -p slurm/logs
