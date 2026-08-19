@@ -1,0 +1,468 @@
+{
+  "model": "gemma-2-9b-it",
+  "n_splits": 200,
+  "per_lang_mechanism": {
+    "en__prefix_injection": {
+      "mean": 0.9636528566479683,
+      "ci_low": 0.9561313420534134,
+      "ci_high": 0.967557293176651,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "en__refusal_suppression": {
+      "mean": 0.9590802496671677,
+      "ci_low": 0.9512656822800636,
+      "ci_high": 0.9645314455032349,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "en__instruction_hierarchy": {
+      "mean": 0.9566213512420654,
+      "ci_low": 0.9477612286806106,
+      "ci_high": 0.9626623153686523,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "en__persona_roleplay": {
+      "mean": 0.9598084703087807,
+      "ci_low": 0.951575955748558,
+      "ci_high": 0.9644229725003243,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "en__fictional_framing": {
+      "mean": 0.9650169423222542,
+      "ci_low": 0.9577111154794693,
+      "ci_high": 0.9689673259854317,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "en__encoding_obfuscation": {
+      "mean": 0.9656606420874596,
+      "ci_low": 0.9586875572800636,
+      "ci_high": 0.9692847713828087,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "en__placebo": {
+      "mean": 0.9542105266451836,
+      "ci_low": 0.9371349468827248,
+      "ci_high": 0.9613527417182922,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "zh__prefix_injection": {
+      "mean": 0.9626694384217263,
+      "ci_low": 0.9549626469612121,
+      "ci_high": 0.9672941759228706,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "zh__refusal_suppression": {
+      "mean": 0.9595566910505294,
+      "ci_low": 0.950904868543148,
+      "ci_high": 0.9649620324373245,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "zh__instruction_hierarchy": {
+      "mean": 0.9560870185494423,
+      "ci_low": 0.9469101876020432,
+      "ci_high": 0.9618197798728942,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "zh__persona_roleplay": {
+      "mean": 0.9582705610990524,
+      "ci_low": 0.9511289343237876,
+      "ci_high": 0.9628654107451439,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "zh__fictional_framing": {
+      "mean": 0.9659790548682213,
+      "ci_low": 0.9604226052761078,
+      "ci_high": 0.9693308681249618,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "zh__encoding_obfuscation": {
+      "mean": 0.9658391726016998,
+      "ci_low": 0.9589782685041428,
+      "ci_high": 0.9694262817502022,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "zh__placebo": {
+      "mean": 0.9517553189396858,
+      "ci_low": 0.9367836266756058,
+      "ci_high": 0.9594287812709809,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "de__prefix_injection": {
+      "mean": 0.9634201040863991,
+      "ci_low": 0.9566308572888375,
+      "ci_high": 0.9674231499433518,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "de__refusal_suppression": {
+      "mean": 0.9599633166193962,
+      "ci_low": 0.9523448526859284,
+      "ci_high": 0.9647258818149567,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "de__instruction_hierarchy": {
+      "mean": 0.9573222357034683,
+      "ci_low": 0.9495326310396195,
+      "ci_high": 0.9629410743713379,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "de__persona_roleplay": {
+      "mean": 0.9592040541768074,
+      "ci_low": 0.9518603250384331,
+      "ci_high": 0.9641323611140251,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "de__fictional_framing": {
+      "mean": 0.9646172362565995,
+      "ci_low": 0.9567058280110359,
+      "ci_high": 0.9685547024011611,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "de__encoding_obfuscation": {
+      "mean": 0.9668454256653786,
+      "ci_low": 0.9613414108753204,
+      "ci_high": 0.970086295902729,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "de__placebo": {
+      "mean": 0.9539909949898719,
+      "ci_low": 0.9413674771785736,
+      "ci_high": 0.9613298729062081,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "ko__prefix_injection": {
+      "mean": 0.9631468152999878,
+      "ci_low": 0.9555229812860488,
+      "ci_high": 0.9675363168120384,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "ko__refusal_suppression": {
+      "mean": 0.9592240005731583,
+      "ci_low": 0.950565031170845,
+      "ci_high": 0.9639973878860474,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "ko__instruction_hierarchy": {
+      "mean": 0.9546395617723465,
+      "ci_low": 0.9443167001008987,
+      "ci_high": 0.9608178362250328,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "ko__persona_roleplay": {
+      "mean": 0.9546586406230927,
+      "ci_low": 0.9454836338758469,
+      "ci_high": 0.960351912677288,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "ko__fictional_framing": {
+      "mean": 0.9666051533818245,
+      "ci_low": 0.9614358738064765,
+      "ci_high": 0.969588865339756,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "ko__encoding_obfuscation": {
+      "mean": 0.9666362318396569,
+      "ci_low": 0.959920021891594,
+      "ci_high": 0.9700445219874382,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "ko__placebo": {
+      "mean": 0.9530475613474846,
+      "ci_low": 0.939939646422863,
+      "ci_high": 0.9606328576803207,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "ar__prefix_injection": {
+      "mean": 0.9607247543334961,
+      "ci_low": 0.9520482420921326,
+      "ci_high": 0.9664000168442726,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "ar__refusal_suppression": {
+      "mean": 0.9594206294417381,
+      "ci_low": 0.9498023018240929,
+      "ci_high": 0.9646343186497688,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "ar__instruction_hierarchy": {
+      "mean": 0.9525223422050476,
+      "ci_low": 0.9421293005347252,
+      "ci_high": 0.9596478298306466,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "ar__persona_roleplay": {
+      "mean": 0.9535598137974739,
+      "ci_low": 0.9399408727884293,
+      "ci_high": 0.9603231817483902,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "ar__fictional_framing": {
+      "mean": 0.9655487924814224,
+      "ci_low": 0.9598303213715553,
+      "ci_high": 0.9691009402275086,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "ar__encoding_obfuscation": {
+      "mean": 0.9663952279090882,
+      "ci_low": 0.959655424952507,
+      "ci_high": 0.9698692291975022,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "ar__placebo": {
+      "mean": 0.9499689340591431,
+      "ci_low": 0.934396043419838,
+      "ci_high": 0.95940503180027,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "th__prefix_injection": {
+      "mean": 0.9604224586486816,
+      "ci_low": 0.9510443806648254,
+      "ci_high": 0.9658164262771607,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "th__refusal_suppression": {
+      "mean": 0.9578175696730614,
+      "ci_low": 0.9493430927395821,
+      "ci_high": 0.9640253081917762,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "th__instruction_hierarchy": {
+      "mean": 0.9477660098671913,
+      "ci_low": 0.932453165948391,
+      "ci_high": 0.9584218457341194,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "th__persona_roleplay": {
+      "mean": 0.9522523385286331,
+      "ci_low": 0.9410258814692497,
+      "ci_high": 0.958908136188984,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "th__fictional_framing": {
+      "mean": 0.963645436167717,
+      "ci_low": 0.9569885611534119,
+      "ci_high": 0.9678686827421188,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "th__encoding_obfuscation": {
+      "mean": 0.9652497524023056,
+      "ci_low": 0.9587280839681626,
+      "ci_high": 0.9690407514572144,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "th__placebo": {
+      "mean": 0.9490462818741798,
+      "ci_low": 0.9309950470924377,
+      "ci_high": 0.9583103522658348,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "yo__prefix_injection": {
+      "mean": 0.9616484099626541,
+      "ci_low": 0.9529596954584122,
+      "ci_high": 0.9665550529956818,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "yo__refusal_suppression": {
+      "mean": 0.9450515639781952,
+      "ci_low": 0.9300002902746201,
+      "ci_high": 0.9550139963626861,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "yo__instruction_hierarchy": {
+      "mean": 0.9493018567562104,
+      "ci_low": 0.9372061520814896,
+      "ci_high": 0.9591596394777298,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "yo__persona_roleplay": {
+      "mean": 0.9483256578445435,
+      "ci_low": 0.9351549983024597,
+      "ci_high": 0.957834292948246,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "yo__fictional_framing": {
+      "mean": 0.9398049223423004,
+      "ci_low": 0.9245755180716515,
+      "ci_high": 0.9514259204268456,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "yo__encoding_obfuscation": {
+      "mean": 0.9599135562777519,
+      "ci_low": 0.9465587913990021,
+      "ci_high": 0.9667689204216003,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "yo__placebo": {
+      "mean": 0.9510731023550033,
+      "ci_low": 0.9379985705018044,
+      "ci_high": 0.9597877889871598,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "sw__prefix_injection": {
+      "mean": 0.9579901638627052,
+      "ci_low": 0.9476849898695946,
+      "ci_high": 0.9639511033892632,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "sw__refusal_suppression": {
+      "mean": 0.955508037507534,
+      "ci_low": 0.9462167322635651,
+      "ci_high": 0.9611661180853843,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "sw__instruction_hierarchy": {
+      "mean": 0.9458300796151161,
+      "ci_low": 0.9327885583043098,
+      "ci_high": 0.9546828493475914,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "sw__persona_roleplay": {
+      "mean": 0.9460888722538948,
+      "ci_low": 0.9282968685030937,
+      "ci_high": 0.9553594186902046,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "sw__fictional_framing": {
+      "mean": 0.9602352687716484,
+      "ci_low": 0.9492959201335907,
+      "ci_high": 0.9656475558876991,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "sw__encoding_obfuscation": {
+      "mean": 0.9640869548916817,
+      "ci_low": 0.9575733199715615,
+      "ci_high": 0.9680432558059693,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "sw__placebo": {
+      "mean": 0.9286716720461845,
+      "ci_low": 0.8957034379243851,
+      "ci_high": 0.944407394528389,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "am__prefix_injection": {
+      "mean": 0.9641436180472374,
+      "ci_low": 0.9575702756643295,
+      "ci_high": 0.9681699141860008,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "am__refusal_suppression": {
+      "mean": 0.9545005258917808,
+      "ci_low": 0.9444195836782455,
+      "ci_high": 0.9615920260548592,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "am__instruction_hierarchy": {
+      "mean": 0.9557400685548783,
+      "ci_low": 0.9458801418542861,
+      "ci_high": 0.9622516691684723,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "am__persona_roleplay": {
+      "mean": 0.9544214433431626,
+      "ci_low": 0.9418724536895752,
+      "ci_high": 0.9621843665838241,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "am__fictional_framing": {
+      "mean": 0.9581619048118591,
+      "ci_low": 0.9478246316313743,
+      "ci_high": 0.964270107448101,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "am__encoding_obfuscation": {
+      "mean": 0.9613089329004287,
+      "ci_low": 0.9501095533370971,
+      "ci_high": 0.9677147835493087,
+      "n_splits": 200,
+      "n_prompts": 75
+    },
+    "am__placebo": {
+      "mean": 0.9408189681172371,
+      "ci_low": 0.9228214398026466,
+      "ci_high": 0.9536556676030159,
+      "n_splits": 200,
+      "n_prompts": 75
+    }
+  },
+  "summary_by_lang": {
+    "en": 0.9605787198458398,
+    "zh": 0.9600224650757653,
+    "de": 0.9607661953568459,
+    "ko": 0.9597082806910787,
+    "ar": 0.95830578488963,
+    "th": 0.9565999781659672,
+    "yo": 0.9507312956452371,
+    "sw": 0.9512015784212522,
+    "am": 0.9555850659523691
+  },
+  "summary_by_mechanism": {
+    "prefix_injection": 0.9619798465900951,
+    "refusal_suppression": 0.9566802871558401,
+    "instruction_hierarchy": 0.9528700582517519,
+    "persona_roleplay": 0.9540655391083823,
+    "fictional_framing": 0.9610683012670942,
+    "encoding_obfuscation": 0.9646595440639388,
+    "placebo": 0.9480648178193304
+  },
+  "overall_mean": 0.9570554848937762
+}
