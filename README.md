@@ -18,7 +18,7 @@ The core question: is the representational shift a jailbreak template induces sh
 |---|---|---|
 | `template_direction[lang][mech]` | mean(act(templated) − act(plain)), paired per instruction | No |
 | `refusal_direction[lang]` | mean(harmful) − mean(harmless), PolyRefuse train split | No |
-| `harmfulness_direction[lang]` | mean(bypassed harmful) − mean(harmless) | Yes (bypass label only) |
+| `harmfulness_direction[lang]` | mean(bypassed harmful) − mean(harmless) |  |
 | `placebo_direction[lang]` | mean(act(placebo-wrapped) − act(plain)), content-neutral wrapper | No |
 
 `template_direction` and `placebo_direction` are the exogenous constructs unique to this repository; `refusal_direction`/`harmfulness_direction` are recomputed from `experiment_thesis`'s pipeline for direct geometric comparison (Section "Direction Geometry" below).
@@ -126,27 +126,6 @@ Phase 0/1 (`scripts/10a`, `10b`): inject raw (non-unit-normalized) `template_dir
 
 ---
 
-## Key Findings
-
-1. **Resource-tier continuum**, not binary HRL/LRL — cross-lingual sharing of jailbreak-template geometry scales with resource-tier proximity. 3/3 models, multiple robustness checks.
-2. **Model-architecture divergence is real, not noise** — split-half ceilings are near-identical across models, so raw differences (Gemma's systematically higher cosine values, absence of low-resource "mechanism collapse") reflect genuine geometric differences.
-3. **Wei et al.'s failure-mode taxonomy does not correspond to geometric clustering** — tested both via average alignment with refusal_direction and via full pairwise mechanism clustering; consistent null result across 3 models.
-4. **Causal evidence that low-resource refusal is more fragile to generic perturbation**, not just geometrically different — replicated in 2 models via placebo-controlled activation injection.
-5. **`fictional_framing` is the only mechanism with cross-model causal robustness** — correlational geometry alone would not have distinguished it as cleanly from `refusal_suppression`, which is geometrically comparable but causally fails on Qwen.
-6. **Yoruba shows a negative magnitude-vs-behavior correlation across all 3 models**, independently corroborating a similar anomaly found via a completely different method (`jailbreak_vector`) in `experiment_thesis`.
-
----
-
-## Known Caveats
-
-- **`encoding_obfuscation`'s apparent bypass rate is mostly hallucination**, not genuine decoding — Qwen 8/9 languages and Llama 9/9 languages show ~0% genuine decode rate on manual audit (longest-common-substring + template-wrapper-leakage filtering). Direction-level results for this mechanism should not be read as evidence of a real jailbreak mechanism.
-- **Low-resource-tier causal data (yo/am) is not yet usable** — too few "plain-condition-refused" prompts to sample from (n=3–11), and placebo already near-saturated (0.75–1.0) at the tested injection strengths, leaving no room to detect a mechanism-specific effect.
-- **Llama's α=2.0 was only calibrated on English** — ko/ar/yo/am show placebo saturation at this strength; mechanism-level comparisons for those languages are not currently trustworthy without per-language recalibration.
-- **Single-middle-layer injection is a coarse simplification** of a multi-layer, multi-token real template effect — a mechanism failing the causal test (e.g. `refusal_suppression` on Qwen) does not imply the underlying `template_direction` measurement is wrong, only that this specific linear intervention doesn't reproduce it.
-- **n=75 instructions/language** is a pragmatic pilot-scale choice, not derived from a formal power analysis.
-
----
-
 ## Repository Structure
 
 ```
@@ -173,7 +152,3 @@ new_experiment/
 ├── slurm/                                  # SLURM job scripts, MODEL_IDX=0/1/2 pattern
 └── output/{model_alias}/                   # completions, pilot_results.json, calibration/phase1 results
 ```
-
-## Relationship to `experiment_thesis`
-
-`experiment_thesis` contains the original RQ1–RQ3 design (`jailbreak_vector`, behaviorally defined) and its own README with the full attack/defense transfer results. This repository shares its `ployrefuse_Enhanced` dataset and the `pipeline` utility library (via `PYTHONPATH`), but is methodologically independent — `template_direction` does not depend on `jailbreak_vector` or any WildGuard label at extraction time. Section 6 above (causal validation) reuses `pipeline.utils.hook_utils.get_activation_addition_input_pre_hook`, the same primitive `experiment_thesis/scripts/cross_lingual_transfer.py` and `cross_lingual_defense.py` use, but with a raw-magnitude (not unit-normalized) convention and a placebo control that those scripts do not have.
