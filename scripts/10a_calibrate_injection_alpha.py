@@ -176,8 +176,9 @@ def main(args):
     print("Loading model...")
     model_base = construct_model_base(args.model_path, lang='en')
     n_layers = model_base.model.config.num_hidden_layers
-    mid_layer = n_layers // 2
-    print(f"  Loaded: {model_alias}  n_layers={n_layers}  mid_layer={mid_layer}\n")
+    mid_layer = args.layer if args.layer is not None else n_layers // 2
+    layer_source = f"override (--layer {args.layer})" if args.layer is not None else "default (n_layers // 2)"
+    print(f"  Loaded: {model_alias}  n_layers={n_layers}  injection_layer={mid_layer}  [{layer_source}]\n")
 
     print(f"Computing raw template_direction[{args.lang}][{args.mechanism}] and placebo_direction[{args.lang}]...")
     direction = compute_template_direction(model_base, completions, args.mechanism, args.batch_size)
@@ -260,7 +261,8 @@ def main(args):
     print("random-direction-control convention: the real direction should beat a magnitude-matched")
     print("control at the SAME alpha, not just produce a high number in isolation).")
 
-    out_path = os.path.join(out_dir, f'calibration_{args.lang}_{args.mechanism}.json')
+    layer_tag = f'_layer{mid_layer}' if args.layer is not None else ''
+    out_path = os.path.join(out_dir, f'calibration_{args.lang}_{args.mechanism}{layer_tag}.json')
     with open(out_path, 'w', encoding='utf-8') as f:
         json.dump(results, f, indent=2, ensure_ascii=False)
     print(f"\nSaved: {out_path}")
@@ -273,6 +275,10 @@ if __name__ == '__main__':
     parser.add_argument('--output_dir',      type=str, default=os.path.join(SCRIPT_DIR, '..', 'output'))
     parser.add_argument('--lang',            type=str, default='en')
     parser.add_argument('--mechanism',       type=str, default='refusal_suppression')
+    parser.add_argument('--layer',           type=int, default=None,
+                         help='Injection layer override. Default: n_layers // 2. '
+                              'Use to re-test at a data-driven layer (e.g. from '
+                              '14_find_safety_layer.py) instead of the naive middle layer.')
     parser.add_argument('--n_samples',       type=int, default=10)
     parser.add_argument('--alphas',          type=str, default='0.5,1.0,1.5,2.0')
     parser.add_argument('--batch_size',      type=int, default=8)
