@@ -6,6 +6,17 @@ evaluation; steering pilot deferred/conditional). **No code changes or GPU
 runs have been made in producing this document.** Written for review before
 any implementation begins.
 
+**Update: cross-lingual replication is out of scope for now.** The thesis's
+main line is English-only (Experiments 1–3 on the 572-instruction English
+`direction_ids`/`validation_ids`/`test_ids` split). The 6-language
+confirmatory config (`scripts/_lang_config.py`) and the already-generated
+`generation_input_{lang}_xling.json` files remain in the repo, unused for
+now -- not deleted, available if cross-lingual replication is revisited
+later. Any in-flight `generate_and_label_xling.sh` SLURM jobs are the
+user's call whether to let finish or cancel (cancelling early wastes
+already-spent compute; letting a near-complete job finish is fine since the
+data is harmless to have on hand even if unused in the current plan).
+
 ---
 
 ## 1. Which existing script already covers each analysis
@@ -87,7 +98,7 @@ Three concrete, already-identified risks, ranked by severity:
 ## 10. Estimated CPU vs GPU work
 
 - **CPU-only, no cluster GPU needed:** `19` reruns, robust-estimator additions, dual-axis diagnosis script, profile-prediction script, all unit tests, the shared statistics module.
-- **GPU needed:** completing the 572/200-instruction generation (in progress — English/Qwen done, others pending per your last status check), `18` reruns for the other 2 models and for the cross-lingual set, `04` rerun at 572-scale, and — **only if you decide to rebuild directions with dual token positions** — a new extraction pass for `refusal_direction`/`harmfulness_direction` themselves (this is the one substantial new GPU cost not already accounted for in the currently-running generation jobs).
+- **GPU needed (English-only scope):** completing the 572-instruction English generation for the remaining 2 models (Llama, Gemma — Qwen done), `18` reruns for those 2 models on `direction_ids`, `04` rerun at 572-scale (English only), and — **only if you decide to rebuild directions with dual token positions** — a new extraction pass for `refusal_direction`/`harmfulness_direction` themselves (this is the one substantial new GPU cost not already accounted for in the currently-running generation jobs). Cross-lingual generation (`generate_and_label_xling.sh`) is no longer required for this plan; any already-running jobs are the user's call to finish or cancel (see note at top of this document).
 
 ## 11. Suggested unified config / output schema
 
