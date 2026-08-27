@@ -48,11 +48,20 @@ def main(args):
                 continue
             refusal_dir = torch.load(path, map_location='cpu').float()  # [n_layers, d_model]
             norms = refusal_dir.norm(dim=-1)  # [n_layers]
-            argmax_layer = int(norms.argmax().item())
+            n_layers_total = len(norms)
+            # Exclude the final ~20% of layers, matching Arditi et al.'s l < 0.8L
+            # criterion -- residual stream norms grow systematically toward the
+            # unembedding layer regardless of refusal-relevance, so an unguarded
+            # argmax over all layers picks the last layer almost by construction
+            # (confirmed empirically: all 3 models, all 9 languages picked the
+            # literal final layer before this cutoff was added).
+            cutoff = int(0.8 * n_layers_total)
+            usable_norms = norms[:cutoff]
+            argmax_layer = int(usable_norms.argmax().item())
             per_lang_argmax[lang] = argmax_layer
             per_lang_norms[lang] = norms.tolist()
             print(f"  [{lang}] peak layer = {argmax_layer}  (norm={norms[argmax_layer]:.2f}, "
-                  f"n_layers={len(norms)})")
+                  f"n_layers={n_layers_total}, searched [0,{cutoff}))")
 
         if per_lang_argmax:
             layers = list(per_lang_argmax.values())
