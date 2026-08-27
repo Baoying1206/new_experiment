@@ -15,7 +15,12 @@ No generation, no WildGuard -- just a forward pass to extract activations,
 so this is much cheaper than Phase 1 (10b) or even the earlier extraction
 scripts that also handled generation-conditioned completions.
 
-Output: {output_dir}/{model_alias}/paired_diffs_{lang}{suffix}.pt, a dict:
+Output: {output_dir}/{model_alias}/paired_diffs_{lang}{suffix}.pt for the default
+ids_key per scope (direction_ids for English, cross_lingual_direction_ids for
+xling), or paired_diffs_{lang}{suffix}_{ids_key}.pt for any other ids_key
+(e.g. validation_ids, test_ids) -- so a validation/test-set extraction can
+never silently overwrite the direction-set file used to build directions/run
+Exp1. Each file is a dict:
   {
     'instruction_ids': {mechanism: [ids in tensor order]},
     'diffs': {mechanism: tensor [n_matched, n_layers, d_model]},
@@ -154,7 +159,19 @@ def main(args):
                       f"check completions_{lang}{args.suffix}.json for missing conditions.")
             torch.cuda.empty_cache()
 
-        out_path = os.path.join(out_dir, f'paired_diffs_{lang}{args.suffix}.pt')
+        # Output filename must reflect --ids_key, not just --suffix -- otherwise a
+        # run with a different ids_key (e.g. validation_ids) but the same --suffix
+        # as an earlier direction_ids run would silently overwrite it, since suffix
+        # alone doesn't distinguish "which partition of the same data pool" this
+        # file was built from. 'direction_ids' (English --suffix _full572 default)
+        # and 'cross_lingual_direction_ids' (--suffix _xling default) keep the
+        # original unsuffixed filename for backward compatibility with
+        # already-saved/committed files and scripts (19_taxonomy_robustness.py)
+        # that read them without an ids_key in the path; any other ids_key (or
+        # None) gets it appended explicitly so it can never collide.
+        DEFAULT_IDS_KEYS = (None, 'direction_ids', 'cross_lingual_direction_ids')
+        ids_key_suffix = '' if args.ids_key in DEFAULT_IDS_KEYS else f'_{args.ids_key}'
+        out_path = os.path.join(out_dir, f'paired_diffs_{lang}{args.suffix}{ids_key_suffix}.pt')
         torch.save({'instruction_ids': ids_by_mech, 'diffs': diffs_by_mech,
                     'n_layers': n_layers, 'd_model': d_model, 'ids_key': args.ids_key}, out_path)
         print(f"  Saved: {out_path}")
