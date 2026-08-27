@@ -18,13 +18,27 @@ is disproportionate for a master's thesis, scope is split:
   `03_generate_and_label.py --lang en --suffix _full572` -> writes
   `completions_en_full572.json`, distinct from the original pilot's
   `completions_en.json` (75 instructions) so nothing gets overwritten.
-- **Cross-lingual validation** (`data/generation_input_{lang}_xling.json`
-  for zh/de/ko/ar/th/yo/sw/am): a shared 200-instruction subset x 8
-  conditions x 3 models = 1,600 rows/model/language. Tests whether the
-  English finding generalizes, without the full-pool cost. Submit
-  `03_generate_and_label.py --lang {lang} --suffix _xling` -> writes
+- **Cross-lingual validation, CONFIRMATORY scope** (`data/generation_input_{lang}_xling.json`
+  for `zh/ar/th/yo/am` -- see `scripts/_lang_config.py`): a shared
+  200-instruction subset x 8 conditions x 3 models = 1,600 rows/model/language.
+  Tests whether the English finding generalizes, without the full-pool cost.
+  Submit `03_generate_and_label.py --lang {lang} --suffix _xling` -> writes
   `completions_{lang}_xling.json`, again distinct from the original
   9-language pilot's `completions_{lang}.json` (75 instructions).
+  Total confirmatory scale: English 572×8×3=13,728 + 5 languages ×200×8×3=24,000
+  = **37,728** model-input combinations.
+- **`de`/`ko`/`sw` are excluded from the confirmatory run** (kept 2
+  languages/resource-tier instead of 3, to keep total scale proportionate to
+  a master's thesis) but **not deleted**: their `generation_input_{lang}_xling.json`
+  files (already built, 1,600 rows each) remain on disk, and all their
+  original 9-language 75-instruction pilot results are untouched. See
+  `scripts/_lang_config.py` for `CONFIRMATORY_LANGUAGES` vs `PILOT_LANGUAGES`.
+- **English has two direction estimates, not one** -- do not compare them
+  interchangeably: `english_full_direction` (built from the 300-id English
+  `direction_ids`, used for the English-only core taxonomy experiment) vs
+  `english_xling_direction` (built from the 100-id `cross_lingual_direction_ids`
+  subset, the *only* one valid for comparison against zh/ar/th/yo/am's
+  directions, which are necessarily built from the same 100 shared ids).
 
 `data/splits.json` defines the leak-free partition: `direction_ids` (300),
 `validation_ids` (72), `test_ids` (200) for English, each with a strict

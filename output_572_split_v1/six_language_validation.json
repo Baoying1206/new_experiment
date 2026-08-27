@@ -1,0 +1,197 @@
+{
+  "all_checks_passed": true,
+  "n_checks": 25,
+  "findings": [
+    {
+      "check": "row_count[en_full572]",
+      "pass": true,
+      "expected": 4576,
+      "actual": 4576
+    },
+    {
+      "check": "row_count[zh_xling]",
+      "pass": true,
+      "expected": 1600,
+      "actual": 1600
+    },
+    {
+      "check": "row_count[ar_xling]",
+      "pass": true,
+      "expected": 1600,
+      "actual": 1600
+    },
+    {
+      "check": "row_count[th_xling]",
+      "pass": true,
+      "expected": 1600,
+      "actual": 1600
+    },
+    {
+      "check": "row_count[yo_xling]",
+      "pass": true,
+      "expected": 1600,
+      "actual": 1600
+    },
+    {
+      "check": "row_count[am_xling]",
+      "pass": true,
+      "expected": 1600,
+      "actual": 1600
+    },
+    {
+      "check": "conditions_per_id[en_full572]",
+      "pass": true,
+      "n_unique_ids": 572,
+      "n_ids_with_wrong_count": 0,
+      "examples": {}
+    },
+    {
+      "check": "conditions_per_id[zh_xling]",
+      "pass": true,
+      "n_unique_ids": 200,
+      "n_ids_with_wrong_count": 0,
+      "examples": {}
+    },
+    {
+      "check": "conditions_per_id[ar_xling]",
+      "pass": true,
+      "n_unique_ids": 200,
+      "n_ids_with_wrong_count": 0,
+      "examples": {}
+    },
+    {
+      "check": "conditions_per_id[th_xling]",
+      "pass": true,
+      "n_unique_ids": 200,
+      "n_ids_with_wrong_count": 0,
+      "examples": {}
+    },
+    {
+      "check": "conditions_per_id[yo_xling]",
+      "pass": true,
+      "n_unique_ids": 200,
+      "n_ids_with_wrong_count": 0,
+      "examples": {}
+    },
+    {
+      "check": "conditions_per_id[am_xling]",
+      "pass": true,
+      "n_unique_ids": 200,
+      "n_ids_with_wrong_count": 0,
+      "examples": {}
+    },
+    {
+      "check": "no_duplicate_id_lang_condition[en]",
+      "pass": true,
+      "n_duplicates": 0,
+      "examples": []
+    },
+    {
+      "check": "no_duplicate_id_lang_condition[zh]",
+      "pass": true,
+      "n_duplicates": 0,
+      "examples": []
+    },
+    {
+      "check": "no_duplicate_id_lang_condition[ar]",
+      "pass": true,
+      "n_duplicates": 0,
+      "examples": []
+    },
+    {
+      "check": "no_duplicate_id_lang_condition[th]",
+      "pass": true,
+      "n_duplicates": 0,
+      "examples": []
+    },
+    {
+      "check": "no_duplicate_id_lang_condition[yo]",
+      "pass": true,
+      "n_duplicates": 0,
+      "examples": []
+    },
+    {
+      "check": "no_duplicate_id_lang_condition[am]",
+      "pass": true,
+      "n_duplicates": 0,
+      "examples": []
+    },
+    {
+      "check": "six_languages_share_same_200_ids",
+      "pass": true,
+      "reference_size": 200,
+      "mismatches": {}
+    },
+    {
+      "check": "xling_100_30_70_pairwise_disjoint",
+      "pass": true,
+      "sizes": {
+        "direction": 100,
+        "validation": 30,
+        "test": 70
+      }
+    },
+    {
+      "check": "xling_subsets_of_english_splits",
+      "pass": true,
+      "xling_direction_subset_of_english_direction": true,
+      "xling_validation_subset_of_english_validation": true,
+      "xling_test_subset_of_english_test": true
+    },
+    {
+      "check": "no_test_id_in_direction_or_validation",
+      "pass": true
+    },
+    {
+      "check": "xling_files_match_splits_json_cross_lingual_ids",
+      "pass": true,
+      "splits_json_size": 200,
+      "generation_input_size": 200
+    },
+    {
+      "check": "harm_category_proportionality (informational, not pass/fail)",
+      "pass": null,
+      "detail": {
+        "sexual": {
+          "full_pct": 10.5,
+          "xling_pct": 13.0
+        },
+        "misinfo": {
+          "full_pct": 15.2,
+          "xling_pct": 12.0
+        },
+        "crime": {
+          "full_pct": 30.2,
+          "xling_pct": 32.5
+        },
+        "other": {
+          "full_pct": 8.7,
+          "xling_pct": 8.0
+        },
+        "violence": {
+          "full_pct": 11.2,
+          "xling_pct": 12.0
+        },
+        "cybercrime": {
+          "full_pct": 7.5,
+          "xling_pct": 7.5
+        },
+        "cbrn": {
+          "full_pct": 3.3,
+          "xling_pct": 2.0
+        },
+        "harassment": {
+          "full_pct": 13.3,
+          "xling_pct": 13.0
+        }
+      }
+    },
+    {
+      "check": "total_confirmatory_task_count",
+      "pass": true,
+      "expected": 37728,
+      "computed_from_formula": 37728,
+      "computed_from_actual_files": 37728
+    }
+  ]
+}

@@ -7,5 +7,11 @@
     "high": ["en", "zh", "de"],
     "medium": ["ko", "ar", "th"],
     "low": ["yo", "sw", "am"]
+  },
+  "confirmatory_selection": {
+    "_note": "6-language formal experiment (572-instruction restart). de/ko/sw excluded from confirmatory scope but not deleted -- see scripts/_lang_config.py and DATA_MANIFEST.md.",
+    "high": ["en", "zh"],
+    "medium": ["ar", "th"],
+    "low": ["yo", "am"]
   }
 }

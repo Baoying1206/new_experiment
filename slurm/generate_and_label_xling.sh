@@ -6,14 +6,22 @@
 #SBATCH --time=12:00:00
 
 # Cross-lingual validation: shared 200-instruction subset (data/splits.json's
-# cross_lingual_ids) x 8 conditions = 1,600 rows/language, for the 8
-# non-English pilot languages. Writes completions_{lang}_xling.json,
-# distinct from the original 9-language pilot's completions_{lang}.json
-# (75 instructions, kept as supplementary evidence, not overwritten).
+# cross_lingual_ids) x 8 conditions = 1,600 rows/language.
 #
-# --time=12:00:00 covers all 8 languages in one job (~12,800 rows total,
-# similar order of magnitude to the original 9-language x 75-instruction
-# run which covered ~5,400 rows) -- check original logs and adjust if needed.
+# CONFIRMATORY scope (default below) = 5 non-English languages
+# (zh, ar, th, yo, am) -- see scripts/_lang_config.py. de/ko/sw were dropped
+# from the formal 6-language experiment (2 per resource tier instead of 3)
+# to keep total scale proportionate to a master's thesis; their
+# generation_input_{lang}_xling.json files still exist (already built) and
+# are NOT deleted -- set XLING_LANGS below to include them if ever needed
+# for a supplementary run, they just aren't submitted by default.
+#
+# Writes completions_{lang}_xling.json, distinct from the original
+# 9-language pilot's completions_{lang}.json (75 instructions, kept as
+# supplementary evidence, not overwritten).
+#
+# --time=12:00:00 covers 5 languages in one job (~8,000 rows total) --
+# check original logs and adjust if needed.
 #
 # Submit with MODEL_IDX=0/1/2:
 #   sbatch --export=MODEL_IDX=0 slurm/generate_and_label_xling.sh
@@ -28,7 +36,7 @@ MODEL_ALIASES=(
     "Meta-Llama-3.1-8B-Instruct"
     "gemma-2-9b-it"
 )
-XLING_LANGS=(zh de ko ar th yo sw am)
+XLING_LANGS=(zh ar th yo am)  # CONFIRMATORY_XLING_LANGUAGES; de/ko/sw excluded but not deleted
 
 MODEL_IDX=${MODEL_IDX:-0}
 MODEL_PATH=${MODEL_PATHS[$MODEL_IDX]}
