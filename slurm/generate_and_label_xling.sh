@@ -3,7 +3,6 @@
 #SBATCH --partition=gpu
 #SBATCH --account=slurm-students
 #SBATCH --output=slurm/logs/generate_xling_%j.out
-#SBATCH --time=12:00:00
 
 # Cross-lingual validation: shared 200-instruction subset (data/splits.json's
 # cross_lingual_ids) x 8 conditions = 1,600 rows/language.
@@ -20,8 +19,15 @@
 # 9-language pilot's completions_{lang}.json (75 instructions, kept as
 # supplementary evidence, not overwritten).
 #
-# --time=12:00:00 covers 5 languages in one job (~8,000 rows total) --
-# check original logs and adjust if needed.
+# No explicit --time -- uses the partition/association default, same as the
+# original generate_and_label.sh (9 languages x 75 instructions = 5,400 rows
+# total), which completed successfully under that default. This 5-language
+# run is 8,000 rows total, moderately larger than that already-proven job --
+# watch the first submission closely; if it gets killed at the wall-time
+# limit rather than finishing, split XLING_LANGS into two smaller batches.
+# (An earlier version of this script set --time=12:00:00 explicitly, which
+# exceeded this account's AssocMaxWallDurationPerJobLimit and left jobs
+# stuck pending -- removed.)
 #
 # Submit with MODEL_IDX=0/1/2:
 #   sbatch --export=MODEL_IDX=0 slurm/generate_and_label_xling.sh

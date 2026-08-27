@@ -3,17 +3,19 @@
 #SBATCH --partition=gpu
 #SBATCH --account=slurm-students
 #SBATCH --output=slurm/logs/generate_en572_%j.out
-#SBATCH --time=12:00:00
 
 # English core experiment at full scale: 572 instructions x 8 conditions =
 # 4,576 rows -- ~7.6x the original 75-instruction pilot's English run.
 # Writes completions_en_full572.json, distinct from the original
 # completions_en.json (kept as supplementary evidence, not overwritten).
 #
-# --time=12:00:00 is a guess based on ~7.6x the original run's wall-clock --
-# check the original generate_and_label logs for actual English runtime and
-# adjust if this is too short (job will be killed at the limit, not fail
-# gracefully) or unnecessarily long (wastes queue priority).
+# No explicit --time -- uses the partition/association default, same as the
+# original generate_and_label.sh (9 languages x 75 instructions = 5,400 rows
+# total), which completed successfully under that default. This English-only
+# run is 4,576 rows, smaller than that already-proven job, so omitting
+# --time should be safe. (An earlier version of this script set
+# --time=12:00:00 explicitly, which exceeded this account's
+# AssocMaxWallDurationPerJobLimit and left jobs stuck pending -- removed.)
 #
 # Submit with MODEL_IDX=0/1/2:
 #   sbatch --export=MODEL_IDX=0 slurm/generate_and_label_en_full572.sh
