@@ -15,20 +15,41 @@ No generation, no WildGuard -- just a forward pass to extract activations,
 so this is much cheaper than Phase 1 (10b) or even the earlier extraction
 scripts that also handled generation-conditioned completions.
 
-Output: {output_dir}/{model_alias}/paired_diffs_{lang}.pt, a dict:
+Output: {output_dir}/{model_alias}/paired_diffs_{lang}{suffix}.pt, a dict:
   {
     'instruction_ids': {mechanism: [ids in tensor order]},
     'diffs': {mechanism: tensor [n_matched, n_layers, d_model]},
+    'ids_key': the --ids_key used, or null if unfiltered,
   }
 for mechanism in REAL_MECHS + ['placebo'].
 
+Supports the 572/200-instruction confirmatory scope introduced after the
+75-instruction pilot restart (see DATA_MANIFEST.md):
+  --suffix   reads completions_{lang}{suffix}.json instead of
+             completions_{lang}.json (e.g. '_full572' for English,
+             '_xling' for the 5 confirmatory non-English languages),
+             writing to the correspondingly-suffixed .pt file so this never
+             collides with the original 75-instruction pilot's
+             paired_diffs_{lang}.pt.
+  --ids_key  restricts to a named id list from data/splits.json (e.g.
+             'direction_ids' to build directions from the 300-id English
+             split, 'test_ids' for an out-of-sample replication,
+             'cross_lingual_direction_ids' for the 100-id cross-lingual
+             direction subset used by the 5 confirmatory languages).
+             Default: no filtering (use every matched instruction) --
+             preserves the original pilot's unfiltered behavior.
+
 Usage:
-  python scripts/18_extract_paired_diffs.py \
-      --model_path /path/to/Qwen2.5-7B-Instruct \
-      --model_alias Qwen2.5-7B-Instruct \
-      --output_dir output \
-      --langs en \
-      --batch_size 8
+  # Original 75-instruction pilot (unchanged behavior):
+  python scripts/18_extract_paired_diffs.py --model_path ... --langs en
+
+  # English confirmatory direction set (300 ids, for building directions):
+  python scripts/18_extract_paired_diffs.py --model_path ... --langs en \
+      --suffix _full572 --ids_key direction_ids
+
+  # Cross-lingual confirmatory direction set (100 ids, 5 languages):
+  python scripts/18_extract_paired_diffs.py --model_path ... \
+      --langs zh,ar,th,yo,am --suffix _xling --ids_key cross_lingual_direction_ids
 """
 import argparse
 import json
@@ -41,6 +62,7 @@ from pipeline.model_utils.model_factory import construct_model_base
 from pipeline.utils.hook_utils import add_hooks
 
 SCRIPT_DIR = os.path.dirname(__file__)
+SPLITS_PATH = os.path.join(SCRIPT_DIR, '..', 'data', 'splits.json')
 REAL_MECHS = ['prefix_injection', 'refusal_suppression', 'instruction_hierarchy',
               'persona_roleplay', 'fictional_framing', 'encoding_obfuscation']
 ALL_CONDS = REAL_MECHS + ['placebo']
@@ -81,6 +103,13 @@ def main(args):
     out_dir = os.path.join(args.output_dir, model_alias)
     langs = args.langs.split(',')
 
+    keep_ids = None
+    if args.ids_key:
+        with open(SPLITS_PATH) as f:
+            splits = json.load(f)
+        keep_ids = set(splits[args.ids_key])
+        print(f"Filtering to splits.json['{args.ids_key}']: {len(keep_ids)} ids\n")
+
     print("Loading model...")
     model_base = construct_model_base(args.model_path, lang='en')
     n_layers = model_base.model.config.num_hidden_layers
@@ -88,18 +117,21 @@ def main(args):
     print(f"  Loaded: {model_alias}  n_layers={n_layers}  d_model={d_model}\n")
 
     for lang in langs:
-        completions_path = os.path.join(out_dir, f'completions_{lang}.json')
+        completions_path = os.path.join(out_dir, f'completions_{lang}{args.suffix}.json')
         if not os.path.exists(completions_path):
-            print(f"[{lang}] Missing completions, skipping.")
+            print(f"[{lang}] Missing {completions_path}, skipping.")
             continue
         with open(completions_path, encoding='utf-8') as f:
             completions = json.load(f)['completions']
 
         by_id = {}
         for c in completions:
+            if keep_ids is not None and c['id'] not in keep_ids:
+                continue
             by_id.setdefault(c['id'], {})[c['condition']] = c['instruction']
 
-        print(f"\n[{lang}] Extracting paired diffs for {ALL_CONDS}...")
+        print(f"\n[{lang}] Extracting paired diffs for {ALL_CONDS}  "
+              f"({len(by_id)} candidate instructions after id filtering)...")
         diffs_by_mech, ids_by_mech = {}, {}
         for mech in ALL_CONDS:
             pids = [pid for pid in by_id if 'plain' in by_id[pid] and mech in by_id[pid]]
@@ -116,11 +148,15 @@ def main(args):
             diffs_by_mech[mech] = diffs
             ids_by_mech[mech] = pids
             print(f"  [{mech}] n={n}  diffs.shape={tuple(diffs.shape)}")
+            if keep_ids is not None and n != len(keep_ids):
+                print(f"    WARNING: expected {len(keep_ids)} ids from --ids_key "
+                      f"'{args.ids_key}' but only {n} had both plain+{mech} -- "
+                      f"check completions_{lang}{args.suffix}.json for missing conditions.")
             torch.cuda.empty_cache()
 
-        out_path = os.path.join(out_dir, f'paired_diffs_{lang}.pt')
+        out_path = os.path.join(out_dir, f'paired_diffs_{lang}{args.suffix}.pt')
         torch.save({'instruction_ids': ids_by_mech, 'diffs': diffs_by_mech,
-                    'n_layers': n_layers, 'd_model': d_model}, out_path)
+                    'n_layers': n_layers, 'd_model': d_model, 'ids_key': args.ids_key}, out_path)
         print(f"  Saved: {out_path}")
 
 
@@ -130,6 +166,13 @@ if __name__ == '__main__':
     parser.add_argument('--model_alias', type=str, default=None)
     parser.add_argument('--output_dir',  type=str, default=os.path.join(SCRIPT_DIR, '..', 'output'))
     parser.add_argument('--langs',       type=str, default='en')
+    parser.add_argument('--suffix',      type=str, default='',
+                         help="Applied to both completions_{lang}{suffix}.json (read) and "
+                              "paired_diffs_{lang}{suffix}.pt (write), e.g. '_full572' or '_xling'.")
+    parser.add_argument('--ids_key',     type=str, default=None,
+                         help="Key into data/splits.json to restrict instructions to "
+                              "(e.g. 'direction_ids', 'test_ids', 'cross_lingual_direction_ids'). "
+                              "Default: no filtering, use every matched instruction.")
     parser.add_argument('--batch_size',  type=int, default=8)
     args = parser.parse_args()
     if args.model_alias is None:

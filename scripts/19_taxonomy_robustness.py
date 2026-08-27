@@ -3,8 +3,11 @@ Stage-1 core diagnostics: is "Wei et al.'s taxonomy doesn't cluster
 geometrically" (Section 09) robust, or an artifact of layer choice, a few
 outlier instructions, or one dominant template?
 
-Requires paired_diffs_{lang}.pt from 18_extract_paired_diffs.py -- CPU-only,
-no model/GPU needed here.
+Requires paired_diffs_{lang}{suffix}.pt from 18_extract_paired_diffs.py --
+CPU-only, no model/GPU needed here. Pass the same --suffix used when 18 was
+run (e.g. '_full572' for English's confirmatory direction-set run,
+'_xling' for the 5 confirmatory non-English languages) -- omitting it reads
+the original unsuffixed 75-instruction pilot's paired_diffs_{lang}.pt.
 
 Implements, at EVERY layer (not a single chosen layer, sidestepping the
 layer-selection problem entirely by reporting consistency across all of
@@ -103,11 +106,14 @@ def mean_vecs_all_layers(diffs_data, id_index, mechs, ids):
 
 def main(args):
     out_dir = os.path.join(args.output_dir, args.model_alias)
-    diffs_path = os.path.join(out_dir, f'paired_diffs_{args.lang}.pt')
+    diffs_path = os.path.join(out_dir, f'paired_diffs_{args.lang}{args.suffix}.pt')
     diffs_data = torch.load(diffs_path, map_location='cpu')
     diffs_data['diffs'] = {m: v.float() for m, v in diffs_data['diffs'].items()}
     n_layers = diffs_data['n_layers']
-    print(f"Loaded {diffs_path}  n_layers={n_layers}")
+    ids_key = diffs_data.get('ids_key')
+    scope_desc = f"built from splits.json['{ids_key}']" if ids_key else \
+        "unfiltered -- no --ids_key was used when this .pt was built"
+    print(f"Loaded {diffs_path}  n_layers={n_layers}  ({scope_desc})")
 
     id_index = build_id_index(diffs_data, REAL_MECHS + ['placebo'])
     common_ids = common_ids_for(diffs_data, REAL_MECHS)
@@ -119,8 +125,8 @@ def main(args):
                     if set(a) == set(CO) or set(a) == set(MG))
     print(f"10 possible 3-3 partitions enumerated; Wei et al.'s partition is #{wei_idx}\n")
 
-    results = {'model': args.model_alias, 'lang': args.lang, 'n_layers': n_layers,
-               'n_common_ids': len(common_ids)}
+    results = {'model': args.model_alias, 'lang': args.lang, 'suffix': args.suffix,
+               'ids_key': ids_key, 'n_layers': n_layers, 'n_common_ids': len(common_ids)}
 
     # ── 1+2: exact enumeration + bootstrap ──────────────────────────────────
     print("=== 1. Exact enumeration test (observed data) ===")
@@ -213,7 +219,7 @@ def main(args):
         'n_layers_positive': pc_n_pos, 'mean_wei_T': pc_wei_T.mean().item(),
     }
 
-    out_path = os.path.join(out_dir, f'taxonomy_robustness_{args.lang}.json')
+    out_path = os.path.join(out_dir, f'taxonomy_robustness_{args.lang}{args.suffix}.json')
     with open(out_path, 'w') as f:
         json.dump(results, f, indent=2)
     print(f"\nSaved: {out_path}")
@@ -224,6 +230,9 @@ if __name__ == '__main__':
     parser.add_argument('--output_dir',    type=str, default=os.path.join(SCRIPT_DIR, '..', 'output'))
     parser.add_argument('--model_alias',   type=str, required=True)
     parser.add_argument('--lang',          type=str, default='en')
+    parser.add_argument('--suffix',        type=str, default='',
+                         help="Matches the --suffix used to build paired_diffs_{lang}{suffix}.pt "
+                              "in 18_extract_paired_diffs.py, e.g. '_full572' or '_xling'.")
     parser.add_argument('--n_bootstrap',   type=int, default=1000)
     parser.add_argument('--n_splithalf',   type=int, default=200)
     args = parser.parse_args()
