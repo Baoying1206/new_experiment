@@ -3,7 +3,6 @@
 #SBATCH --partition=cpu
 #SBATCH --account=slurm-students
 #SBATCH --output=slurm/logs/taxo_robust_%j.out
-#SBATCH --time=00:20:00
 
 # CPU-only Exp1 analysis (19_taxonomy_robustness.py) -- no GPU/model loading
 # needed, so this runs on the `cpu` partition (confirmed available via
