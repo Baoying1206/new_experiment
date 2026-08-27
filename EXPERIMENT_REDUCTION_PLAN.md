@@ -115,3 +115,63 @@ Output schema: your §5/§6 field lists (model, language, layer, token_position,
 3. Given §8's confirmed leak in `10a`/`14`: do you want these fixed now (before any new calibration is run on 572-scale data), or is this acceptable to defer since the steering pilot itself is conditional/optional?
 
 No code has been changed and no GPU jobs have been run in producing this plan, per your instructions. Waiting for your confirmation before implementing.
+
+---
+
+## 12. Audit round (Decisions 1/2/3 resolved by user; this section reports the audit results)
+
+The three open questions in the Summary above were resolved by the user as:
+**Decision 1** — rebuild both directions with genuine `t_inst`/`t_post` positions (never `positions=[-1]` for both again). **Decision 2** — defer steering (`10a` untouched), but fix `14`'s layer-selection leakage, prioritizing split-half reliability / template-placebo separation / reference-direction reliability on the validation set, plus a pre-registered `floor(0.6*n_layers)` sensitivity check. **Decision 3** — reference axes must not overlap validation/test; prefer an independent PolyRefuse train split, fall back to 5-fold cross-fitting on `direction_ids` if independence can't be confirmed.
+
+This round is audit + infrastructure only — no full GPU direction-extraction job has been submitted, per the explicit instruction to wait for token-audit confirmation first.
+
+### 12.1 Token-position audit
+
+Cannot be run locally — no tokenizer/model access on this machine. Built:
+- `scripts/utils/token_positions.py` — `get_instruction_end_position` (t_inst, via subsequence search of the raw instruction's token ids inside the fully-rendered prompt) and `get_post_instruction_position` (t_post, the last token of the rendered prompt — i.e. what `positions=[-1]` already computed, now given an explicit name and metadata). Both return a `PositionResult` with semantic name, token id, decoded token, chat-template hash, and context — never a bare int.
+- `scripts/audits/audit_token_positions.py` — the real-tokenizer audit script, to be run on the cluster against Qwen2.5-7B-Instruct/Meta-Llama-3.1-8B-Instruct/gemma-2-9b-it with 5 sample instructions each. Writes `output/audits/token_position_audit.{json,md}`, explicitly flagged for **required human review** of the decoded tokens before trusting the positions.
+- `scripts/utils/test_token_positions.py` — 7 CPU-only unit tests against a synthetic mock tokenizer (Qwen/im_start, Llama/header, Gemma/start_of_turn conventions), all passing locally. Proves the subsequence-search *algorithm* is correct given a template; does **not** prove real BPE tokenizers segment the instruction/template boundary the same way the mock assumes — that is exactly what `audit_token_positions.py` must still verify on the cluster.
+- **Do not submit a full GPU direction-extraction job until `audit_token_positions.py` has been run on the cluster and its output reviewed.**
+
+### 12.2 Source-overlap audit (ran locally, partial result)
+
+`scripts/audits/audit_source_overlap.py` — run against local `ployrefuse_Enhanced/`, output in `output/audits/axis_source_overlap.{json,md}`.
+
+**Critical finding: local PolyRefuse files carry no native per-item ID** (only `{'instruction': str, 'category': str|None}`) — "overlap by ID" as originally specified is not computable locally; all checks are by normalised instruction text instead.
+
+**Critical finding: English `harmful_train`/`harmless_train`/`harmless_val` are missing from the local `ployrefuse_Enhanced/` mirror.** All 15 other languages have train+val locally; only English is missing it (and, symmetrically, only English has `harmless_test`). **This blocks direct verification of Decision 3 for English** — cannot confirm from local data whether English's would-be independent-train-split axis data overlaps the 572-instruction pool.
+
+Confirmed instead, as indirect evidence: for all 15 non-English languages checkable locally, `harmful_train` (260 items) vs `harmful_test` (572 items) normalised-text overlap = 0, `harmful_val` (39 items) vs `harmful_test` overlap = 0, `harmful_train` vs `harmful_val` overlap = 0 — consistent with PolyRefuse maintaining genuine train/val/test disjointness by design. Also confirmed: `data/sampled_prompts.json` (572 items) is **exactly** `ployrefuse_Enhanced/harmful_test_translated_en.json` (same 572 rows, 562 unique texts, 10 internal duplicates) — exact text-set equality, not assumed.
+
+**Recommendation for Decision 3, pending cluster verification:** locate English `harmful_train`/`harmless_train`/`harmless_val` via the `_orig` (`dataset.load_dataset`) path referenced in `experiment_thesis/scripts/extract_jailbreak_vectors.py::load_dataset_split` (this is the only path that could plausibly reach data absent from the local mirror), and run the same normalised-text overlap check directly. **If that data cannot be located or turns out to overlap, use 5-fold cross-fitting on the 300 `direction_ids` instead** (build refusal/harmfulness directions from 4 folds, compute out-of-fold δR/δH on the held-out fold, repeat ×5, merge) — this has zero dependency on locating an independent English train split, at the cost of ~5x direction-extraction compute and slightly smaller per-fold training data (240 vs 300).
+
+### 12.3 Layer-selection leakage audit (done, no cluster needed)
+
+Full report: `output/audits/layer_selection_leakage.md`. Key correction to §8 above: `14_find_safety_layer.py`'s criterion is peak `refusal_direction` L2-norm within the first 80% of layers — **not** based on classification accuracy, ASR, or test outcomes (that specific fear is not what's happening). The actual leak is structural: `refusal_dir_{lang}.pt` (14's input) was built by `extract_jailbreak_vectors.py` from the original unsplit 75-instruction pilot, predating `data/splits.json` — so the layer-norms 14 maximizes over come from a pool undifferentiated with respect to the current direction/validation/test partition, not a genuine validation-only selection. Fix required: rebuild directions with an explicit `--split direction`, add `--split validation` to `14`, add the `floor(0.6*n_layers)` sensitivity check, and — per the user's explicit instruction — do not unilaterally lock a final selection rule; output candidate rules and their effect on `validation_ids` first.
+
+**Outputs marked stale:** `output/safety_layer_identification.json` (`stale` — built from un-partitioned pre-split directions). No `16_single_layer_geometry.py` output currently exists (confirmed via `ls output/`), so nothing downstream needs retroactive staleness marking yet — but any future run using the current `safety_layer_identification.json` would inherit the same staleness.
+
+### 12.4 New infrastructure built this round
+
+- `scripts/utils/token_positions.py` + `scripts/utils/test_token_positions.py` (7/7 passing)
+- `scripts/utils/direction_metadata.py` (`build_direction_metadata`/`save_direction_metadata`/`load_direction_metadata`, enforcing the required-field schema in §12.5) + `scripts/utils/test_direction_metadata.py` (7/7 passing)
+- `scripts/audits/audit_source_overlap.py` (run, output committed) + `scripts/audits/audit_token_positions.py` (cluster-only, not yet run) + `scripts/audits/test_smoke.py` (3/3 passing, re-runs the source-overlap audit end-to-end and checks known findings haven't silently changed)
+- `output/audits/axis_source_overlap.{json,md}`, `output/audits/layer_selection_leakage.md`
+
+Leakage-prevention CLI flags (`--split`, `--ids-file`, `--axis-source`, `--position`) and the disjointness assertions are **not yet added** to `04`/`10a`/`14`/`18` — flagged as the first GPU-adjacent code change to make once Decision 3's axis-dataset question is resolved (§12.2), since the flag design depends on which of independent-train-split vs cross-fitting is chosen.
+
+### 12.5 Direction metadata schema (implemented)
+
+Every new direction `.pt` must ship a same-named `.json` built via `scripts/utils/direction_metadata.py`, containing: `direction_type`, `model`, `model_revision`, `tokenizer_revision`, `chat_template_hash`, `semantic_position` (`t_inst`|`t_post`), `layer`, `source_partition`, `source_ids_hash`, `sample_count`, `construction_contrast`, `git_commit`, `random_seed`. `save_direction_metadata` refuses to write if any required field is missing.
+
+### 12.6 Recommended next GPU tasks (not submitted)
+
+In dependency order:
+1. Run `scripts/audits/audit_token_positions.py` on the cluster for all 3 models; human-review the output; only then trust `token_positions.py` for real extraction.
+2. On the cluster, attempt to locate English `harmful_train`/`harmless_train`/`harmless_val` via the `_orig` loader path; re-run the overlap check for English specifically. This determines whether Decision 3 uses independent-train-split or cross-fitting.
+3. Once 1–2 are resolved: rebuild `refusal_direction`/`harmfulness_direction` for English at `t_inst`/`t_post` respectively, using whichever axis-source design §2 selected, saving full metadata per §12.5.
+4. Add `--split`/`--ids-file`/`--axis-source`/`--position` CLI flags + disjointness assertions to `04`/`14`/`18` (and `10a` only if/when steering is un-deferred).
+5. Re-run `14_find_safety_layer.py` validation-only, output candidate layer-selection rules (not a single locked-in choice) for the user to pick from.
+6. Only after 1–5: resume the Experiment 1/2/3 GPU pipeline (English 572-instruction generation completion for Llama/Gemma, `18`/`04` reruns on `direction_ids` with the new dual-position directions).
+
+No GPU jobs have been submitted in producing this round's deliverables.

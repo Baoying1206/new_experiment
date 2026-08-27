@@ -1,0 +1,708 @@
+{
+  "per_language": {
+    "en": {
+      "language": "en",
+      "partitions": {
+        "harmful_train": null,
+        "harmful_val": null,
+        "harmful_test": {
+          "count": 572,
+          "unique_normalised_texts": 562,
+          "duplicate_count_within_partition": 10
+        },
+        "harmless_train": null,
+        "harmless_val": null,
+        "harmless_test": {
+          "count": 500,
+          "unique_normalised_texts": 500,
+          "duplicate_count_within_partition": 0
+        }
+      },
+      "overlap_by_normalised_text": {
+        "harmful_train_vs_harmful_test": null,
+        "harmful_val_vs_harmful_test": null,
+        "harmful_train_vs_harmful_val": null,
+        "harmless_train_vs_harmless_test": null,
+        "harmless_val_vs_harmless_test": null
+      },
+      "overlap_by_id": "not_computable_local_files_have_no_native_id_field",
+      "provenance_status": "unknown_missing_local_data",
+      "missing_local_partitions": [
+        "harmful_train",
+        "harmful_val",
+        "harmless_train",
+        "harmless_val"
+      ],
+      "note": "English harmful_train/harmless_train/harmless_val are absent from this local ployrefuse_Enhanced mirror. extract_jailbreak_vectors.py loads via an _orig (dataset.load_dataset) path first, falling back to these local files only on FileNotFoundError/KeyError/TypeError -- so this data likely exists on the cluster but is unverified here. Cannot confirm English axis-training-data vs 572-pool disjointness from local data alone."
+    },
+    "zh": {
+      "language": "zh",
+      "partitions": {
+        "harmful_train": {
+          "count": 260,
+          "unique_normalised_texts": 260,
+          "duplicate_count_within_partition": 0
+        },
+        "harmful_val": {
+          "count": 39,
+          "unique_normalised_texts": 39,
+          "duplicate_count_within_partition": 0
+        },
+        "harmful_test": {
+          "count": 572,
+          "unique_normalised_texts": 562,
+          "duplicate_count_within_partition": 10
+        },
+        "harmless_train": {
+          "count": 200,
+          "unique_normalised_texts": 200,
+          "duplicate_count_within_partition": 0
+        },
+        "harmless_val": {
+          "count": 200,
+          "unique_normalised_texts": 200,
+          "duplicate_count_within_partition": 0
+        },
+        "harmless_test": null
+      },
+      "overlap_by_normalised_text": {
+        "harmful_train_vs_harmful_test": 0,
+        "harmful_val_vs_harmful_test": 0,
+        "harmful_train_vs_harmful_val": 0,
+        "harmless_train_vs_harmless_test": null,
+        "harmless_val_vs_harmless_test": null
+      },
+      "overlap_by_id": "not_computable_local_files_have_no_native_id_field",
+      "provenance_status": "checked_locally"
+    },
+    "ar": {
+      "language": "ar",
+      "partitions": {
+        "harmful_train": {
+          "count": 260,
+          "unique_normalised_texts": 260,
+          "duplicate_count_within_partition": 0
+        },
+        "harmful_val": {
+          "count": 39,
+          "unique_normalised_texts": 39,
+          "duplicate_count_within_partition": 0
+        },
+        "harmful_test": {
+          "count": 572,
+          "unique_normalised_texts": 562,
+          "duplicate_count_within_partition": 10
+        },
+        "harmless_train": {
+          "count": 200,
+          "unique_normalised_texts": 200,
+          "duplicate_count_within_partition": 0
+        },
+        "harmless_val": {
+          "count": 200,
+          "unique_normalised_texts": 200,
+          "duplicate_count_within_partition": 0
+        },
+        "harmless_test": {
+          "count": 500,
+          "unique_normalised_texts": 500,
+          "duplicate_count_within_partition": 0
+        }
+      },
+      "overlap_by_normalised_text": {
+        "harmful_train_vs_harmful_test": 0,
+        "harmful_val_vs_harmful_test": 0,
+        "harmful_train_vs_harmful_val": 0,
+        "harmless_train_vs_harmless_test": 0,
+        "harmless_val_vs_harmless_test": 0
+      },
+      "overlap_by_id": "not_computable_local_files_have_no_native_id_field",
+      "provenance_status": "checked_locally"
+    },
+    "th": {
+      "language": "th",
+      "partitions": {
+        "harmful_train": {
+          "count": 260,
+          "unique_normalised_texts": 260,
+          "duplicate_count_within_partition": 0
+        },
+        "harmful_val": {
+          "count": 39,
+          "unique_normalised_texts": 39,
+          "duplicate_count_within_partition": 0
+        },
+        "harmful_test": {
+          "count": 572,
+          "unique_normalised_texts": 562,
+          "duplicate_count_within_partition": 10
+        },
+        "harmless_train": {
+          "count": 200,
+          "unique_normalised_texts": 200,
+          "duplicate_count_within_partition": 0
+        },
+        "harmless_val": {
+          "count": 200,
+          "unique_normalised_texts": 200,
+          "duplicate_count_within_partition": 0
+        },
+        "harmless_test": {
+          "count": 500,
+          "unique_normalised_texts": 500,
+          "duplicate_count_within_partition": 0
+        }
+      },
+      "overlap_by_normalised_text": {
+        "harmful_train_vs_harmful_test": 0,
+        "harmful_val_vs_harmful_test": 0,
+        "harmful_train_vs_harmful_val": 0,
+        "harmless_train_vs_harmless_test": 0,
+        "harmless_val_vs_harmless_test": 0
+      },
+      "overlap_by_id": "not_computable_local_files_have_no_native_id_field",
+      "provenance_status": "checked_locally"
+    },
+    "yo": {
+      "language": "yo",
+      "partitions": {
+        "harmful_train": {
+          "count": 260,
+          "unique_normalised_texts": 260,
+          "duplicate_count_within_partition": 0
+        },
+        "harmful_val": {
+          "count": 39,
+          "unique_normalised_texts": 39,
+          "duplicate_count_within_partition": 0
+        },
+        "harmful_test": {
+          "count": 572,
+          "unique_normalised_texts": 562,
+          "duplicate_count_within_partition": 10
+        },
+        "harmless_train": {
+          "count": 200,
+          "unique_normalised_texts": 200,
+          "duplicate_count_within_partition": 0
+        },
+        "harmless_val": {
+          "count": 200,
+          "unique_normalised_texts": 200,
+          "duplicate_count_within_partition": 0
+        },
+        "harmless_test": {
+          "count": 500,
+          "unique_normalised_texts": 500,
+          "duplicate_count_within_partition": 0
+        }
+      },
+      "overlap_by_normalised_text": {
+        "harmful_train_vs_harmful_test": 0,
+        "harmful_val_vs_harmful_test": 0,
+        "harmful_train_vs_harmful_val": 0,
+        "harmless_train_vs_harmless_test": 0,
+        "harmless_val_vs_harmless_test": 0
+      },
+      "overlap_by_id": "not_computable_local_files_have_no_native_id_field",
+      "provenance_status": "checked_locally"
+    },
+    "am": {
+      "language": "am",
+      "partitions": {
+        "harmful_train": {
+          "count": 260,
+          "unique_normalised_texts": 260,
+          "duplicate_count_within_partition": 0
+        },
+        "harmful_val": {
+          "count": 39,
+          "unique_normalised_texts": 39,
+          "duplicate_count_within_partition": 0
+        },
+        "harmful_test": {
+          "count": 572,
+          "unique_normalised_texts": 562,
+          "duplicate_count_within_partition": 10
+        },
+        "harmless_train": {
+          "count": 200,
+          "unique_normalised_texts": 200,
+          "duplicate_count_within_partition": 0
+        },
+        "harmless_val": {
+          "count": 200,
+          "unique_normalised_texts": 200,
+          "duplicate_count_within_partition": 0
+        },
+        "harmless_test": {
+          "count": 500,
+          "unique_normalised_texts": 500,
+          "duplicate_count_within_partition": 0
+        }
+      },
+      "overlap_by_normalised_text": {
+        "harmful_train_vs_harmful_test": 0,
+        "harmful_val_vs_harmful_test": 0,
+        "harmful_train_vs_harmful_val": 0,
+        "harmless_train_vs_harmless_test": 0,
+        "harmless_val_vs_harmless_test": 0
+      },
+      "overlap_by_id": "not_computable_local_files_have_no_native_id_field",
+      "provenance_status": "checked_locally"
+    },
+    "de": {
+      "language": "de",
+      "partitions": {
+        "harmful_train": {
+          "count": 260,
+          "unique_normalised_texts": 260,
+          "duplicate_count_within_partition": 0
+        },
+        "harmful_val": {
+          "count": 39,
+          "unique_normalised_texts": 39,
+          "duplicate_count_within_partition": 0
+        },
+        "harmful_test": {
+          "count": 572,
+          "unique_normalised_texts": 562,
+          "duplicate_count_within_partition": 10
+        },
+        "harmless_train": {
+          "count": 200,
+          "unique_normalised_texts": 200,
+          "duplicate_count_within_partition": 0
+        },
+        "harmless_val": {
+          "count": 200,
+          "unique_normalised_texts": 200,
+          "duplicate_count_within_partition": 0
+        },
+        "harmless_test": {
+          "count": 500,
+          "unique_normalised_texts": 500,
+          "duplicate_count_within_partition": 0
+        }
+      },
+      "overlap_by_normalised_text": {
+        "harmful_train_vs_harmful_test": 0,
+        "harmful_val_vs_harmful_test": 0,
+        "harmful_train_vs_harmful_val": 0,
+        "harmless_train_vs_harmless_test": 0,
+        "harmless_val_vs_harmless_test": 0
+      },
+      "overlap_by_id": "not_computable_local_files_have_no_native_id_field",
+      "provenance_status": "checked_locally"
+    },
+    "ko": {
+      "language": "ko",
+      "partitions": {
+        "harmful_train": {
+          "count": 260,
+          "unique_normalised_texts": 260,
+          "duplicate_count_within_partition": 0
+        },
+        "harmful_val": {
+          "count": 39,
+          "unique_normalised_texts": 39,
+          "duplicate_count_within_partition": 0
+        },
+        "harmful_test": {
+          "count": 572,
+          "unique_normalised_texts": 562,
+          "duplicate_count_within_partition": 10
+        },
+        "harmless_train": {
+          "count": 200,
+          "unique_normalised_texts": 200,
+          "duplicate_count_within_partition": 0
+        },
+        "harmless_val": {
+          "count": 200,
+          "unique_normalised_texts": 200,
+          "duplicate_count_within_partition": 0
+        },
+        "harmless_test": {
+          "count": 500,
+          "unique_normalised_texts": 500,
+          "duplicate_count_within_partition": 0
+        }
+      },
+      "overlap_by_normalised_text": {
+        "harmful_train_vs_harmful_test": 0,
+        "harmful_val_vs_harmful_test": 0,
+        "harmful_train_vs_harmful_val": 0,
+        "harmless_train_vs_harmless_test": 0,
+        "harmless_val_vs_harmless_test": 0
+      },
+      "overlap_by_id": "not_computable_local_files_have_no_native_id_field",
+      "provenance_status": "checked_locally"
+    },
+    "sw": {
+      "language": "sw",
+      "partitions": {
+        "harmful_train": {
+          "count": 260,
+          "unique_normalised_texts": 260,
+          "duplicate_count_within_partition": 0
+        },
+        "harmful_val": {
+          "count": 39,
+          "unique_normalised_texts": 39,
+          "duplicate_count_within_partition": 0
+        },
+        "harmful_test": {
+          "count": 572,
+          "unique_normalised_texts": 562,
+          "duplicate_count_within_partition": 10
+        },
+        "harmless_train": {
+          "count": 200,
+          "unique_normalised_texts": 200,
+          "duplicate_count_within_partition": 0
+        },
+        "harmless_val": {
+          "count": 200,
+          "unique_normalised_texts": 200,
+          "duplicate_count_within_partition": 0
+        },
+        "harmless_test": {
+          "count": 500,
+          "unique_normalised_texts": 500,
+          "duplicate_count_within_partition": 0
+        }
+      },
+      "overlap_by_normalised_text": {
+        "harmful_train_vs_harmful_test": 0,
+        "harmful_val_vs_harmful_test": 0,
+        "harmful_train_vs_harmful_val": 0,
+        "harmless_train_vs_harmless_test": 0,
+        "harmless_val_vs_harmless_test": 0
+      },
+      "overlap_by_id": "not_computable_local_files_have_no_native_id_field",
+      "provenance_status": "checked_locally"
+    },
+    "es": {
+      "language": "es",
+      "partitions": {
+        "harmful_train": {
+          "count": 260,
+          "unique_normalised_texts": 260,
+          "duplicate_count_within_partition": 0
+        },
+        "harmful_val": {
+          "count": 39,
+          "unique_normalised_texts": 39,
+          "duplicate_count_within_partition": 0
+        },
+        "harmful_test": {
+          "count": 572,
+          "unique_normalised_texts": 562,
+          "duplicate_count_within_partition": 10
+        },
+        "harmless_train": {
+          "count": 200,
+          "unique_normalised_texts": 200,
+          "duplicate_count_within_partition": 0
+        },
+        "harmless_val": {
+          "count": 200,
+          "unique_normalised_texts": 200,
+          "duplicate_count_within_partition": 0
+        },
+        "harmless_test": {
+          "count": 500,
+          "unique_normalised_texts": 500,
+          "duplicate_count_within_partition": 0
+        }
+      },
+      "overlap_by_normalised_text": {
+        "harmful_train_vs_harmful_test": 0,
+        "harmful_val_vs_harmful_test": 0,
+        "harmful_train_vs_harmful_val": 0,
+        "harmless_train_vs_harmless_test": 0,
+        "harmless_val_vs_harmless_test": 0
+      },
+      "overlap_by_id": "not_computable_local_files_have_no_native_id_field",
+      "provenance_status": "checked_locally"
+    },
+    "fr": {
+      "language": "fr",
+      "partitions": {
+        "harmful_train": {
+          "count": 260,
+          "unique_normalised_texts": 260,
+          "duplicate_count_within_partition": 0
+        },
+        "harmful_val": {
+          "count": 39,
+          "unique_normalised_texts": 39,
+          "duplicate_count_within_partition": 0
+        },
+        "harmful_test": {
+          "count": 572,
+          "unique_normalised_texts": 562,
+          "duplicate_count_within_partition": 10
+        },
+        "harmless_train": {
+          "count": 200,
+          "unique_normalised_texts": 200,
+          "duplicate_count_within_partition": 0
+        },
+        "harmless_val": {
+          "count": 200,
+          "unique_normalised_texts": 200,
+          "duplicate_count_within_partition": 0
+        },
+        "harmless_test": {
+          "count": 500,
+          "unique_normalised_texts": 500,
+          "duplicate_count_within_partition": 0
+        }
+      },
+      "overlap_by_normalised_text": {
+        "harmful_train_vs_harmful_test": 0,
+        "harmful_val_vs_harmful_test": 0,
+        "harmful_train_vs_harmful_val": 0,
+        "harmless_train_vs_harmless_test": 0,
+        "harmless_val_vs_harmless_test": 0
+      },
+      "overlap_by_id": "not_computable_local_files_have_no_native_id_field",
+      "provenance_status": "checked_locally"
+    },
+    "it": {
+      "language": "it",
+      "partitions": {
+        "harmful_train": {
+          "count": 260,
+          "unique_normalised_texts": 260,
+          "duplicate_count_within_partition": 0
+        },
+        "harmful_val": {
+          "count": 39,
+          "unique_normalised_texts": 39,
+          "duplicate_count_within_partition": 0
+        },
+        "harmful_test": {
+          "count": 572,
+          "unique_normalised_texts": 562,
+          "duplicate_count_within_partition": 10
+        },
+        "harmless_train": {
+          "count": 200,
+          "unique_normalised_texts": 200,
+          "duplicate_count_within_partition": 0
+        },
+        "harmless_val": {
+          "count": 200,
+          "unique_normalised_texts": 200,
+          "duplicate_count_within_partition": 0
+        },
+        "harmless_test": {
+          "count": 500,
+          "unique_normalised_texts": 500,
+          "duplicate_count_within_partition": 0
+        }
+      },
+      "overlap_by_normalised_text": {
+        "harmful_train_vs_harmful_test": 0,
+        "harmful_val_vs_harmful_test": 0,
+        "harmful_train_vs_harmful_val": 0,
+        "harmless_train_vs_harmless_test": 0,
+        "harmless_val_vs_harmless_test": 0
+      },
+      "overlap_by_id": "not_computable_local_files_have_no_native_id_field",
+      "provenance_status": "checked_locally"
+    },
+    "ja": {
+      "language": "ja",
+      "partitions": {
+        "harmful_train": {
+          "count": 260,
+          "unique_normalised_texts": 260,
+          "duplicate_count_within_partition": 0
+        },
+        "harmful_val": {
+          "count": 39,
+          "unique_normalised_texts": 39,
+          "duplicate_count_within_partition": 0
+        },
+        "harmful_test": {
+          "count": 572,
+          "unique_normalised_texts": 562,
+          "duplicate_count_within_partition": 10
+        },
+        "harmless_train": {
+          "count": 200,
+          "unique_normalised_texts": 200,
+          "duplicate_count_within_partition": 0
+        },
+        "harmless_val": {
+          "count": 200,
+          "unique_normalised_texts": 200,
+          "duplicate_count_within_partition": 0
+        },
+        "harmless_test": {
+          "count": 500,
+          "unique_normalised_texts": 500,
+          "duplicate_count_within_partition": 0
+        }
+      },
+      "overlap_by_normalised_text": {
+        "harmful_train_vs_harmful_test": 0,
+        "harmful_val_vs_harmful_test": 0,
+        "harmful_train_vs_harmful_val": 0,
+        "harmless_train_vs_harmless_test": 0,
+        "harmless_val_vs_harmless_test": 0
+      },
+      "overlap_by_id": "not_computable_local_files_have_no_native_id_field",
+      "provenance_status": "checked_locally"
+    },
+    "nl": {
+      "language": "nl",
+      "partitions": {
+        "harmful_train": {
+          "count": 260,
+          "unique_normalised_texts": 260,
+          "duplicate_count_within_partition": 0
+        },
+        "harmful_val": {
+          "count": 39,
+          "unique_normalised_texts": 39,
+          "duplicate_count_within_partition": 0
+        },
+        "harmful_test": {
+          "count": 572,
+          "unique_normalised_texts": 562,
+          "duplicate_count_within_partition": 10
+        },
+        "harmless_train": {
+          "count": 200,
+          "unique_normalised_texts": 200,
+          "duplicate_count_within_partition": 0
+        },
+        "harmless_val": {
+          "count": 200,
+          "unique_normalised_texts": 200,
+          "duplicate_count_within_partition": 0
+        },
+        "harmless_test": {
+          "count": 500,
+          "unique_normalised_texts": 500,
+          "duplicate_count_within_partition": 0
+        }
+      },
+      "overlap_by_normalised_text": {
+        "harmful_train_vs_harmful_test": 0,
+        "harmful_val_vs_harmful_test": 0,
+        "harmful_train_vs_harmful_val": 0,
+        "harmless_train_vs_harmless_test": 0,
+        "harmless_val_vs_harmless_test": 0
+      },
+      "overlap_by_id": "not_computable_local_files_have_no_native_id_field",
+      "provenance_status": "checked_locally"
+    },
+    "pl": {
+      "language": "pl",
+      "partitions": {
+        "harmful_train": {
+          "count": 260,
+          "unique_normalised_texts": 260,
+          "duplicate_count_within_partition": 0
+        },
+        "harmful_val": {
+          "count": 39,
+          "unique_normalised_texts": 39,
+          "duplicate_count_within_partition": 0
+        },
+        "harmful_test": {
+          "count": 572,
+          "unique_normalised_texts": 562,
+          "duplicate_count_within_partition": 10
+        },
+        "harmless_train": {
+          "count": 200,
+          "unique_normalised_texts": 200,
+          "duplicate_count_within_partition": 0
+        },
+        "harmless_val": {
+          "count": 200,
+          "unique_normalised_texts": 200,
+          "duplicate_count_within_partition": 0
+        },
+        "harmless_test": {
+          "count": 500,
+          "unique_normalised_texts": 500,
+          "duplicate_count_within_partition": 0
+        }
+      },
+      "overlap_by_normalised_text": {
+        "harmful_train_vs_harmful_test": 0,
+        "harmful_val_vs_harmful_test": 0,
+        "harmful_train_vs_harmful_val": 0,
+        "harmless_train_vs_harmless_test": 0,
+        "harmless_val_vs_harmless_test": 0
+      },
+      "overlap_by_id": "not_computable_local_files_have_no_native_id_field",
+      "provenance_status": "checked_locally"
+    },
+    "ru": {
+      "language": "ru",
+      "partitions": {
+        "harmful_train": {
+          "count": 260,
+          "unique_normalised_texts": 260,
+          "duplicate_count_within_partition": 0
+        },
+        "harmful_val": {
+          "count": 39,
+          "unique_normalised_texts": 39,
+          "duplicate_count_within_partition": 0
+        },
+        "harmful_test": {
+          "count": 572,
+          "unique_normalised_texts": 562,
+          "duplicate_count_within_partition": 10
+        },
+        "harmless_train": {
+          "count": 200,
+          "unique_normalised_texts": 200,
+          "duplicate_count_within_partition": 0
+        },
+        "harmless_val": {
+          "count": 200,
+          "unique_normalised_texts": 200,
+          "duplicate_count_within_partition": 0
+        },
+        "harmless_test": {
+          "count": 500,
+          "unique_normalised_texts": 500,
+          "duplicate_count_within_partition": 0
+        }
+      },
+      "overlap_by_normalised_text": {
+        "harmful_train_vs_harmful_test": 0,
+        "harmful_val_vs_harmful_test": 0,
+        "harmful_train_vs_harmful_val": 0,
+        "harmless_train_vs_harmless_test": 0,
+        "harmless_val_vs_harmless_test": 0
+      },
+      "overlap_by_id": "not_computable_local_files_have_no_native_id_field",
+      "provenance_status": "checked_locally"
+    }
+  },
+  "sampled_prompts_provenance": {
+    "sampled_prompts_count": 572,
+    "harmful_test_translated_en_count": 572,
+    "sampled_prompts_is_subset_of_harmful_test_en": true,
+    "overlap_count": 562,
+    "conclusion": "data/sampled_prompts.json (source of the entire English 572-instruction core pool, and by extension data/splits.json direction_ids/validation_ids/test_ids) is exactly ployrefuse_Enhanced/harmful_test_translated_en.json (all 572 rows, including its 10 internal duplicate-text rows). Confirmed by exact text-set equality, not assumed."
+  },
+  "recommended_axis_partition": {
+    "decision": "CANNOT finalize independent-train-split design for English from local data alone",
+    "indirect_evidence": "15/15 non-English languages checked locally show ZERO normalised-text overlap between harmful_train (260 items) and harmful_test (572 items, the source of the 572-pool) -- and also zero for harmful_val vs harmful_test, and harmful_train vs harmful_val. This is consistent with PolyRefuse maintaining genuine train/val/test disjointness by design across all languages, which would support English also being disjoint -- but this is INDIRECT evidence, not a direct verification of English data, since English train/val files are not present locally.",
+    "required_before_finalizing": "Locate English harmful_train_translated_en.json / harmless_train_translated_en.json / harmless_val_translated_en.json on the cluster (likely reachable via the _orig dataset.load_dataset path referenced in extract_jailbreak_vectors.py::load_dataset_split), and run this same normalised-text overlap check directly against ployrefuse_Enhanced/harmful_test_translated_en.json (== data/sampled_prompts.json). Until this is done, do not assume the independent-train-split design is safe for English.",
+    "recommended_fallback_if_unverifiable_or_overlapping": "5-fold cross-fitting on data/splits.json direction_ids (300 English ids): split into 5 folds, build refusal_direction/harmfulness_direction from 4 folds at a time, compute out-of-fold delta_R/delta_H on the held-out fold only, repeat 5x and merge. This has zero dependency on locating/verifying an independent English train split, at the cost of the axis directions being built from slightly less data per fold (240 vs 300 instructions) and requiring 5x the direction-extraction compute."
+  }
+}

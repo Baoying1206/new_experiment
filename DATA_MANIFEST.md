@@ -121,6 +121,49 @@ new_experiment/
 - `single_layer_geometry_L{layer}.json`: depends on `safety_layer_identification.json`'s peak-norm layer, which is a proxy (not Arditi et al.'s full induce/kl-score criteria) — treat as a sensitivity check, not a definitive "correct layer."
 - `calibration_{lang}_{mech}.json` (no layer suffix) exists for `refusal_suppression`/`en` on all 3 models at the default middle layer; layer-suffixed versions only exist where a re-check was explicitly run (see conversation history for which alpha/layer combinations were tested and why).
 
+## Audit round (token position / axis independence / layer-selection leakage)
+
+New, read-only-so-far audit infrastructure — full findings in
+`EXPERIMENT_REDUCTION_PLAN.md` §12. Summary:
+
+- `scripts/utils/token_positions.py` — explicit `t_inst`/`t_post` position
+  finding (replaces the implicit `positions=[-1]` convention), with
+  `scripts/utils/test_token_positions.py` (7/7 passing, mock-tokenizer only).
+  `scripts/audits/audit_token_positions.py` still needs to run **on the
+  cluster** (real tokenizer required) before any new direction extraction —
+  not yet run.
+- `scripts/utils/direction_metadata.py` — required-field schema for every
+  new direction `.pt`'s companion `.json` (`scripts/utils/test_direction_metadata.py`,
+  7/7 passing).
+- `scripts/audits/audit_source_overlap.py` — run against local data, output
+  in `output/audits/axis_source_overlap.{json,md}`. **Key finding: English
+  `harmful_train`/`harmless_train`/`harmless_val` are absent from this local
+  `ployrefuse_Enhanced/` mirror** (present for all 15 other languages) — the
+  independent-train-split design for Decision 3 cannot be verified for
+  English without cluster access; local PolyRefuse files also have no
+  native ID field, so all overlap checks are by normalised text, not ID.
+- `output/audits/layer_selection_leakage.md` — `output/safety_layer_identification.json`
+  is marked **`stale`**: `14_find_safety_layer.py`'s peak-norm criterion is
+  not itself test-outcome-based, but its input (`refusal_dir_{lang}.pt`) was
+  built pre-`splits.json`, from an unpartitioned pool. No downstream
+  `single_layer_geometry_L{layer}.json` currently exists, so nothing else
+  needs retroactive marking yet.
+- `scripts/audits/test_smoke.py` (3/3 passing) — CPU-only, re-runs the
+  source-overlap audit and checks its known findings (English gap, zero
+  train/test overlap for the 15 checkable languages, `sampled_prompts.json`
+  == `harmful_test_translated_en.json`) haven't silently changed.
+
+**Old `positions=[-1]`-based `refusal_dir_{lang}.pt`/`harmfulness_dir_{lang}.pt`
+files (in `experiment_thesis/output/jailbreak_analysis/`) remain usable for
+Experiment 1** (the binary-taxonomy geometry test doesn't depend on the
+t_inst/t_post distinction) **but are `legacy_same_position` and
+`stale_for_dual_axis_claim = true` for Experiment 2/3**, which require
+genuinely separate refusal/harmfulness reference positions. Any new
+dual-position direction extraction should write to a new
+`output_v2_dual_position/` directory rather than overwriting these —
+not yet created, since no extraction has run yet (blocked on the
+token-position audit, per `EXPERIMENT_REDUCTION_PLAN.md` §12.6).
+
 ## Conventions
 
 - **Model alias** is always the HuggingFace-style directory name: `Qwen2.5-7B-Instruct`, `Meta-Llama-3.1-8B-Instruct`, `gemma-2-9b-it` — matches `MODEL_ALIASES` arrays in every `slurm/*.sh`.
