@@ -122,14 +122,14 @@ def load_wildguard():
 def main(args):
     model_alias = args.model_alias or os.path.basename(args.model_path)
     out_dir = os.path.join(args.output_dir, model_alias)
-    out_path = os.path.join(out_dir, f'completions_{args.lang}.json')
+    out_path = os.path.join(out_dir, f'completions_{args.lang}{args.suffix}.json')
 
     if os.path.exists(out_path) and not args.overwrite:
         print(f"Already exists, skipping: {out_path}  (use --overwrite to regenerate)")
         return
     os.makedirs(out_dir, exist_ok=True)
 
-    input_path = os.path.join(DATA_DIR, f'generation_input_{args.lang}.json')
+    input_path = os.path.join(DATA_DIR, f'generation_input_{args.lang}{args.suffix}.json')
     with open(input_path, encoding='utf-8') as f:
         dataset = json.load(f)
     for row in dataset:
@@ -197,6 +197,11 @@ if __name__ == '__main__':
     parser.add_argument('--max_new_tokens', type=int, default=200)
     parser.add_argument('--wg_batch',       type=int, default=16)
     parser.add_argument('--overwrite',      action='store_true')
+    parser.add_argument('--suffix',         type=str, default='',
+                         help="Applied to both generation_input_{lang}{suffix}.json (read) and "
+                              "completions_{lang}{suffix}.json (write), e.g. '_xling' for the "
+                              "200-instruction cross-lingual subset -- prevents silently "
+                              "overwriting the original 75-instruction pilot's completions_{lang}.json.")
     args = parser.parse_args()
     if args.model_alias is None:
         args.model_alias = os.path.basename(args.model_path)

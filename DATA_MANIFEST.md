@@ -11,14 +11,20 @@ Pilot restarted from a 75-instruction sample to the full 572-instruction
 572 x 9 languages x 3 models x 8 conditions scale (123,552 generations)
 is disproportionate for a master's thesis, scope is split:
 
-- **English core experiment** (`data/generation_input_en.json`): full 572
-  instructions x 8 conditions x 3 models = 4,576 rows/model. Answers the
-  primary question (does Wei et al.'s taxonomy correspond to separable
-  activation geometry?) with maximum statistical power.
+- **English core experiment** (`data/generation_input_en_full572.json`):
+  full 572 instructions x 8 conditions x 3 models = 4,576 rows/model.
+  Answers the primary question (does Wei et al.'s taxonomy correspond to
+  separable activation geometry?) with maximum statistical power. Submit
+  `03_generate_and_label.py --lang en --suffix _full572` -> writes
+  `completions_en_full572.json`, distinct from the original pilot's
+  `completions_en.json` (75 instructions) so nothing gets overwritten.
 - **Cross-lingual validation** (`data/generation_input_{lang}_xling.json`
   for zh/de/ko/ar/th/yo/sw/am): a shared 200-instruction subset x 8
   conditions x 3 models = 1,600 rows/model/language. Tests whether the
-  English finding generalizes, without the full-pool cost.
+  English finding generalizes, without the full-pool cost. Submit
+  `03_generate_and_label.py --lang {lang} --suffix _xling` -> writes
+  `completions_{lang}_xling.json`, again distinct from the original
+  9-language pilot's `completions_{lang}.json` (75 instructions).
 
 `data/splits.json` defines the leak-free partition: `direction_ids` (300),
 `validation_ids` (72), `test_ids` (200) for English, each with a strict
