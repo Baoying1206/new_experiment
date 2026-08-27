@@ -23,7 +23,7 @@ ENHANCED_DIR = os.path.join(os.path.dirname(__file__), '..', 'ployrefuse_Enhance
 OUT_PATH = os.path.join(os.path.dirname(__file__), '..', 'data', 'sampled_prompts.json')
 
 PILOT_LANGS = ['en', 'zh', 'de', 'ko', 'ar', 'th', 'yo', 'sw', 'am']
-TARGET_N = 75
+TARGET_N = 572  # full harmful_test pool (was 75) -- pilot restarted at full scale
 SEED = 0
 
 # Same coarse mapping as extract_jailbreak_vectors.py -- keep in sync if that one changes.
