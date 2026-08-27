@@ -35,6 +35,17 @@ independently -- not combined into one score):
      data-independent sensitivity check (mirrors Arditi et al.'s style of
      relative-depth heuristic), reported regardless of what (1)-(3) say.
 
+Rules 1-3's argmax search is restricted to layers [floor(0.2*n_layers),
+floor(0.8*n_layers)) -- the earliest layers trivially win both criteria
+(near-ceiling split-half reliability and template-placebo separation),
+because templated vs plain/placebo text differs lexically at the raw
+token-embedding level before any deep computation happens; that's a
+meaningless artifact, not a safety-relevant signal. This mirrors
+14_find_safety_layer.py's existing exclusion of the last ~20% of layers
+(residual-stream norm growth), applied symmetrically to the first ~20% too.
+Full per-layer values (including the excluded range) are still saved to
+the output JSON for auditability.
+
 NOT computed here: "reference-direction reliability" (split-half
 reliability of refusal_direction/harmfulness_direction themselves) -- this
 needs the dual-position (t_inst/t_post) direction rebuild from Decision 1,
@@ -124,13 +135,29 @@ def main(args):
                                      n_layers, args.n_splithalf, rng)
     tp_sep = template_placebo_separation(diffs_data, id_index, REAL_MECHS, common_ids, n_layers)
 
-    sh_rank = sh_rel.argsort(descending=True).argsort()  # rank 0 = best
-    tp_rank = tp_sep.argsort(descending=True).argsort()
-    combined_rank_sum = sh_rank + tp_rank
-    combined_best_layer = int(combined_rank_sum.argmin().item())
+    # Restrict argmax search to a pre-registered middle-layer window, excluding
+    # both ends -- the earliest layers trivially win both criteria (split-half
+    # "reliability" and template-vs-placebo "separation" are both near-ceiling
+    # there simply because templated vs plain/placebo text differs lexically at
+    # the token-embedding level, before any deep computation; this is a
+    # meaningless artifact, not a safety-relevant signal), mirroring
+    # 14_find_safety_layer.py's existing exclusion of the last ~20% of layers
+    # (residual-stream norm growth) but applied symmetrically to the first
+    # ~20% too. Full per-layer arrays are still saved below so this window is
+    # auditable, not hidden.
+    lo = int(0.2 * n_layers)
+    hi = int(0.8 * n_layers)
+    print(f"Restricting candidate search to layers [{lo}, {hi}) -- excludes the "
+          f"trivially-high-reliability earliest layers and the norm-growth-dominated "
+          f"latest layers; full per-layer values are still saved to the output JSON.\n")
 
-    sh_best_layer = int(sh_rel.argmax().item())
-    tp_best_layer = int(tp_sep.argmax().item())
+    sh_rank = sh_rel.argsort(descending=True).argsort()  # rank 0 = best (full range, for reference)
+    tp_rank = tp_sep.argsort(descending=True).argsort()
+    usable_rank_sum = sh_rank[lo:hi] + tp_rank[lo:hi]
+    combined_best_layer = lo + int(usable_rank_sum.argmin().item())
+
+    sh_best_layer = lo + int(sh_rel[lo:hi].argmax().item())
+    tp_best_layer = lo + int(tp_sep[lo:hi].argmax().item())
     relative_0_6_layer = int(0.6 * n_layers)
 
     print("=== Candidate layer-selection rules (validation_ids only) ===")
@@ -139,7 +166,7 @@ def main(args):
     print(f"  2. template_placebo_separation argmax:  layer {tp_best_layer}  "
           f"(value={tp_sep[tp_best_layer]:.4f}, range=[{tp_sep.min():.4f},{tp_sep.max():.4f}])")
     print(f"  3. combined (min rank-sum of 1+2):      layer {combined_best_layer}  "
-          f"(rank_sum={int(combined_rank_sum[combined_best_layer])})")
+          f"(rank_sum={int(usable_rank_sum[combined_best_layer - lo])})")
     print(f"  4. relative_layer floor(0.6*n_layers):  layer {relative_0_6_layer}  "
           f"(fixed, pre-registered, data-independent -- always reported regardless of 1-3)")
     print(f"\n  NOT computed: reference-direction reliability (needs Decision 1's dual-position "
@@ -150,6 +177,8 @@ def main(args):
     results = {
         'model': args.model_alias, 'lang': args.lang, 'suffix': args.suffix,
         'n_layers': n_layers, 'n_validation_ids': len(common_ids),
+        'search_window': {'lo': lo, 'hi': hi, 'note': 'argmax restricted to [lo,hi); '
+                           'full per-layer arrays below include excluded layers too'},
         'split_half_reliability_per_layer': sh_rel.tolist(),
         'template_placebo_separation_per_layer': tp_sep.tolist(),
         'candidates': {
