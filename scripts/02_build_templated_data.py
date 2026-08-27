@@ -14,13 +14,23 @@ where `instruction` is the final text to feed the model (matches the
 {"instruction": ...} contract expected by generate_completions / run_baseline.py).
 
 No model/GPU needed -- pure text templating, safe to run locally.
+
+Optionally restrict to a named id subset from data/splits.json (e.g.
+cross_lingual_ids) via --ids_key, and/or a subset of languages via --langs,
+writing to generation_input_{lang}{suffix}.json so this doesn't overwrite
+the full-pool file for languages that also have a full-scale version (e.g.
+English keeps generation_input_en.json at 572; the other 8 languages get
+generation_input_{lang}_xling.json at 200 via --ids_key cross_lingual_ids
+--langs zh,de,ko,ar,th,yo,sw,am --suffix _xling).
 """
+import argparse
 import base64
 import json
 import os
 
 SCRIPT_DIR = os.path.dirname(__file__)
 SAMPLED_PATH = os.path.join(SCRIPT_DIR, '..', 'data', 'sampled_prompts.json')
+SPLITS_PATH = os.path.join(SCRIPT_DIR, '..', 'data', 'splits.json')
 TEMPLATE_DIR = os.path.join(SCRIPT_DIR, '..', 'templates')
 OUT_DIR = os.path.join(SCRIPT_DIR, '..', 'data')
 
@@ -54,12 +64,22 @@ def build_condition(template_name, template_text, mechanism, instruction):
     return template_text.format(instruction=instruction)
 
 
-def main():
+def main(args):
     with open(SAMPLED_PATH, encoding='utf-8') as f:
         sampled = json.load(f)
-    print(f"Loaded {len(sampled)} sampled prompts.")
 
-    for lang in PILOT_LANGS:
+    if args.ids_key:
+        with open(SPLITS_PATH) as f:
+            splits = json.load(f)
+        keep_ids = set(splits[args.ids_key])
+        sampled = [item for item in sampled if item['id'] in keep_ids]
+        print(f"Loaded {len(sampled)} prompts (filtered to splits.json['{args.ids_key}'], "
+              f"{len(keep_ids)} requested).")
+    else:
+        print(f"Loaded {len(sampled)} sampled prompts (no id filter).")
+
+    langs = args.langs.split(',') if args.langs else PILOT_LANGS
+    for lang in langs:
         texts, mechanism_of = load_templates(lang)
         rows = []
         needs_translation_flagged = False
@@ -86,7 +106,7 @@ def main():
                     'instruction': rendered, 'instruction_en': instruction_en,
                 })
 
-        out_path = os.path.join(OUT_DIR, f'generation_input_{lang}.json')
+        out_path = os.path.join(OUT_DIR, f'generation_input_{lang}{args.suffix}.json')
         with open(out_path, 'w', encoding='utf-8') as f:
             json.dump(rows, f, indent=2, ensure_ascii=False)
 
@@ -98,4 +118,12 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--ids_key', type=str, default=None,
+                         help="Key into data/splits.json to restrict prompts to "
+                              "(e.g. 'cross_lingual_ids'). Default: use all sampled prompts.")
+    parser.add_argument('--langs', type=str, default=None,
+                         help="Comma-separated languages. Default: all 9 pilot languages.")
+    parser.add_argument('--suffix', type=str, default='',
+                         help="Output filename suffix, e.g. '_xling' -> generation_input_{lang}_xling.json")
+    main(parser.parse_args())

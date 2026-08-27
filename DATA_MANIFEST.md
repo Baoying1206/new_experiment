@@ -4,6 +4,33 @@ Documents what each file in `output/` is, how it was produced, and what depends 
 
 ---
 
+## Scope (two-phase design, current)
+
+Pilot restarted from a 75-instruction sample to the full 572-instruction
+`harmful_test` pool per language (all already translated). Given the full
+572 x 9 languages x 3 models x 8 conditions scale (123,552 generations)
+is disproportionate for a master's thesis, scope is split:
+
+- **English core experiment** (`data/generation_input_en.json`): full 572
+  instructions x 8 conditions x 3 models = 4,576 rows/model. Answers the
+  primary question (does Wei et al.'s taxonomy correspond to separable
+  activation geometry?) with maximum statistical power.
+- **Cross-lingual validation** (`data/generation_input_{lang}_xling.json`
+  for zh/de/ko/ar/th/yo/sw/am): a shared 200-instruction subset x 8
+  conditions x 3 models = 1,600 rows/model/language. Tests whether the
+  English finding generalizes, without the full-pool cost.
+
+`data/splits.json` defines the leak-free partition: `direction_ids` (300),
+`validation_ids` (72), `test_ids` (200) for English, each with a strict
+subset (`cross_lingual_*_ids`, 100/30/70) used for the 8 cross-lingual
+languages -- so a cross-lingual test-set id is guaranteed to also be an
+English test-set id, never a direction or validation id. Built by
+`01b_define_splits.py`; consumed by `02_build_templated_data.py --ids_key`.
+
+The original 9-language x 3-model x 75-instruction pilot results (README,
+sections 01-14 of the published summary artifact) remain valid as
+supplementary evidence and are not being redone at full scale.
+
 ## Directory structure
 
 ```
