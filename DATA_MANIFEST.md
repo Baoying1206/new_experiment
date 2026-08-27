@@ -136,12 +136,19 @@ New, read-only-so-far audit infrastructure — full findings in
   new direction `.pt`'s companion `.json` (`scripts/utils/test_direction_metadata.py`,
   7/7 passing).
 - `scripts/audits/audit_source_overlap.py` — run against local data, output
-  in `output/audits/axis_source_overlap.{json,md}`. **Key finding: English
-  `harmful_train`/`harmless_train`/`harmless_val` are absent from this local
-  `ployrefuse_Enhanced/` mirror** (present for all 15 other languages) — the
-  independent-train-split design for Decision 3 cannot be verified for
-  English without cluster access; local PolyRefuse files also have no
-  native ID field, so all overlap checks are by normalised text, not ID.
+  in `output/audits/axis_source_overlap.{json,md}`. **English
+  `harmful_train`/`harmless_train`/`harmless_val` are absent from
+  `ployrefuse_Enhanced/`** (present for all 15 other languages) — but
+  **resolved via `output/audits/english_axis_data_followup.json`**: they
+  live at `related_work/Multilingual-Refusal/dataset/splits/{harmtype}_{split}.json`
+  instead (English never needed translation), confirmed present locally.
+  `harmful_train` (260) overlaps the 572-instruction pool by exactly 1
+  instruction (`p457`), which falls in `direction_ids`, not
+  `validation_ids`/`test_ids` — so the independent-train-split design for
+  Decision 3 is usable as long as `p457` is excluded from `harmful_train`
+  when building `refusal_direction`/`harmfulness_direction`. Local
+  PolyRefuse files have no native ID field, so all overlap checks are by
+  normalised text, not ID.
 - `output/audits/layer_selection_leakage.md` — `output/safety_layer_identification.json`
   is marked **`stale`**: `14_find_safety_layer.py`'s peak-norm criterion is
   not itself test-outcome-based, but its input (`refusal_dir_{lang}.pt`) was
