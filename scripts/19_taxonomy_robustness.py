@@ -33,8 +33,22 @@ them):
      template-wrapper effects (not mechanism-specific ones) explain the
      non-clustering.
 
+Also implements, for the exact enumeration test only (the primary Exp1
+result -- the taxonomy gap G):
+  1b. Ordinary-mean vs robust-estimator comparison: recomputes each
+      mechanism's per-layer direction as a coordinate-wise median or
+      trimmed mean (default 10% each tail) instead of the ordinary mean
+      over the 300 direction-set instructions, then reruns the exact
+      enumeration test under each estimator. Tests whether Wei's
+      partition ranking/T depends on a handful of outlier instructions
+      dominating the ordinary mean, vs being a genuine bulk-of-the-data
+      effect.
+
 NOT implemented here (deferred, see conversation): median/trimmed-mean
-variants of the bootstrap, surface-feature-vs-activation-distance
+variants of the bootstrap/split-half/leave-one-out/placebo-calibrated
+tests (those already get a different, resampling-based form of robustness
+check; re-deriving them under every point estimator is a further
+possible extension, not done here), surface-feature-vs-activation-distance
 comparison (separate script, text-only), and the model/language mixed
 regression (needs paired_diffs extracted across multiple languages first).
 
@@ -95,12 +109,37 @@ def common_ids_for(diffs_data, mechs):
     return sorted(set.intersection(*id_lists))
 
 
-def mean_vecs_all_layers(diffs_data, id_index, mechs, ids):
-    """Returns {mech: tensor[n_layers, d]} -- mean over `ids` at every layer."""
+ESTIMATORS = ['mean', 'median', 'trimmed_mean']
+
+
+def aggregate(x, method, trim_frac=0.1):
+    """x: tensor[n, n_layers, d] (n_layers, d can be any trailing shape).
+    Returns tensor[n_layers, d] -- coordinate-wise mean/median/trimmed_mean
+    over the n instructions. median/trimmed_mean are robust to a few
+    instructions with outlier activation shifts dominating the ordinary
+    mean; trimmed_mean drops the lowest and highest trim_frac of values per
+    coordinate before averaging the rest (default 10% each tail)."""
+    if method == 'mean':
+        return x.mean(0)
+    if method == 'median':
+        return x.median(0).values
+    if method == 'trimmed_mean':
+        n = x.shape[0]
+        k = int(n * trim_frac)
+        if k == 0:
+            return x.mean(0)
+        sorted_x, _ = torch.sort(x, dim=0)
+        return sorted_x[k:n - k].mean(0)
+    raise ValueError(f"unknown estimator: {method}")
+
+
+def mean_vecs_all_layers(diffs_data, id_index, mechs, ids, method='mean', trim_frac=0.1):
+    """Returns {mech: tensor[n_layers, d]} -- aggregated over `ids` at every layer,
+    using the given estimator (default ordinary mean, matching prior behavior)."""
     out = {}
     for m in mechs:
         idxs = [id_index[m][pid] for pid in ids]
-        out[m] = diffs_data['diffs'][m][idxs].mean(0)  # [n_layers, d]
+        out[m] = aggregate(diffs_data['diffs'][m][idxs], method, trim_frac)  # [n_layers, d]
     return out
 
 
@@ -145,6 +184,29 @@ def main(args):
         'n_layers_top1': n_layers_top1, 'n_layers_positive': n_layers_positive,
         'mean_wei_T': wei_T.mean().item(),
     }
+
+    print("\n=== 1b. Ordinary mean vs robust estimators (exact enumeration test) ===")
+    results['estimator_comparison'] = {}
+    for method in ESTIMATORS:
+        if method == 'mean':
+            v_est, T_est, ranks_est = vecs, wei_T, ranks  # reuse section 1's result, don't recompute
+        else:
+            v_est = mean_vecs_all_layers(diffs_data, id_index, REAL_MECHS, common_ids,
+                                          method=method, trim_frac=args.trim_frac)
+            all_T_est = torch.stack([T_statistic_all_layers(v_est, a, b) for a, b in partitions], 0)
+            T_est = all_T_est[wei_idx]
+            ranks_est = (all_T_est >= T_est.unsqueeze(0)).sum(0)
+        n_top1_est = int((ranks_est == 1).sum().item())
+        n_pos_est = int((T_est > 0).sum().item())
+        print(f"  [{method}] Wei rank #1 in {n_top1_est}/{n_layers} layers, "
+              f"T>0 in {n_pos_est}/{n_layers} layers, mean_T={T_est.mean():.4f}")
+        results['estimator_comparison'][method] = {
+            'wei_T_per_layer': T_est.tolist(), 'n_layers_top1': n_top1_est,
+            'n_layers_positive': n_pos_est, 'mean_wei_T': T_est.mean().item(),
+        }
+    agree = len(set(results['estimator_comparison'][m]['n_layers_top1'] > 0 for m in ESTIMATORS)) == 1
+    print(f"  --> estimators agree on whether Wei's partition is ever rank #1: {agree}")
+    results['estimator_comparison']['estimators_agree_qualitatively'] = agree
 
     print("\n=== 2. Bootstrap (n={}) ===".format(args.n_bootstrap))
     boot_T = torch.zeros(args.n_bootstrap, n_layers)
@@ -235,5 +297,8 @@ if __name__ == '__main__':
                               "in 18_extract_paired_diffs.py, e.g. '_full572' or '_xling'.")
     parser.add_argument('--n_bootstrap',   type=int, default=1000)
     parser.add_argument('--n_splithalf',   type=int, default=200)
+    parser.add_argument('--trim_frac',     type=float, default=0.1,
+                         help="Fraction trimmed from each tail per coordinate for the "
+                              "trimmed_mean estimator (section 1b).")
     args = parser.parse_args()
     main(args)
