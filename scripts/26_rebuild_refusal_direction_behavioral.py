@@ -171,7 +171,7 @@ def generate_and_label(model_base, rows, batch_size, max_new_tokens, wg_batch):
     completions = model_base.generate_completions(
         dataset, fwd_pre_hooks=[], fwd_hooks=[], batch_size=batch_size, max_new_tokens=max_new_tokens)
     for c, item in zip(completions, dataset):
-        for k in ('instruction_id', 'condition', 'text'):
+        for k in ('instruction_id', 'condition', 'text', 'split'):
             c[k] = item[k]
 
     print("Freeing model GPU memory for WildGuard...")
