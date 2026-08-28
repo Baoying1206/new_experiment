@@ -57,10 +57,38 @@ def load_templates(lang):
     return texts, mechanism_of
 
 
+def split_payload(instruction):
+    """Splits instruction into two halves at the word boundary nearest the
+    character midpoint, so a+b reassembles to exactly the original string
+    (word-preserving, unlike a raw character-index split which could cut a
+    word in half and make the SmartGPT concatenation trick read as garbled
+    text rather than the original request)."""
+    words = instruction.split(' ')
+    if len(words) < 2:
+        # single-word instruction (rare) -- fall back to a literal character split
+        mid = max(1, len(instruction) // 2)
+        return instruction[:mid], instruction[mid:]
+    # find the split point among word boundaries closest to the character midpoint
+    target = len(instruction) / 2
+    best_i, best_dist = 1, float('inf')
+    running_len = 0
+    for i in range(1, len(words)):
+        running_len += len(words[i - 1]) + 1  # +1 for the space
+        dist = abs(running_len - target)
+        if dist < best_dist:
+            best_dist, best_i = dist, i
+    a = ' '.join(words[:best_i])
+    b = ' ' + ' '.join(words[best_i:])  # leading space so a+b == instruction exactly
+    return a, b
+
+
 def build_condition(template_name, template_text, mechanism, instruction):
     if template_name == 'encoding_obfuscation':
         b64 = base64.b64encode(instruction.encode('utf-8')).decode('ascii')
         return template_text.format(instruction_b64=b64)
+    if template_name == 'payload_splitting':
+        payload_a, payload_b = split_payload(instruction)
+        return template_text.format(payload_a=payload_a, payload_b=payload_b)
     return template_text.format(instruction=instruction)
 
 
@@ -78,9 +106,22 @@ def main(args):
     else:
         print(f"Loaded {len(sampled)} sampled prompts (no id filter).")
 
+    only_mechanisms = set(args.only_mechanisms.split(',')) if args.only_mechanisms else None
+    if only_mechanisms:
+        print(f"Restricting to mechanisms: {sorted(only_mechanisms)}  "
+              f"(skip_plain={args.skip_plain}) -- for regenerating only NEW/changed "
+              f"mechanisms without re-generating ones already covered by an existing "
+              f"completions file.\n")
+
     langs = args.langs.split(',') if args.langs else PILOT_LANGS
     for lang in langs:
         texts, mechanism_of = load_templates(lang)
+        if only_mechanisms:
+            missing = only_mechanisms - set(texts.keys())
+            if missing:
+                raise ValueError(f"--only_mechanisms names {missing} not found in "
+                                  f"templates_{lang}.json's templates: {sorted(texts.keys())}")
+            texts = {name: text for name, text in texts.items() if name in only_mechanisms}
         rows = []
         needs_translation_flagged = False
 
@@ -89,11 +130,12 @@ def main(args):
             instruction_en = item['instruction_en']
 
             # condition: plain (no template)
-            rows.append({
-                'id': item['id'], 'condition': 'plain', 'mechanism': 'none',
-                'category': item['category'],
-                'instruction': base_instruction, 'instruction_en': instruction_en,
-            })
+            if not args.skip_plain:
+                rows.append({
+                    'id': item['id'], 'condition': 'plain', 'mechanism': 'none',
+                    'category': item['category'],
+                    'instruction': base_instruction, 'instruction_en': instruction_en,
+                })
 
             # condition: each template
             for name, text in texts.items():
@@ -110,7 +152,7 @@ def main(args):
         with open(out_path, 'w', encoding='utf-8') as f:
             json.dump(rows, f, indent=2, ensure_ascii=False)
 
-        n_conditions = len(texts) + 1
+        n_conditions = len(texts) + (0 if args.skip_plain else 1)
         print(f"[{lang}] {len(rows)} rows ({len(sampled)} prompts x {n_conditions} conditions) "
               f"-> {out_path}"
               + ("  *** contains untranslated placeholders, DO NOT run on cluster yet ***"
@@ -126,4 +168,13 @@ if __name__ == '__main__':
                          help="Comma-separated languages. Default: all 9 pilot languages.")
     parser.add_argument('--suffix', type=str, default='',
                          help="Output filename suffix, e.g. '_xling' -> generation_input_{lang}_xling.json")
+    parser.add_argument('--only_mechanisms', type=str, default=None,
+                         help="Comma-separated template names to restrict to (e.g. "
+                              "'payload_splitting,distractor_instructions') -- for building a "
+                              "minimal generation_input covering only NEW mechanisms not already "
+                              "present in an existing completions file, instead of regenerating "
+                              "everything. Default: all templates in templates_{lang}.json.")
+    parser.add_argument('--skip_plain', action='store_true',
+                         help="Omit the 'plain' (no-template) condition row -- use when plain's "
+                              "completions already exist and don't need regenerating.")
     main(parser.parse_args())
