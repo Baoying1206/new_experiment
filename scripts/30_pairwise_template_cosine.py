@@ -16,21 +16,33 @@ Usage:
 import argparse
 import json
 import os
+import sys
 
 import torch
 import torch.nn.functional as F
 
 SCRIPT_DIR = os.path.dirname(__file__)
-REAL_MECHS = ['prefix_injection', 'refusal_suppression', 'instruction_hierarchy',
-              'persona_roleplay', 'fictional_framing', 'encoding_obfuscation']
-CO = ['prefix_injection', 'refusal_suppression', 'instruction_hierarchy']
-MG = ['persona_roleplay', 'fictional_framing', 'encoding_obfuscation']
+sys.path.insert(0, SCRIPT_DIR)
+import _taxonomy_config as tc
+
+OLD_REAL_MECHS = tc.CANONICAL_REAL_MECHS
+OLD_CO = tc.CANONICAL_CO_MECHS
+OLD_MG = tc.CANONICAL_MG_MECHS
+CORRECTED_REAL_MECHS = tc.CORRECTED_REAL_MECHS
+CORRECTED_CO = tc.CORRECTED_CO_MECHS
+CORRECTED_MG = tc.CORRECTED_MG_MECHS
 FIXED_LAYER_FRACTION = 0.6
 
 
 def main(args):
+    if args.taxonomy == 'corrected':
+        REAL_MECHS, CO, MG = CORRECTED_REAL_MECHS, CORRECTED_CO, CORRECTED_MG
+    else:
+        REAL_MECHS, CO, MG = OLD_REAL_MECHS, OLD_CO, OLD_MG
+    print(f"Taxonomy: {args.taxonomy}  CO={CO}  MG={MG}\n")
+
     models = args.models.split(',')
-    results = {'lang': args.lang, 'suffix': args.suffix, 'per_model': {}}
+    results = {'lang': args.lang, 'suffix': args.suffix, 'taxonomy': args.taxonomy, 'per_model': {}}
 
     for model_alias in models:
         print(f"\n=== {model_alias} ===")
@@ -40,6 +52,12 @@ def main(args):
             results['per_model'][model_alias] = {'error': 'missing paired_diffs file', 'path': path}
             continue
         data = torch.load(path, map_location='cpu')
+        missing = set(REAL_MECHS) - set(data['diffs'].keys())
+        if missing:
+            print(f"  MISSING mechanisms {missing} in {path} -- was it extracted with "
+                  f"--mechanisms matching taxonomy={args.taxonomy}? Got keys: {sorted(data['diffs'].keys())}")
+            results['per_model'][model_alias] = {'error': f'missing mechanisms {sorted(missing)}', 'path': path}
+            continue
         n_layers = data['n_layers']
         fixed_layer = int(FIXED_LAYER_FRACTION * n_layers)
 
@@ -94,7 +112,8 @@ def main(args):
         print(f"\n  Closest pair: {closest[0]} & {closest[1]}  (cos={closest[2]:.4f})")
         print(f"  Farthest pair: {farthest[0]} & {farthest[1]}  (cos={farthest[2]:.4f})")
 
-    out_path = os.path.join(args.output_dir, f'pairwise_template_cosine_{args.lang}{args.suffix}.json')
+    taxonomy_suffix = '' if args.taxonomy == 'old' else f'_{args.taxonomy}'
+    out_path = os.path.join(args.output_dir, f'pairwise_template_cosine_{args.lang}{args.suffix}{taxonomy_suffix}.json')
     with open(out_path, 'w') as f:
         json.dump(results, f, indent=2)
     print(f"\nSaved: {out_path}")
@@ -107,5 +126,13 @@ if __name__ == '__main__':
     parser.add_argument('--suffix',     type=str, default='_full572')
     parser.add_argument('--models',     type=str,
                          default='Qwen2.5-7B-Instruct,Meta-Llama-3.1-8B-Instruct,gemma-2-9b-it')
+    parser.add_argument('--taxonomy',   type=str, default='old', choices=['old', 'corrected'],
+                         help="'old' (default): original 6-mechanism set (instruction_hierarchy/ "
+                              "fictional_framing included, persona_roleplay as MG). 'corrected': "
+                              "_taxonomy_config.py's CORRECTED_* set (persona_roleplay as CO, "
+                              "payload_splitting/distractors_negated instead of the two dropped "
+                              "mechanisms) -- requires a paired_diffs file extracted with "
+                              "18_extract_paired_diffs.py --mechanisms matching that set (e.g. "
+                              "--suffix _full572_corrected).")
     args = parser.parse_args()
     main(args)
