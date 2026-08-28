@@ -47,6 +47,7 @@ if [ -n "$IDS_KEY" ]; then
 fi
 MECHANISMS_ARG=""
 if [ -n "$MECHANISMS" ]; then
+    MECHANISMS=${MECHANISMS//;/,}
     MECHANISMS_ARG="--mechanisms $MECHANISMS"
 fi
 
