@@ -1,0 +1,4082 @@
+{
+  "Qwen2.5-7B-Instruct": {
+    "model_alias": "Qwen2.5-7B-Instruct",
+    "model_path": "/home/h24/baga0553/models/Qwen2.5-7B-Instruct",
+    "chat_template_present": true,
+    "samples": [
+      {
+        "instruction": "Explain how photosynthesis works.",
+        "full_token_count": 36,
+        "full_tokens": [
+          {
+            "index": 0,
+            "id": 151644,
+            "decoded": "<|im_start|>",
+            "is_special": true
+          },
+          {
+            "index": 1,
+            "id": 8948,
+            "decoded": "system",
+            "is_special": false
+          },
+          {
+            "index": 2,
+            "id": 198,
+            "decoded": "\n",
+            "is_special": false
+          },
+          {
+            "index": 3,
+            "id": 2610,
+            "decoded": "You",
+            "is_special": false
+          },
+          {
+            "index": 4,
+            "id": 525,
+            "decoded": " are",
+            "is_special": false
+          },
+          {
+            "index": 5,
+            "id": 1207,
+            "decoded": " Q",
+            "is_special": false
+          },
+          {
+            "index": 6,
+            "id": 16948,
+            "decoded": "wen",
+            "is_special": false
+          },
+          {
+            "index": 7,
+            "id": 11,
+            "decoded": ",",
+            "is_special": false
+          },
+          {
+            "index": 8,
+            "id": 3465,
+            "decoded": " created",
+            "is_special": false
+          },
+          {
+            "index": 9,
+            "id": 553,
+            "decoded": " by",
+            "is_special": false
+          },
+          {
+            "index": 10,
+            "id": 54364,
+            "decoded": " Alibaba",
+            "is_special": false
+          },
+          {
+            "index": 11,
+            "id": 14817,
+            "decoded": " Cloud",
+            "is_special": false
+          },
+          {
+            "index": 12,
+            "id": 13,
+            "decoded": ".",
+            "is_special": false
+          },
+          {
+            "index": 13,
+            "id": 1446,
+            "decoded": " You",
+            "is_special": false
+          },
+          {
+            "index": 14,
+            "id": 525,
+            "decoded": " are",
+            "is_special": false
+          },
+          {
+            "index": 15,
+            "id": 264,
+            "decoded": " a",
+            "is_special": false
+          },
+          {
+            "index": 16,
+            "id": 10950,
+            "decoded": " helpful",
+            "is_special": false
+          },
+          {
+            "index": 17,
+            "id": 17847,
+            "decoded": " assistant",
+            "is_special": false
+          },
+          {
+            "index": 18,
+            "id": 13,
+            "decoded": ".",
+            "is_special": false
+          },
+          {
+            "index": 19,
+            "id": 151645,
+            "decoded": "<|im_end|>",
+            "is_special": true
+          },
+          {
+            "index": 20,
+            "id": 198,
+            "decoded": "\n",
+            "is_special": false
+          },
+          {
+            "index": 21,
+            "id": 151644,
+            "decoded": "<|im_start|>",
+            "is_special": true
+          },
+          {
+            "index": 22,
+            "id": 872,
+            "decoded": "user",
+            "is_special": false
+          },
+          {
+            "index": 23,
+            "id": 198,
+            "decoded": "\n",
+            "is_special": false
+          },
+          {
+            "index": 24,
+            "id": 840,
+            "decoded": "Ex",
+            "is_special": false
+          },
+          {
+            "index": 25,
+            "id": 20772,
+            "decoded": "plain",
+            "is_special": false
+          },
+          {
+            "index": 26,
+            "id": 1246,
+            "decoded": " how",
+            "is_special": false
+          },
+          {
+            "index": 27,
+            "id": 7249,
+            "decoded": " photos",
+            "is_special": false
+          },
+          {
+            "index": 28,
+            "id": 73667,
+            "decoded": "ynthesis",
+            "is_special": false
+          },
+          {
+            "index": 29,
+            "id": 4278,
+            "decoded": " works",
+            "is_special": false
+          },
+          {
+            "index": 30,
+            "id": 13,
+            "decoded": ".",
+            "is_special": false
+          },
+          {
+            "index": 31,
+            "id": 151645,
+            "decoded": "<|im_end|>",
+            "is_special": true
+          },
+          {
+            "index": 32,
+            "id": 198,
+            "decoded": "\n",
+            "is_special": false
+          },
+          {
+            "index": 33,
+            "id": 151644,
+            "decoded": "<|im_start|>",
+            "is_special": true
+          },
+          {
+            "index": 34,
+            "id": 77091,
+            "decoded": "assistant",
+            "is_special": false
+          },
+          {
+            "index": 35,
+            "id": 198,
+            "decoded": "\n",
+            "is_special": false
+          }
+        ],
+        "t_inst": {
+          "position_index": 30,
+          "semantic_name": "t_inst",
+          "token_id": 13,
+          "decoded_token": ".",
+          "model_family": "Qwen2.5-7B-Instruct",
+          "chat_template_hash": "cd8e9439f057",
+          "context_before": [
+            "plain",
+            " how",
+            " photos",
+            "ynthesis",
+            " works",
+            ".",
+            "<|im_end|>",
+            "\n",
+            "<|im_start|>",
+            "assistant"
+          ],
+          "context_after": [
+            "<|im_end|>",
+            "\n",
+            "<|im_start|>",
+            "assistant",
+            "\n"
+          ],
+          "method": "generic_subsequence_search"
+        },
+        "t_post": {
+          "position_index": 35,
+          "semantic_name": "t_post",
+          "token_id": 198,
+          "decoded_token": "\n",
+          "model_family": "Qwen2.5-7B-Instruct",
+          "chat_template_hash": "cd8e9439f057",
+          "context_before": [
+            ".",
+            "<|im_end|>",
+            "\n",
+            "<|im_start|>",
+            "assistant"
+          ],
+          "context_after": [],
+          "method": "last_token_of_rendered_prompt"
+        }
+      },
+      {
+        "instruction": "Write a short poem about the ocean, no more than four lines.",
+        "full_token_count": 43,
+        "full_tokens": [
+          {
+            "index": 0,
+            "id": 151644,
+            "decoded": "<|im_start|>",
+            "is_special": true
+          },
+          {
+            "index": 1,
+            "id": 8948,
+            "decoded": "system",
+            "is_special": false
+          },
+          {
+            "index": 2,
+            "id": 198,
+            "decoded": "\n",
+            "is_special": false
+          },
+          {
+            "index": 3,
+            "id": 2610,
+            "decoded": "You",
+            "is_special": false
+          },
+          {
+            "index": 4,
+            "id": 525,
+            "decoded": " are",
+            "is_special": false
+          },
+          {
+            "index": 5,
+            "id": 1207,
+            "decoded": " Q",
+            "is_special": false
+          },
+          {
+            "index": 6,
+            "id": 16948,
+            "decoded": "wen",
+            "is_special": false
+          },
+          {
+            "index": 7,
+            "id": 11,
+            "decoded": ",",
+            "is_special": false
+          },
+          {
+            "index": 8,
+            "id": 3465,
+            "decoded": " created",
+            "is_special": false
+          },
+          {
+            "index": 9,
+            "id": 553,
+            "decoded": " by",
+            "is_special": false
+          },
+          {
+            "index": 10,
+            "id": 54364,
+            "decoded": " Alibaba",
+            "is_special": false
+          },
+          {
+            "index": 11,
+            "id": 14817,
+            "decoded": " Cloud",
+            "is_special": false
+          },
+          {
+            "index": 12,
+            "id": 13,
+            "decoded": ".",
+            "is_special": false
+          },
+          {
+            "index": 13,
+            "id": 1446,
+            "decoded": " You",
+            "is_special": false
+          },
+          {
+            "index": 14,
+            "id": 525,
+            "decoded": " are",
+            "is_special": false
+          },
+          {
+            "index": 15,
+            "id": 264,
+            "decoded": " a",
+            "is_special": false
+          },
+          {
+            "index": 16,
+            "id": 10950,
+            "decoded": " helpful",
+            "is_special": false
+          },
+          {
+            "index": 17,
+            "id": 17847,
+            "decoded": " assistant",
+            "is_special": false
+          },
+          {
+            "index": 18,
+            "id": 13,
+            "decoded": ".",
+            "is_special": false
+          },
+          {
+            "index": 19,
+            "id": 151645,
+            "decoded": "<|im_end|>",
+            "is_special": true
+          },
+          {
+            "index": 20,
+            "id": 198,
+            "decoded": "\n",
+            "is_special": false
+          },
+          {
+            "index": 21,
+            "id": 151644,
+            "decoded": "<|im_start|>",
+            "is_special": true
+          },
+          {
+            "index": 22,
+            "id": 872,
+            "decoded": "user",
+            "is_special": false
+          },
+          {
+            "index": 23,
+            "id": 198,
+            "decoded": "\n",
+            "is_special": false
+          },
+          {
+            "index": 24,
+            "id": 7985,
+            "decoded": "Write",
+            "is_special": false
+          },
+          {
+            "index": 25,
+            "id": 264,
+            "decoded": " a",
+            "is_special": false
+          },
+          {
+            "index": 26,
+            "id": 2805,
+            "decoded": " short",
+            "is_special": false
+          },
+          {
+            "index": 27,
+            "id": 32794,
+            "decoded": " poem",
+            "is_special": false
+          },
+          {
+            "index": 28,
+            "id": 911,
+            "decoded": " about",
+            "is_special": false
+          },
+          {
+            "index": 29,
+            "id": 279,
+            "decoded": " the",
+            "is_special": false
+          },
+          {
+            "index": 30,
+            "id": 17951,
+            "decoded": " ocean",
+            "is_special": false
+          },
+          {
+            "index": 31,
+            "id": 11,
+            "decoded": ",",
+            "is_special": false
+          },
+          {
+            "index": 32,
+            "id": 902,
+            "decoded": " no",
+            "is_special": false
+          },
+          {
+            "index": 33,
+            "id": 803,
+            "decoded": " more",
+            "is_special": false
+          },
+          {
+            "index": 34,
+            "id": 1091,
+            "decoded": " than",
+            "is_special": false
+          },
+          {
+            "index": 35,
+            "id": 3040,
+            "decoded": " four",
+            "is_special": false
+          },
+          {
+            "index": 36,
+            "id": 5128,
+            "decoded": " lines",
+            "is_special": false
+          },
+          {
+            "index": 37,
+            "id": 13,
+            "decoded": ".",
+            "is_special": false
+          },
+          {
+            "index": 38,
+            "id": 151645,
+            "decoded": "<|im_end|>",
+            "is_special": true
+          },
+          {
+            "index": 39,
+            "id": 198,
+            "decoded": "\n",
+            "is_special": false
+          },
+          {
+            "index": 40,
+            "id": 151644,
+            "decoded": "<|im_start|>",
+            "is_special": true
+          },
+          {
+            "index": 41,
+            "id": 77091,
+            "decoded": "assistant",
+            "is_special": false
+          },
+          {
+            "index": 42,
+            "id": 198,
+            "decoded": "\n",
+            "is_special": false
+          }
+        ],
+        "t_inst": {
+          "position_index": 37,
+          "semantic_name": "t_inst",
+          "token_id": 13,
+          "decoded_token": ".",
+          "model_family": "Qwen2.5-7B-Instruct",
+          "chat_template_hash": "cd8e9439f057",
+          "context_before": [
+            " no",
+            " more",
+            " than",
+            " four",
+            " lines",
+            ".",
+            "<|im_end|>",
+            "\n",
+            "<|im_start|>",
+            "assistant"
+          ],
+          "context_after": [
+            "<|im_end|>",
+            "\n",
+            "<|im_start|>",
+            "assistant",
+            "\n"
+          ],
+          "method": "generic_subsequence_search"
+        },
+        "t_post": {
+          "position_index": 42,
+          "semantic_name": "t_post",
+          "token_id": 198,
+          "decoded_token": "\n",
+          "model_family": "Qwen2.5-7B-Instruct",
+          "chat_template_hash": "cd8e9439f057",
+          "context_before": [
+            ".",
+            "<|im_end|>",
+            "\n",
+            "<|im_start|>",
+            "assistant"
+          ],
+          "context_after": [],
+          "method": "last_token_of_rendered_prompt"
+        }
+      },
+      {
+        "instruction": "What is 17 * 23?",
+        "full_token_count": 39,
+        "full_tokens": [
+          {
+            "index": 0,
+            "id": 151644,
+            "decoded": "<|im_start|>",
+            "is_special": true
+          },
+          {
+            "index": 1,
+            "id": 8948,
+            "decoded": "system",
+            "is_special": false
+          },
+          {
+            "index": 2,
+            "id": 198,
+            "decoded": "\n",
+            "is_special": false
+          },
+          {
+            "index": 3,
+            "id": 2610,
+            "decoded": "You",
+            "is_special": false
+          },
+          {
+            "index": 4,
+            "id": 525,
+            "decoded": " are",
+            "is_special": false
+          },
+          {
+            "index": 5,
+            "id": 1207,
+            "decoded": " Q",
+            "is_special": false
+          },
+          {
+            "index": 6,
+            "id": 16948,
+            "decoded": "wen",
+            "is_special": false
+          },
+          {
+            "index": 7,
+            "id": 11,
+            "decoded": ",",
+            "is_special": false
+          },
+          {
+            "index": 8,
+            "id": 3465,
+            "decoded": " created",
+            "is_special": false
+          },
+          {
+            "index": 9,
+            "id": 553,
+            "decoded": " by",
+            "is_special": false
+          },
+          {
+            "index": 10,
+            "id": 54364,
+            "decoded": " Alibaba",
+            "is_special": false
+          },
+          {
+            "index": 11,
+            "id": 14817,
+            "decoded": " Cloud",
+            "is_special": false
+          },
+          {
+            "index": 12,
+            "id": 13,
+            "decoded": ".",
+            "is_special": false
+          },
+          {
+            "index": 13,
+            "id": 1446,
+            "decoded": " You",
+            "is_special": false
+          },
+          {
+            "index": 14,
+            "id": 525,
+            "decoded": " are",
+            "is_special": false
+          },
+          {
+            "index": 15,
+            "id": 264,
+            "decoded": " a",
+            "is_special": false
+          },
+          {
+            "index": 16,
+            "id": 10950,
+            "decoded": " helpful",
+            "is_special": false
+          },
+          {
+            "index": 17,
+            "id": 17847,
+            "decoded": " assistant",
+            "is_special": false
+          },
+          {
+            "index": 18,
+            "id": 13,
+            "decoded": ".",
+            "is_special": false
+          },
+          {
+            "index": 19,
+            "id": 151645,
+            "decoded": "<|im_end|>",
+            "is_special": true
+          },
+          {
+            "index": 20,
+            "id": 198,
+            "decoded": "\n",
+            "is_special": false
+          },
+          {
+            "index": 21,
+            "id": 151644,
+            "decoded": "<|im_start|>",
+            "is_special": true
+          },
+          {
+            "index": 22,
+            "id": 872,
+            "decoded": "user",
+            "is_special": false
+          },
+          {
+            "index": 23,
+            "id": 198,
+            "decoded": "\n",
+            "is_special": false
+          },
+          {
+            "index": 24,
+            "id": 3838,
+            "decoded": "What",
+            "is_special": false
+          },
+          {
+            "index": 25,
+            "id": 374,
+            "decoded": " is",
+            "is_special": false
+          },
+          {
+            "index": 26,
+            "id": 220,
+            "decoded": " ",
+            "is_special": false
+          },
+          {
+            "index": 27,
+            "id": 16,
+            "decoded": "1",
+            "is_special": false
+          },
+          {
+            "index": 28,
+            "id": 22,
+            "decoded": "7",
+            "is_special": false
+          },
+          {
+            "index": 29,
+            "id": 353,
+            "decoded": " *",
+            "is_special": false
+          },
+          {
+            "index": 30,
+            "id": 220,
+            "decoded": " ",
+            "is_special": false
+          },
+          {
+            "index": 31,
+            "id": 17,
+            "decoded": "2",
+            "is_special": false
+          },
+          {
+            "index": 32,
+            "id": 18,
+            "decoded": "3",
+            "is_special": false
+          },
+          {
+            "index": 33,
+            "id": 30,
+            "decoded": "?",
+            "is_special": false
+          },
+          {
+            "index": 34,
+            "id": 151645,
+            "decoded": "<|im_end|>",
+            "is_special": true
+          },
+          {
+            "index": 35,
+            "id": 198,
+            "decoded": "\n",
+            "is_special": false
+          },
+          {
+            "index": 36,
+            "id": 151644,
+            "decoded": "<|im_start|>",
+            "is_special": true
+          },
+          {
+            "index": 37,
+            "id": 77091,
+            "decoded": "assistant",
+            "is_special": false
+          },
+          {
+            "index": 38,
+            "id": 198,
+            "decoded": "\n",
+            "is_special": false
+          }
+        ],
+        "t_inst": {
+          "position_index": 33,
+          "semantic_name": "t_inst",
+          "token_id": 30,
+          "decoded_token": "?",
+          "model_family": "Qwen2.5-7B-Instruct",
+          "chat_template_hash": "cd8e9439f057",
+          "context_before": [
+            "7",
+            " *",
+            " ",
+            "2",
+            "3",
+            "?",
+            "<|im_end|>",
+            "\n",
+            "<|im_start|>",
+            "assistant"
+          ],
+          "context_after": [
+            "<|im_end|>",
+            "\n",
+            "<|im_start|>",
+            "assistant",
+            "\n"
+          ],
+          "method": "generic_subsequence_search"
+        },
+        "t_post": {
+          "position_index": 38,
+          "semantic_name": "t_post",
+          "token_id": 198,
+          "decoded_token": "\n",
+          "model_family": "Qwen2.5-7B-Instruct",
+          "chat_template_hash": "cd8e9439f057",
+          "context_before": [
+            "?",
+            "<|im_end|>",
+            "\n",
+            "<|im_start|>",
+            "assistant"
+          ],
+          "context_after": [],
+          "method": "last_token_of_rendered_prompt"
+        }
+      },
+      {
+        "instruction": "Translate 'good morning' into French, German, and Japanese, and explain any cultural notes about greeting time-of-day in each.",
+        "full_token_count": 55,
+        "full_tokens": [
+          {
+            "index": 0,
+            "id": 151644,
+            "decoded": "<|im_start|>",
+            "is_special": true
+          },
+          {
+            "index": 1,
+            "id": 8948,
+            "decoded": "system",
+            "is_special": false
+          },
+          {
+            "index": 2,
+            "id": 198,
+            "decoded": "\n",
+            "is_special": false
+          },
+          {
+            "index": 3,
+            "id": 2610,
+            "decoded": "You",
+            "is_special": false
+          },
+          {
+            "index": 4,
+            "id": 525,
+            "decoded": " are",
+            "is_special": false
+          },
+          {
+            "index": 5,
+            "id": 1207,
+            "decoded": " Q",
+            "is_special": false
+          },
+          {
+            "index": 6,
+            "id": 16948,
+            "decoded": "wen",
+            "is_special": false
+          },
+          {
+            "index": 7,
+            "id": 11,
+            "decoded": ",",
+            "is_special": false
+          },
+          {
+            "index": 8,
+            "id": 3465,
+            "decoded": " created",
+            "is_special": false
+          },
+          {
+            "index": 9,
+            "id": 553,
+            "decoded": " by",
+            "is_special": false
+          },
+          {
+            "index": 10,
+            "id": 54364,
+            "decoded": " Alibaba",
+            "is_special": false
+          },
+          {
+            "index": 11,
+            "id": 14817,
+            "decoded": " Cloud",
+            "is_special": false
+          },
+          {
+            "index": 12,
+            "id": 13,
+            "decoded": ".",
+            "is_special": false
+          },
+          {
+            "index": 13,
+            "id": 1446,
+            "decoded": " You",
+            "is_special": false
+          },
+          {
+            "index": 14,
+            "id": 525,
+            "decoded": " are",
+            "is_special": false
+          },
+          {
+            "index": 15,
+            "id": 264,
+            "decoded": " a",
+            "is_special": false
+          },
+          {
+            "index": 16,
+            "id": 10950,
+            "decoded": " helpful",
+            "is_special": false
+          },
+          {
+            "index": 17,
+            "id": 17847,
+            "decoded": " assistant",
+            "is_special": false
+          },
+          {
+            "index": 18,
+            "id": 13,
+            "decoded": ".",
+            "is_special": false
+          },
+          {
+            "index": 19,
+            "id": 151645,
+            "decoded": "<|im_end|>",
+            "is_special": true
+          },
+          {
+            "index": 20,
+            "id": 198,
+            "decoded": "\n",
+            "is_special": false
+          },
+          {
+            "index": 21,
+            "id": 151644,
+            "decoded": "<|im_start|>",
+            "is_special": true
+          },
+          {
+            "index": 22,
+            "id": 872,
+            "decoded": "user",
+            "is_special": false
+          },
+          {
+            "index": 23,
+            "id": 198,
+            "decoded": "\n",
+            "is_special": false
+          },
+          {
+            "index": 24,
+            "id": 27473,
+            "decoded": "Translate",
+            "is_special": false
+          },
+          {
+            "index": 25,
+            "id": 364,
+            "decoded": " '",
+            "is_special": false
+          },
+          {
+            "index": 26,
+            "id": 18536,
+            "decoded": "good",
+            "is_special": false
+          },
+          {
+            "index": 27,
+            "id": 6556,
+            "decoded": " morning",
+            "is_special": false
+          },
+          {
+            "index": 28,
+            "id": 6,
+            "decoded": "'",
+            "is_special": false
+          },
+          {
+            "index": 29,
+            "id": 1119,
+            "decoded": " into",
+            "is_special": false
+          },
+          {
+            "index": 30,
+            "id": 8585,
+            "decoded": " French",
+            "is_special": false
+          },
+          {
+            "index": 31,
+            "id": 11,
+            "decoded": ",",
+            "is_special": false
+          },
+          {
+            "index": 32,
+            "id": 5938,
+            "decoded": " German",
+            "is_special": false
+          },
+          {
+            "index": 33,
+            "id": 11,
+            "decoded": ",",
+            "is_special": false
+          },
+          {
+            "index": 34,
+            "id": 323,
+            "decoded": " and",
+            "is_special": false
+          },
+          {
+            "index": 35,
+            "id": 10769,
+            "decoded": " Japanese",
+            "is_special": false
+          },
+          {
+            "index": 36,
+            "id": 11,
+            "decoded": ",",
+            "is_special": false
+          },
+          {
+            "index": 37,
+            "id": 323,
+            "decoded": " and",
+            "is_special": false
+          },
+          {
+            "index": 38,
+            "id": 10339,
+            "decoded": " explain",
+            "is_special": false
+          },
+          {
+            "index": 39,
+            "id": 894,
+            "decoded": " any",
+            "is_special": false
+          },
+          {
+            "index": 40,
+            "id": 12752,
+            "decoded": " cultural",
+            "is_special": false
+          },
+          {
+            "index": 41,
+            "id": 8388,
+            "decoded": " notes",
+            "is_special": false
+          },
+          {
+            "index": 42,
+            "id": 911,
+            "decoded": " about",
+            "is_special": false
+          },
+          {
+            "index": 43,
+            "id": 42113,
+            "decoded": " greeting",
+            "is_special": false
+          },
+          {
+            "index": 44,
+            "id": 882,
+            "decoded": " time",
+            "is_special": false
+          },
+          {
+            "index": 45,
+            "id": 8668,
+            "decoded": "-of",
+            "is_special": false
+          },
+          {
+            "index": 46,
+            "id": 11228,
+            "decoded": "-day",
+            "is_special": false
+          },
+          {
+            "index": 47,
+            "id": 304,
+            "decoded": " in",
+            "is_special": false
+          },
+          {
+            "index": 48,
+            "id": 1817,
+            "decoded": " each",
+            "is_special": false
+          },
+          {
+            "index": 49,
+            "id": 13,
+            "decoded": ".",
+            "is_special": false
+          },
+          {
+            "index": 50,
+            "id": 151645,
+            "decoded": "<|im_end|>",
+            "is_special": true
+          },
+          {
+            "index": 51,
+            "id": 198,
+            "decoded": "\n",
+            "is_special": false
+          },
+          {
+            "index": 52,
+            "id": 151644,
+            "decoded": "<|im_start|>",
+            "is_special": true
+          },
+          {
+            "index": 53,
+            "id": 77091,
+            "decoded": "assistant",
+            "is_special": false
+          },
+          {
+            "index": 54,
+            "id": 198,
+            "decoded": "\n",
+            "is_special": false
+          }
+        ],
+        "t_inst": {
+          "position_index": 49,
+          "semantic_name": "t_inst",
+          "token_id": 13,
+          "decoded_token": ".",
+          "model_family": "Qwen2.5-7B-Instruct",
+          "chat_template_hash": "cd8e9439f057",
+          "context_before": [
+            " time",
+            "-of",
+            "-day",
+            " in",
+            " each",
+            ".",
+            "<|im_end|>",
+            "\n",
+            "<|im_start|>",
+            "assistant"
+          ],
+          "context_after": [
+            "<|im_end|>",
+            "\n",
+            "<|im_start|>",
+            "assistant",
+            "\n"
+          ],
+          "method": "generic_subsequence_search"
+        },
+        "t_post": {
+          "position_index": 54,
+          "semantic_name": "t_post",
+          "token_id": 198,
+          "decoded_token": "\n",
+          "model_family": "Qwen2.5-7B-Instruct",
+          "chat_template_hash": "cd8e9439f057",
+          "context_before": [
+            ".",
+            "<|im_end|>",
+            "\n",
+            "<|im_start|>",
+            "assistant"
+          ],
+          "context_after": [],
+          "method": "last_token_of_rendered_prompt"
+        }
+      },
+      {
+        "instruction": "List three prime numbers.",
+        "full_token_count": 34,
+        "full_tokens": [
+          {
+            "index": 0,
+            "id": 151644,
+            "decoded": "<|im_start|>",
+            "is_special": true
+          },
+          {
+            "index": 1,
+            "id": 8948,
+            "decoded": "system",
+            "is_special": false
+          },
+          {
+            "index": 2,
+            "id": 198,
+            "decoded": "\n",
+            "is_special": false
+          },
+          {
+            "index": 3,
+            "id": 2610,
+            "decoded": "You",
+            "is_special": false
+          },
+          {
+            "index": 4,
+            "id": 525,
+            "decoded": " are",
+            "is_special": false
+          },
+          {
+            "index": 5,
+            "id": 1207,
+            "decoded": " Q",
+            "is_special": false
+          },
+          {
+            "index": 6,
+            "id": 16948,
+            "decoded": "wen",
+            "is_special": false
+          },
+          {
+            "index": 7,
+            "id": 11,
+            "decoded": ",",
+            "is_special": false
+          },
+          {
+            "index": 8,
+            "id": 3465,
+            "decoded": " created",
+            "is_special": false
+          },
+          {
+            "index": 9,
+            "id": 553,
+            "decoded": " by",
+            "is_special": false
+          },
+          {
+            "index": 10,
+            "id": 54364,
+            "decoded": " Alibaba",
+            "is_special": false
+          },
+          {
+            "index": 11,
+            "id": 14817,
+            "decoded": " Cloud",
+            "is_special": false
+          },
+          {
+            "index": 12,
+            "id": 13,
+            "decoded": ".",
+            "is_special": false
+          },
+          {
+            "index": 13,
+            "id": 1446,
+            "decoded": " You",
+            "is_special": false
+          },
+          {
+            "index": 14,
+            "id": 525,
+            "decoded": " are",
+            "is_special": false
+          },
+          {
+            "index": 15,
+            "id": 264,
+            "decoded": " a",
+            "is_special": false
+          },
+          {
+            "index": 16,
+            "id": 10950,
+            "decoded": " helpful",
+            "is_special": false
+          },
+          {
+            "index": 17,
+            "id": 17847,
+            "decoded": " assistant",
+            "is_special": false
+          },
+          {
+            "index": 18,
+            "id": 13,
+            "decoded": ".",
+            "is_special": false
+          },
+          {
+            "index": 19,
+            "id": 151645,
+            "decoded": "<|im_end|>",
+            "is_special": true
+          },
+          {
+            "index": 20,
+            "id": 198,
+            "decoded": "\n",
+            "is_special": false
+          },
+          {
+            "index": 21,
+            "id": 151644,
+            "decoded": "<|im_start|>",
+            "is_special": true
+          },
+          {
+            "index": 22,
+            "id": 872,
+            "decoded": "user",
+            "is_special": false
+          },
+          {
+            "index": 23,
+            "id": 198,
+            "decoded": "\n",
+            "is_special": false
+          },
+          {
+            "index": 24,
+            "id": 852,
+            "decoded": "List",
+            "is_special": false
+          },
+          {
+            "index": 25,
+            "id": 2326,
+            "decoded": " three",
+            "is_special": false
+          },
+          {
+            "index": 26,
+            "id": 10250,
+            "decoded": " prime",
+            "is_special": false
+          },
+          {
+            "index": 27,
+            "id": 5109,
+            "decoded": " numbers",
+            "is_special": false
+          },
+          {
+            "index": 28,
+            "id": 13,
+            "decoded": ".",
+            "is_special": false
+          },
+          {
+            "index": 29,
+            "id": 151645,
+            "decoded": "<|im_end|>",
+            "is_special": true
+          },
+          {
+            "index": 30,
+            "id": 198,
+            "decoded": "\n",
+            "is_special": false
+          },
+          {
+            "index": 31,
+            "id": 151644,
+            "decoded": "<|im_start|>",
+            "is_special": true
+          },
+          {
+            "index": 32,
+            "id": 77091,
+            "decoded": "assistant",
+            "is_special": false
+          },
+          {
+            "index": 33,
+            "id": 198,
+            "decoded": "\n",
+            "is_special": false
+          }
+        ],
+        "t_inst": {
+          "position_index": 28,
+          "semantic_name": "t_inst",
+          "token_id": 13,
+          "decoded_token": ".",
+          "model_family": "Qwen2.5-7B-Instruct",
+          "chat_template_hash": "cd8e9439f057",
+          "context_before": [
+            "\n",
+            "List",
+            " three",
+            " prime",
+            " numbers",
+            ".",
+            "<|im_end|>",
+            "\n",
+            "<|im_start|>",
+            "assistant"
+          ],
+          "context_after": [
+            "<|im_end|>",
+            "\n",
+            "<|im_start|>",
+            "assistant",
+            "\n"
+          ],
+          "method": "generic_subsequence_search"
+        },
+        "t_post": {
+          "position_index": 33,
+          "semantic_name": "t_post",
+          "token_id": 198,
+          "decoded_token": "\n",
+          "model_family": "Qwen2.5-7B-Instruct",
+          "chat_template_hash": "cd8e9439f057",
+          "context_before": [
+            ".",
+            "<|im_end|>",
+            "\n",
+            "<|im_start|>",
+            "assistant"
+          ],
+          "context_after": [],
+          "method": "last_token_of_rendered_prompt"
+        }
+      }
+    ]
+  },
+  "Meta-Llama-3.1-8B-Instruct": {
+    "model_alias": "Meta-Llama-3.1-8B-Instruct",
+    "model_path": "/home/h24/baga0553/models/Llama-3.1-8B-Instruct",
+    "chat_template_present": true,
+    "samples": [
+      {
+        "instruction": "Explain how photosynthesis works.",
+        "full_token_count": 42,
+        "full_tokens": [
+          {
+            "index": 0,
+            "id": 128000,
+            "decoded": "<|begin_of_text|>",
+            "is_special": true
+          },
+          {
+            "index": 1,
+            "id": 128006,
+            "decoded": "<|start_header_id|>",
+            "is_special": false
+          },
+          {
+            "index": 2,
+            "id": 9125,
+            "decoded": "system",
+            "is_special": false
+          },
+          {
+            "index": 3,
+            "id": 128007,
+            "decoded": "<|end_header_id|>",
+            "is_special": false
+          },
+          {
+            "index": 4,
+            "id": 271,
+            "decoded": "\n\n",
+            "is_special": false
+          },
+          {
+            "index": 5,
+            "id": 38766,
+            "decoded": "Cut",
+            "is_special": false
+          },
+          {
+            "index": 6,
+            "id": 1303,
+            "decoded": "ting",
+            "is_special": false
+          },
+          {
+            "index": 7,
+            "id": 33025,
+            "decoded": " Knowledge",
+            "is_special": false
+          },
+          {
+            "index": 8,
+            "id": 2696,
+            "decoded": " Date",
+            "is_special": false
+          },
+          {
+            "index": 9,
+            "id": 25,
+            "decoded": ":",
+            "is_special": false
+          },
+          {
+            "index": 10,
+            "id": 6790,
+            "decoded": " December",
+            "is_special": false
+          },
+          {
+            "index": 11,
+            "id": 220,
+            "decoded": " ",
+            "is_special": false
+          },
+          {
+            "index": 12,
+            "id": 2366,
+            "decoded": "202",
+            "is_special": false
+          },
+          {
+            "index": 13,
+            "id": 18,
+            "decoded": "3",
+            "is_special": false
+          },
+          {
+            "index": 14,
+            "id": 198,
+            "decoded": "\n",
+            "is_special": false
+          },
+          {
+            "index": 15,
+            "id": 15724,
+            "decoded": "Today",
+            "is_special": false
+          },
+          {
+            "index": 16,
+            "id": 2696,
+            "decoded": " Date",
+            "is_special": false
+          },
+          {
+            "index": 17,
+            "id": 25,
+            "decoded": ":",
+            "is_special": false
+          },
+          {
+            "index": 18,
+            "id": 220,
+            "decoded": " ",
+            "is_special": false
+          },
+          {
+            "index": 19,
+            "id": 1627,
+            "decoded": "26",
+            "is_special": false
+          },
+          {
+            "index": 20,
+            "id": 10263,
+            "decoded": " Jul",
+            "is_special": false
+          },
+          {
+            "index": 21,
+            "id": 220,
+            "decoded": " ",
+            "is_special": false
+          },
+          {
+            "index": 22,
+            "id": 2366,
+            "decoded": "202",
+            "is_special": false
+          },
+          {
+            "index": 23,
+            "id": 19,
+            "decoded": "4",
+            "is_special": false
+          },
+          {
+            "index": 24,
+            "id": 271,
+            "decoded": "\n\n",
+            "is_special": false
+          },
+          {
+            "index": 25,
+            "id": 128009,
+            "decoded": "<|eot_id|>",
+            "is_special": true
+          },
+          {
+            "index": 26,
+            "id": 128006,
+            "decoded": "<|start_header_id|>",
+            "is_special": false
+          },
+          {
+            "index": 27,
+            "id": 882,
+            "decoded": "user",
+            "is_special": false
+          },
+          {
+            "index": 28,
+            "id": 128007,
+            "decoded": "<|end_header_id|>",
+            "is_special": false
+          },
+          {
+            "index": 29,
+            "id": 271,
+            "decoded": "\n\n",
+            "is_special": false
+          },
+          {
+            "index": 30,
+            "id": 849,
+            "decoded": "Ex",
+            "is_special": false
+          },
+          {
+            "index": 31,
+            "id": 21435,
+            "decoded": "plain",
+            "is_special": false
+          },
+          {
+            "index": 32,
+            "id": 1268,
+            "decoded": " how",
+            "is_special": false
+          },
+          {
+            "index": 33,
+            "id": 7397,
+            "decoded": " photos",
+            "is_special": false
+          },
+          {
+            "index": 34,
+            "id": 74767,
+            "decoded": "ynthesis",
+            "is_special": false
+          },
+          {
+            "index": 35,
+            "id": 4375,
+            "decoded": " works",
+            "is_special": false
+          },
+          {
+            "index": 36,
+            "id": 13,
+            "decoded": ".",
+            "is_special": false
+          },
+          {
+            "index": 37,
+            "id": 128009,
+            "decoded": "<|eot_id|>",
+            "is_special": true
+          },
+          {
+            "index": 38,
+            "id": 128006,
+            "decoded": "<|start_header_id|>",
+            "is_special": false
+          },
+          {
+            "index": 39,
+            "id": 78191,
+            "decoded": "assistant",
+            "is_special": false
+          },
+          {
+            "index": 40,
+            "id": 128007,
+            "decoded": "<|end_header_id|>",
+            "is_special": false
+          },
+          {
+            "index": 41,
+            "id": 271,
+            "decoded": "\n\n",
+            "is_special": false
+          }
+        ],
+        "t_inst": {
+          "position_index": 36,
+          "semantic_name": "t_inst",
+          "token_id": 13,
+          "decoded_token": ".",
+          "model_family": "Meta-Llama-3.1-8B-Instruct",
+          "chat_template_hash": "e10ca381b1cc",
+          "context_before": [
+            "plain",
+            " how",
+            " photos",
+            "ynthesis",
+            " works",
+            ".",
+            "<|eot_id|>",
+            "<|start_header_id|>",
+            "assistant",
+            "<|end_header_id|>"
+          ],
+          "context_after": [
+            "<|eot_id|>",
+            "<|start_header_id|>",
+            "assistant",
+            "<|end_header_id|>",
+            "\n\n"
+          ],
+          "method": "generic_subsequence_search"
+        },
+        "t_post": {
+          "position_index": 41,
+          "semantic_name": "t_post",
+          "token_id": 271,
+          "decoded_token": "\n\n",
+          "model_family": "Meta-Llama-3.1-8B-Instruct",
+          "chat_template_hash": "e10ca381b1cc",
+          "context_before": [
+            ".",
+            "<|eot_id|>",
+            "<|start_header_id|>",
+            "assistant",
+            "<|end_header_id|>"
+          ],
+          "context_after": [],
+          "method": "last_token_of_rendered_prompt"
+        }
+      },
+      {
+        "instruction": "Write a short poem about the ocean, no more than four lines.",
+        "full_token_count": 49,
+        "full_tokens": [
+          {
+            "index": 0,
+            "id": 128000,
+            "decoded": "<|begin_of_text|>",
+            "is_special": true
+          },
+          {
+            "index": 1,
+            "id": 128006,
+            "decoded": "<|start_header_id|>",
+            "is_special": false
+          },
+          {
+            "index": 2,
+            "id": 9125,
+            "decoded": "system",
+            "is_special": false
+          },
+          {
+            "index": 3,
+            "id": 128007,
+            "decoded": "<|end_header_id|>",
+            "is_special": false
+          },
+          {
+            "index": 4,
+            "id": 271,
+            "decoded": "\n\n",
+            "is_special": false
+          },
+          {
+            "index": 5,
+            "id": 38766,
+            "decoded": "Cut",
+            "is_special": false
+          },
+          {
+            "index": 6,
+            "id": 1303,
+            "decoded": "ting",
+            "is_special": false
+          },
+          {
+            "index": 7,
+            "id": 33025,
+            "decoded": " Knowledge",
+            "is_special": false
+          },
+          {
+            "index": 8,
+            "id": 2696,
+            "decoded": " Date",
+            "is_special": false
+          },
+          {
+            "index": 9,
+            "id": 25,
+            "decoded": ":",
+            "is_special": false
+          },
+          {
+            "index": 10,
+            "id": 6790,
+            "decoded": " December",
+            "is_special": false
+          },
+          {
+            "index": 11,
+            "id": 220,
+            "decoded": " ",
+            "is_special": false
+          },
+          {
+            "index": 12,
+            "id": 2366,
+            "decoded": "202",
+            "is_special": false
+          },
+          {
+            "index": 13,
+            "id": 18,
+            "decoded": "3",
+            "is_special": false
+          },
+          {
+            "index": 14,
+            "id": 198,
+            "decoded": "\n",
+            "is_special": false
+          },
+          {
+            "index": 15,
+            "id": 15724,
+            "decoded": "Today",
+            "is_special": false
+          },
+          {
+            "index": 16,
+            "id": 2696,
+            "decoded": " Date",
+            "is_special": false
+          },
+          {
+            "index": 17,
+            "id": 25,
+            "decoded": ":",
+            "is_special": false
+          },
+          {
+            "index": 18,
+            "id": 220,
+            "decoded": " ",
+            "is_special": false
+          },
+          {
+            "index": 19,
+            "id": 1627,
+            "decoded": "26",
+            "is_special": false
+          },
+          {
+            "index": 20,
+            "id": 10263,
+            "decoded": " Jul",
+            "is_special": false
+          },
+          {
+            "index": 21,
+            "id": 220,
+            "decoded": " ",
+            "is_special": false
+          },
+          {
+            "index": 22,
+            "id": 2366,
+            "decoded": "202",
+            "is_special": false
+          },
+          {
+            "index": 23,
+            "id": 19,
+            "decoded": "4",
+            "is_special": false
+          },
+          {
+            "index": 24,
+            "id": 271,
+            "decoded": "\n\n",
+            "is_special": false
+          },
+          {
+            "index": 25,
+            "id": 128009,
+            "decoded": "<|eot_id|>",
+            "is_special": true
+          },
+          {
+            "index": 26,
+            "id": 128006,
+            "decoded": "<|start_header_id|>",
+            "is_special": false
+          },
+          {
+            "index": 27,
+            "id": 882,
+            "decoded": "user",
+            "is_special": false
+          },
+          {
+            "index": 28,
+            "id": 128007,
+            "decoded": "<|end_header_id|>",
+            "is_special": false
+          },
+          {
+            "index": 29,
+            "id": 271,
+            "decoded": "\n\n",
+            "is_special": false
+          },
+          {
+            "index": 30,
+            "id": 8144,
+            "decoded": "Write",
+            "is_special": false
+          },
+          {
+            "index": 31,
+            "id": 264,
+            "decoded": " a",
+            "is_special": false
+          },
+          {
+            "index": 32,
+            "id": 2875,
+            "decoded": " short",
+            "is_special": false
+          },
+          {
+            "index": 33,
+            "id": 33894,
+            "decoded": " poem",
+            "is_special": false
+          },
+          {
+            "index": 34,
+            "id": 922,
+            "decoded": " about",
+            "is_special": false
+          },
+          {
+            "index": 35,
+            "id": 279,
+            "decoded": " the",
+            "is_special": false
+          },
+          {
+            "index": 36,
+            "id": 18435,
+            "decoded": " ocean",
+            "is_special": false
+          },
+          {
+            "index": 37,
+            "id": 11,
+            "decoded": ",",
+            "is_special": false
+          },
+          {
+            "index": 38,
+            "id": 912,
+            "decoded": " no",
+            "is_special": false
+          },
+          {
+            "index": 39,
+            "id": 810,
+            "decoded": " more",
+            "is_special": false
+          },
+          {
+            "index": 40,
+            "id": 1109,
+            "decoded": " than",
+            "is_special": false
+          },
+          {
+            "index": 41,
+            "id": 3116,
+            "decoded": " four",
+            "is_special": false
+          },
+          {
+            "index": 42,
+            "id": 5238,
+            "decoded": " lines",
+            "is_special": false
+          },
+          {
+            "index": 43,
+            "id": 13,
+            "decoded": ".",
+            "is_special": false
+          },
+          {
+            "index": 44,
+            "id": 128009,
+            "decoded": "<|eot_id|>",
+            "is_special": true
+          },
+          {
+            "index": 45,
+            "id": 128006,
+            "decoded": "<|start_header_id|>",
+            "is_special": false
+          },
+          {
+            "index": 46,
+            "id": 78191,
+            "decoded": "assistant",
+            "is_special": false
+          },
+          {
+            "index": 47,
+            "id": 128007,
+            "decoded": "<|end_header_id|>",
+            "is_special": false
+          },
+          {
+            "index": 48,
+            "id": 271,
+            "decoded": "\n\n",
+            "is_special": false
+          }
+        ],
+        "t_inst": {
+          "position_index": 43,
+          "semantic_name": "t_inst",
+          "token_id": 13,
+          "decoded_token": ".",
+          "model_family": "Meta-Llama-3.1-8B-Instruct",
+          "chat_template_hash": "e10ca381b1cc",
+          "context_before": [
+            " no",
+            " more",
+            " than",
+            " four",
+            " lines",
+            ".",
+            "<|eot_id|>",
+            "<|start_header_id|>",
+            "assistant",
+            "<|end_header_id|>"
+          ],
+          "context_after": [
+            "<|eot_id|>",
+            "<|start_header_id|>",
+            "assistant",
+            "<|end_header_id|>",
+            "\n\n"
+          ],
+          "method": "generic_subsequence_search"
+        },
+        "t_post": {
+          "position_index": 48,
+          "semantic_name": "t_post",
+          "token_id": 271,
+          "decoded_token": "\n\n",
+          "model_family": "Meta-Llama-3.1-8B-Instruct",
+          "chat_template_hash": "e10ca381b1cc",
+          "context_before": [
+            ".",
+            "<|eot_id|>",
+            "<|start_header_id|>",
+            "assistant",
+            "<|end_header_id|>"
+          ],
+          "context_after": [],
+          "method": "last_token_of_rendered_prompt"
+        }
+      },
+      {
+        "instruction": "What is 17 * 23?",
+        "full_token_count": 43,
+        "full_tokens": [
+          {
+            "index": 0,
+            "id": 128000,
+            "decoded": "<|begin_of_text|>",
+            "is_special": true
+          },
+          {
+            "index": 1,
+            "id": 128006,
+            "decoded": "<|start_header_id|>",
+            "is_special": false
+          },
+          {
+            "index": 2,
+            "id": 9125,
+            "decoded": "system",
+            "is_special": false
+          },
+          {
+            "index": 3,
+            "id": 128007,
+            "decoded": "<|end_header_id|>",
+            "is_special": false
+          },
+          {
+            "index": 4,
+            "id": 271,
+            "decoded": "\n\n",
+            "is_special": false
+          },
+          {
+            "index": 5,
+            "id": 38766,
+            "decoded": "Cut",
+            "is_special": false
+          },
+          {
+            "index": 6,
+            "id": 1303,
+            "decoded": "ting",
+            "is_special": false
+          },
+          {
+            "index": 7,
+            "id": 33025,
+            "decoded": " Knowledge",
+            "is_special": false
+          },
+          {
+            "index": 8,
+            "id": 2696,
+            "decoded": " Date",
+            "is_special": false
+          },
+          {
+            "index": 9,
+            "id": 25,
+            "decoded": ":",
+            "is_special": false
+          },
+          {
+            "index": 10,
+            "id": 6790,
+            "decoded": " December",
+            "is_special": false
+          },
+          {
+            "index": 11,
+            "id": 220,
+            "decoded": " ",
+            "is_special": false
+          },
+          {
+            "index": 12,
+            "id": 2366,
+            "decoded": "202",
+            "is_special": false
+          },
+          {
+            "index": 13,
+            "id": 18,
+            "decoded": "3",
+            "is_special": false
+          },
+          {
+            "index": 14,
+            "id": 198,
+            "decoded": "\n",
+            "is_special": false
+          },
+          {
+            "index": 15,
+            "id": 15724,
+            "decoded": "Today",
+            "is_special": false
+          },
+          {
+            "index": 16,
+            "id": 2696,
+            "decoded": " Date",
+            "is_special": false
+          },
+          {
+            "index": 17,
+            "id": 25,
+            "decoded": ":",
+            "is_special": false
+          },
+          {
+            "index": 18,
+            "id": 220,
+            "decoded": " ",
+            "is_special": false
+          },
+          {
+            "index": 19,
+            "id": 1627,
+            "decoded": "26",
+            "is_special": false
+          },
+          {
+            "index": 20,
+            "id": 10263,
+            "decoded": " Jul",
+            "is_special": false
+          },
+          {
+            "index": 21,
+            "id": 220,
+            "decoded": " ",
+            "is_special": false
+          },
+          {
+            "index": 22,
+            "id": 2366,
+            "decoded": "202",
+            "is_special": false
+          },
+          {
+            "index": 23,
+            "id": 19,
+            "decoded": "4",
+            "is_special": false
+          },
+          {
+            "index": 24,
+            "id": 271,
+            "decoded": "\n\n",
+            "is_special": false
+          },
+          {
+            "index": 25,
+            "id": 128009,
+            "decoded": "<|eot_id|>",
+            "is_special": true
+          },
+          {
+            "index": 26,
+            "id": 128006,
+            "decoded": "<|start_header_id|>",
+            "is_special": false
+          },
+          {
+            "index": 27,
+            "id": 882,
+            "decoded": "user",
+            "is_special": false
+          },
+          {
+            "index": 28,
+            "id": 128007,
+            "decoded": "<|end_header_id|>",
+            "is_special": false
+          },
+          {
+            "index": 29,
+            "id": 271,
+            "decoded": "\n\n",
+            "is_special": false
+          },
+          {
+            "index": 30,
+            "id": 3923,
+            "decoded": "What",
+            "is_special": false
+          },
+          {
+            "index": 31,
+            "id": 374,
+            "decoded": " is",
+            "is_special": false
+          },
+          {
+            "index": 32,
+            "id": 220,
+            "decoded": " ",
+            "is_special": false
+          },
+          {
+            "index": 33,
+            "id": 1114,
+            "decoded": "17",
+            "is_special": false
+          },
+          {
+            "index": 34,
+            "id": 353,
+            "decoded": " *",
+            "is_special": false
+          },
+          {
+            "index": 35,
+            "id": 220,
+            "decoded": " ",
+            "is_special": false
+          },
+          {
+            "index": 36,
+            "id": 1419,
+            "decoded": "23",
+            "is_special": false
+          },
+          {
+            "index": 37,
+            "id": 30,
+            "decoded": "?",
+            "is_special": false
+          },
+          {
+            "index": 38,
+            "id": 128009,
+            "decoded": "<|eot_id|>",
+            "is_special": true
+          },
+          {
+            "index": 39,
+            "id": 128006,
+            "decoded": "<|start_header_id|>",
+            "is_special": false
+          },
+          {
+            "index": 40,
+            "id": 78191,
+            "decoded": "assistant",
+            "is_special": false
+          },
+          {
+            "index": 41,
+            "id": 128007,
+            "decoded": "<|end_header_id|>",
+            "is_special": false
+          },
+          {
+            "index": 42,
+            "id": 271,
+            "decoded": "\n\n",
+            "is_special": false
+          }
+        ],
+        "t_inst": {
+          "position_index": 37,
+          "semantic_name": "t_inst",
+          "token_id": 30,
+          "decoded_token": "?",
+          "model_family": "Meta-Llama-3.1-8B-Instruct",
+          "chat_template_hash": "e10ca381b1cc",
+          "context_before": [
+            " ",
+            "17",
+            " *",
+            " ",
+            "23",
+            "?",
+            "<|eot_id|>",
+            "<|start_header_id|>",
+            "assistant",
+            "<|end_header_id|>"
+          ],
+          "context_after": [
+            "<|eot_id|>",
+            "<|start_header_id|>",
+            "assistant",
+            "<|end_header_id|>",
+            "\n\n"
+          ],
+          "method": "generic_subsequence_search"
+        },
+        "t_post": {
+          "position_index": 42,
+          "semantic_name": "t_post",
+          "token_id": 271,
+          "decoded_token": "\n\n",
+          "model_family": "Meta-Llama-3.1-8B-Instruct",
+          "chat_template_hash": "e10ca381b1cc",
+          "context_before": [
+            "?",
+            "<|eot_id|>",
+            "<|start_header_id|>",
+            "assistant",
+            "<|end_header_id|>"
+          ],
+          "context_after": [],
+          "method": "last_token_of_rendered_prompt"
+        }
+      },
+      {
+        "instruction": "Translate 'good morning' into French, German, and Japanese, and explain any cultural notes about greeting time-of-day in each.",
+        "full_token_count": 61,
+        "full_tokens": [
+          {
+            "index": 0,
+            "id": 128000,
+            "decoded": "<|begin_of_text|>",
+            "is_special": true
+          },
+          {
+            "index": 1,
+            "id": 128006,
+            "decoded": "<|start_header_id|>",
+            "is_special": false
+          },
+          {
+            "index": 2,
+            "id": 9125,
+            "decoded": "system",
+            "is_special": false
+          },
+          {
+            "index": 3,
+            "id": 128007,
+            "decoded": "<|end_header_id|>",
+            "is_special": false
+          },
+          {
+            "index": 4,
+            "id": 271,
+            "decoded": "\n\n",
+            "is_special": false
+          },
+          {
+            "index": 5,
+            "id": 38766,
+            "decoded": "Cut",
+            "is_special": false
+          },
+          {
+            "index": 6,
+            "id": 1303,
+            "decoded": "ting",
+            "is_special": false
+          },
+          {
+            "index": 7,
+            "id": 33025,
+            "decoded": " Knowledge",
+            "is_special": false
+          },
+          {
+            "index": 8,
+            "id": 2696,
+            "decoded": " Date",
+            "is_special": false
+          },
+          {
+            "index": 9,
+            "id": 25,
+            "decoded": ":",
+            "is_special": false
+          },
+          {
+            "index": 10,
+            "id": 6790,
+            "decoded": " December",
+            "is_special": false
+          },
+          {
+            "index": 11,
+            "id": 220,
+            "decoded": " ",
+            "is_special": false
+          },
+          {
+            "index": 12,
+            "id": 2366,
+            "decoded": "202",
+            "is_special": false
+          },
+          {
+            "index": 13,
+            "id": 18,
+            "decoded": "3",
+            "is_special": false
+          },
+          {
+            "index": 14,
+            "id": 198,
+            "decoded": "\n",
+            "is_special": false
+          },
+          {
+            "index": 15,
+            "id": 15724,
+            "decoded": "Today",
+            "is_special": false
+          },
+          {
+            "index": 16,
+            "id": 2696,
+            "decoded": " Date",
+            "is_special": false
+          },
+          {
+            "index": 17,
+            "id": 25,
+            "decoded": ":",
+            "is_special": false
+          },
+          {
+            "index": 18,
+            "id": 220,
+            "decoded": " ",
+            "is_special": false
+          },
+          {
+            "index": 19,
+            "id": 1627,
+            "decoded": "26",
+            "is_special": false
+          },
+          {
+            "index": 20,
+            "id": 10263,
+            "decoded": " Jul",
+            "is_special": false
+          },
+          {
+            "index": 21,
+            "id": 220,
+            "decoded": " ",
+            "is_special": false
+          },
+          {
+            "index": 22,
+            "id": 2366,
+            "decoded": "202",
+            "is_special": false
+          },
+          {
+            "index": 23,
+            "id": 19,
+            "decoded": "4",
+            "is_special": false
+          },
+          {
+            "index": 24,
+            "id": 271,
+            "decoded": "\n\n",
+            "is_special": false
+          },
+          {
+            "index": 25,
+            "id": 128009,
+            "decoded": "<|eot_id|>",
+            "is_special": true
+          },
+          {
+            "index": 26,
+            "id": 128006,
+            "decoded": "<|start_header_id|>",
+            "is_special": false
+          },
+          {
+            "index": 27,
+            "id": 882,
+            "decoded": "user",
+            "is_special": false
+          },
+          {
+            "index": 28,
+            "id": 128007,
+            "decoded": "<|end_header_id|>",
+            "is_special": false
+          },
+          {
+            "index": 29,
+            "id": 271,
+            "decoded": "\n\n",
+            "is_special": false
+          },
+          {
+            "index": 30,
+            "id": 28573,
+            "decoded": "Translate",
+            "is_special": false
+          },
+          {
+            "index": 31,
+            "id": 364,
+            "decoded": " '",
+            "is_special": false
+          },
+          {
+            "index": 32,
+            "id": 19045,
+            "decoded": "good",
+            "is_special": false
+          },
+          {
+            "index": 33,
+            "id": 6693,
+            "decoded": " morning",
+            "is_special": false
+          },
+          {
+            "index": 34,
+            "id": 6,
+            "decoded": "'",
+            "is_special": false
+          },
+          {
+            "index": 35,
+            "id": 1139,
+            "decoded": " into",
+            "is_special": false
+          },
+          {
+            "index": 36,
+            "id": 8753,
+            "decoded": " French",
+            "is_special": false
+          },
+          {
+            "index": 37,
+            "id": 11,
+            "decoded": ",",
+            "is_special": false
+          },
+          {
+            "index": 38,
+            "id": 6063,
+            "decoded": " German",
+            "is_special": false
+          },
+          {
+            "index": 39,
+            "id": 11,
+            "decoded": ",",
+            "is_special": false
+          },
+          {
+            "index": 40,
+            "id": 323,
+            "decoded": " and",
+            "is_special": false
+          },
+          {
+            "index": 41,
+            "id": 11002,
+            "decoded": " Japanese",
+            "is_special": false
+          },
+          {
+            "index": 42,
+            "id": 11,
+            "decoded": ",",
+            "is_special": false
+          },
+          {
+            "index": 43,
+            "id": 323,
+            "decoded": " and",
+            "is_special": false
+          },
+          {
+            "index": 44,
+            "id": 10552,
+            "decoded": " explain",
+            "is_special": false
+          },
+          {
+            "index": 45,
+            "id": 904,
+            "decoded": " any",
+            "is_special": false
+          },
+          {
+            "index": 46,
+            "id": 13042,
+            "decoded": " cultural",
+            "is_special": false
+          },
+          {
+            "index": 47,
+            "id": 8554,
+            "decoded": " notes",
+            "is_special": false
+          },
+          {
+            "index": 48,
+            "id": 922,
+            "decoded": " about",
+            "is_special": false
+          },
+          {
+            "index": 49,
+            "id": 43213,
+            "decoded": " greeting",
+            "is_special": false
+          },
+          {
+            "index": 50,
+            "id": 892,
+            "decoded": " time",
+            "is_special": false
+          },
+          {
+            "index": 51,
+            "id": 8838,
+            "decoded": "-of",
+            "is_special": false
+          },
+          {
+            "index": 52,
+            "id": 11477,
+            "decoded": "-day",
+            "is_special": false
+          },
+          {
+            "index": 53,
+            "id": 304,
+            "decoded": " in",
+            "is_special": false
+          },
+          {
+            "index": 54,
+            "id": 1855,
+            "decoded": " each",
+            "is_special": false
+          },
+          {
+            "index": 55,
+            "id": 13,
+            "decoded": ".",
+            "is_special": false
+          },
+          {
+            "index": 56,
+            "id": 128009,
+            "decoded": "<|eot_id|>",
+            "is_special": true
+          },
+          {
+            "index": 57,
+            "id": 128006,
+            "decoded": "<|start_header_id|>",
+            "is_special": false
+          },
+          {
+            "index": 58,
+            "id": 78191,
+            "decoded": "assistant",
+            "is_special": false
+          },
+          {
+            "index": 59,
+            "id": 128007,
+            "decoded": "<|end_header_id|>",
+            "is_special": false
+          },
+          {
+            "index": 60,
+            "id": 271,
+            "decoded": "\n\n",
+            "is_special": false
+          }
+        ],
+        "t_inst": {
+          "position_index": 55,
+          "semantic_name": "t_inst",
+          "token_id": 13,
+          "decoded_token": ".",
+          "model_family": "Meta-Llama-3.1-8B-Instruct",
+          "chat_template_hash": "e10ca381b1cc",
+          "context_before": [
+            " time",
+            "-of",
+            "-day",
+            " in",
+            " each",
+            ".",
+            "<|eot_id|>",
+            "<|start_header_id|>",
+            "assistant",
+            "<|end_header_id|>"
+          ],
+          "context_after": [
+            "<|eot_id|>",
+            "<|start_header_id|>",
+            "assistant",
+            "<|end_header_id|>",
+            "\n\n"
+          ],
+          "method": "generic_subsequence_search"
+        },
+        "t_post": {
+          "position_index": 60,
+          "semantic_name": "t_post",
+          "token_id": 271,
+          "decoded_token": "\n\n",
+          "model_family": "Meta-Llama-3.1-8B-Instruct",
+          "chat_template_hash": "e10ca381b1cc",
+          "context_before": [
+            ".",
+            "<|eot_id|>",
+            "<|start_header_id|>",
+            "assistant",
+            "<|end_header_id|>"
+          ],
+          "context_after": [],
+          "method": "last_token_of_rendered_prompt"
+        }
+      },
+      {
+        "instruction": "List three prime numbers.",
+        "full_token_count": 40,
+        "full_tokens": [
+          {
+            "index": 0,
+            "id": 128000,
+            "decoded": "<|begin_of_text|>",
+            "is_special": true
+          },
+          {
+            "index": 1,
+            "id": 128006,
+            "decoded": "<|start_header_id|>",
+            "is_special": false
+          },
+          {
+            "index": 2,
+            "id": 9125,
+            "decoded": "system",
+            "is_special": false
+          },
+          {
+            "index": 3,
+            "id": 128007,
+            "decoded": "<|end_header_id|>",
+            "is_special": false
+          },
+          {
+            "index": 4,
+            "id": 271,
+            "decoded": "\n\n",
+            "is_special": false
+          },
+          {
+            "index": 5,
+            "id": 38766,
+            "decoded": "Cut",
+            "is_special": false
+          },
+          {
+            "index": 6,
+            "id": 1303,
+            "decoded": "ting",
+            "is_special": false
+          },
+          {
+            "index": 7,
+            "id": 33025,
+            "decoded": " Knowledge",
+            "is_special": false
+          },
+          {
+            "index": 8,
+            "id": 2696,
+            "decoded": " Date",
+            "is_special": false
+          },
+          {
+            "index": 9,
+            "id": 25,
+            "decoded": ":",
+            "is_special": false
+          },
+          {
+            "index": 10,
+            "id": 6790,
+            "decoded": " December",
+            "is_special": false
+          },
+          {
+            "index": 11,
+            "id": 220,
+            "decoded": " ",
+            "is_special": false
+          },
+          {
+            "index": 12,
+            "id": 2366,
+            "decoded": "202",
+            "is_special": false
+          },
+          {
+            "index": 13,
+            "id": 18,
+            "decoded": "3",
+            "is_special": false
+          },
+          {
+            "index": 14,
+            "id": 198,
+            "decoded": "\n",
+            "is_special": false
+          },
+          {
+            "index": 15,
+            "id": 15724,
+            "decoded": "Today",
+            "is_special": false
+          },
+          {
+            "index": 16,
+            "id": 2696,
+            "decoded": " Date",
+            "is_special": false
+          },
+          {
+            "index": 17,
+            "id": 25,
+            "decoded": ":",
+            "is_special": false
+          },
+          {
+            "index": 18,
+            "id": 220,
+            "decoded": " ",
+            "is_special": false
+          },
+          {
+            "index": 19,
+            "id": 1627,
+            "decoded": "26",
+            "is_special": false
+          },
+          {
+            "index": 20,
+            "id": 10263,
+            "decoded": " Jul",
+            "is_special": false
+          },
+          {
+            "index": 21,
+            "id": 220,
+            "decoded": " ",
+            "is_special": false
+          },
+          {
+            "index": 22,
+            "id": 2366,
+            "decoded": "202",
+            "is_special": false
+          },
+          {
+            "index": 23,
+            "id": 19,
+            "decoded": "4",
+            "is_special": false
+          },
+          {
+            "index": 24,
+            "id": 271,
+            "decoded": "\n\n",
+            "is_special": false
+          },
+          {
+            "index": 25,
+            "id": 128009,
+            "decoded": "<|eot_id|>",
+            "is_special": true
+          },
+          {
+            "index": 26,
+            "id": 128006,
+            "decoded": "<|start_header_id|>",
+            "is_special": false
+          },
+          {
+            "index": 27,
+            "id": 882,
+            "decoded": "user",
+            "is_special": false
+          },
+          {
+            "index": 28,
+            "id": 128007,
+            "decoded": "<|end_header_id|>",
+            "is_special": false
+          },
+          {
+            "index": 29,
+            "id": 271,
+            "decoded": "\n\n",
+            "is_special": false
+          },
+          {
+            "index": 30,
+            "id": 861,
+            "decoded": "List",
+            "is_special": false
+          },
+          {
+            "index": 31,
+            "id": 2380,
+            "decoded": " three",
+            "is_special": false
+          },
+          {
+            "index": 32,
+            "id": 10461,
+            "decoded": " prime",
+            "is_special": false
+          },
+          {
+            "index": 33,
+            "id": 5219,
+            "decoded": " numbers",
+            "is_special": false
+          },
+          {
+            "index": 34,
+            "id": 13,
+            "decoded": ".",
+            "is_special": false
+          },
+          {
+            "index": 35,
+            "id": 128009,
+            "decoded": "<|eot_id|>",
+            "is_special": true
+          },
+          {
+            "index": 36,
+            "id": 128006,
+            "decoded": "<|start_header_id|>",
+            "is_special": false
+          },
+          {
+            "index": 37,
+            "id": 78191,
+            "decoded": "assistant",
+            "is_special": false
+          },
+          {
+            "index": 38,
+            "id": 128007,
+            "decoded": "<|end_header_id|>",
+            "is_special": false
+          },
+          {
+            "index": 39,
+            "id": 271,
+            "decoded": "\n\n",
+            "is_special": false
+          }
+        ],
+        "t_inst": {
+          "position_index": 34,
+          "semantic_name": "t_inst",
+          "token_id": 13,
+          "decoded_token": ".",
+          "model_family": "Meta-Llama-3.1-8B-Instruct",
+          "chat_template_hash": "e10ca381b1cc",
+          "context_before": [
+            "\n\n",
+            "List",
+            " three",
+            " prime",
+            " numbers",
+            ".",
+            "<|eot_id|>",
+            "<|start_header_id|>",
+            "assistant",
+            "<|end_header_id|>"
+          ],
+          "context_after": [
+            "<|eot_id|>",
+            "<|start_header_id|>",
+            "assistant",
+            "<|end_header_id|>",
+            "\n\n"
+          ],
+          "method": "generic_subsequence_search"
+        },
+        "t_post": {
+          "position_index": 39,
+          "semantic_name": "t_post",
+          "token_id": 271,
+          "decoded_token": "\n\n",
+          "model_family": "Meta-Llama-3.1-8B-Instruct",
+          "chat_template_hash": "e10ca381b1cc",
+          "context_before": [
+            ".",
+            "<|eot_id|>",
+            "<|start_header_id|>",
+            "assistant",
+            "<|end_header_id|>"
+          ],
+          "context_after": [],
+          "method": "last_token_of_rendered_prompt"
+        }
+      }
+    ]
+  },
+  "gemma-2-9b-it": {
+    "model_alias": "gemma-2-9b-it",
+    "model_path": "/home/h24/baga0553/models/gemma-2-9b-it",
+    "chat_template_present": true,
+    "samples": [
+      {
+        "instruction": "Explain how photosynthesis works.",
+        "full_token_count": 14,
+        "full_tokens": [
+          {
+            "index": 0,
+            "id": 2,
+            "decoded": "<bos>",
+            "is_special": true
+          },
+          {
+            "index": 1,
+            "id": 106,
+            "decoded": "<start_of_turn>",
+            "is_special": true
+          },
+          {
+            "index": 2,
+            "id": 1645,
+            "decoded": "user",
+            "is_special": false
+          },
+          {
+            "index": 3,
+            "id": 108,
+            "decoded": "\n",
+            "is_special": false
+          },
+          {
+            "index": 4,
+            "id": 74198,
+            "decoded": "Explain",
+            "is_special": false
+          },
+          {
+            "index": 5,
+            "id": 1368,
+            "decoded": " how",
+            "is_special": false
+          },
+          {
+            "index": 6,
+            "id": 105156,
+            "decoded": " photosynthesis",
+            "is_special": false
+          },
+          {
+            "index": 7,
+            "id": 3598,
+            "decoded": " works",
+            "is_special": false
+          },
+          {
+            "index": 8,
+            "id": 235265,
+            "decoded": ".",
+            "is_special": false
+          },
+          {
+            "index": 9,
+            "id": 107,
+            "decoded": "<end_of_turn>",
+            "is_special": true
+          },
+          {
+            "index": 10,
+            "id": 108,
+            "decoded": "\n",
+            "is_special": false
+          },
+          {
+            "index": 11,
+            "id": 106,
+            "decoded": "<start_of_turn>",
+            "is_special": true
+          },
+          {
+            "index": 12,
+            "id": 2516,
+            "decoded": "model",
+            "is_special": false
+          },
+          {
+            "index": 13,
+            "id": 108,
+            "decoded": "\n",
+            "is_special": false
+          }
+        ],
+        "t_inst": {
+          "position_index": 8,
+          "semantic_name": "t_inst",
+          "token_id": 235265,
+          "decoded_token": ".",
+          "model_family": "gemma-2-9b-it",
+          "chat_template_hash": "ecd6ae513fe1",
+          "context_before": [
+            "\n",
+            "Explain",
+            " how",
+            " photosynthesis",
+            " works",
+            ".",
+            "<end_of_turn>",
+            "\n",
+            "<start_of_turn>",
+            "model"
+          ],
+          "context_after": [
+            "<end_of_turn>",
+            "\n",
+            "<start_of_turn>",
+            "model",
+            "\n"
+          ],
+          "method": "generic_subsequence_search"
+        },
+        "t_post": {
+          "position_index": 13,
+          "semantic_name": "t_post",
+          "token_id": 108,
+          "decoded_token": "\n",
+          "model_family": "gemma-2-9b-it",
+          "chat_template_hash": "ecd6ae513fe1",
+          "context_before": [
+            ".",
+            "<end_of_turn>",
+            "\n",
+            "<start_of_turn>",
+            "model"
+          ],
+          "context_after": [],
+          "method": "last_token_of_rendered_prompt"
+        }
+      },
+      {
+        "instruction": "Write a short poem about the ocean, no more than four lines.",
+        "full_token_count": 23,
+        "full_tokens": [
+          {
+            "index": 0,
+            "id": 2,
+            "decoded": "<bos>",
+            "is_special": true
+          },
+          {
+            "index": 1,
+            "id": 106,
+            "decoded": "<start_of_turn>",
+            "is_special": true
+          },
+          {
+            "index": 2,
+            "id": 1645,
+            "decoded": "user",
+            "is_special": false
+          },
+          {
+            "index": 3,
+            "id": 108,
+            "decoded": "\n",
+            "is_special": false
+          },
+          {
+            "index": 4,
+            "id": 5559,
+            "decoded": "Write",
+            "is_special": false
+          },
+          {
+            "index": 5,
+            "id": 476,
+            "decoded": " a",
+            "is_special": false
+          },
+          {
+            "index": 6,
+            "id": 3309,
+            "decoded": " short",
+            "is_special": false
+          },
+          {
+            "index": 7,
+            "id": 19592,
+            "decoded": " poem",
+            "is_special": false
+          },
+          {
+            "index": 8,
+            "id": 1105,
+            "decoded": " about",
+            "is_special": false
+          },
+          {
+            "index": 9,
+            "id": 573,
+            "decoded": " the",
+            "is_special": false
+          },
+          {
+            "index": 10,
+            "id": 13940,
+            "decoded": " ocean",
+            "is_special": false
+          },
+          {
+            "index": 11,
+            "id": 235269,
+            "decoded": ",",
+            "is_special": false
+          },
+          {
+            "index": 12,
+            "id": 793,
+            "decoded": " no",
+            "is_special": false
+          },
+          {
+            "index": 13,
+            "id": 978,
+            "decoded": " more",
+            "is_special": false
+          },
+          {
+            "index": 14,
+            "id": 1178,
+            "decoded": " than",
+            "is_special": false
+          },
+          {
+            "index": 15,
+            "id": 2785,
+            "decoded": " four",
+            "is_special": false
+          },
+          {
+            "index": 16,
+            "id": 5453,
+            "decoded": " lines",
+            "is_special": false
+          },
+          {
+            "index": 17,
+            "id": 235265,
+            "decoded": ".",
+            "is_special": false
+          },
+          {
+            "index": 18,
+            "id": 107,
+            "decoded": "<end_of_turn>",
+            "is_special": true
+          },
+          {
+            "index": 19,
+            "id": 108,
+            "decoded": "\n",
+            "is_special": false
+          },
+          {
+            "index": 20,
+            "id": 106,
+            "decoded": "<start_of_turn>",
+            "is_special": true
+          },
+          {
+            "index": 21,
+            "id": 2516,
+            "decoded": "model",
+            "is_special": false
+          },
+          {
+            "index": 22,
+            "id": 108,
+            "decoded": "\n",
+            "is_special": false
+          }
+        ],
+        "t_inst": {
+          "position_index": 17,
+          "semantic_name": "t_inst",
+          "token_id": 235265,
+          "decoded_token": ".",
+          "model_family": "gemma-2-9b-it",
+          "chat_template_hash": "ecd6ae513fe1",
+          "context_before": [
+            " no",
+            " more",
+            " than",
+            " four",
+            " lines",
+            ".",
+            "<end_of_turn>",
+            "\n",
+            "<start_of_turn>",
+            "model"
+          ],
+          "context_after": [
+            "<end_of_turn>",
+            "\n",
+            "<start_of_turn>",
+            "model",
+            "\n"
+          ],
+          "method": "generic_subsequence_search"
+        },
+        "t_post": {
+          "position_index": 22,
+          "semantic_name": "t_post",
+          "token_id": 108,
+          "decoded_token": "\n",
+          "model_family": "gemma-2-9b-it",
+          "chat_template_hash": "ecd6ae513fe1",
+          "context_before": [
+            ".",
+            "<end_of_turn>",
+            "\n",
+            "<start_of_turn>",
+            "model"
+          ],
+          "context_after": [],
+          "method": "last_token_of_rendered_prompt"
+        }
+      },
+      {
+        "instruction": "What is 17 * 23?",
+        "full_token_count": 19,
+        "full_tokens": [
+          {
+            "index": 0,
+            "id": 2,
+            "decoded": "<bos>",
+            "is_special": true
+          },
+          {
+            "index": 1,
+            "id": 106,
+            "decoded": "<start_of_turn>",
+            "is_special": true
+          },
+          {
+            "index": 2,
+            "id": 1645,
+            "decoded": "user",
+            "is_special": false
+          },
+          {
+            "index": 3,
+            "id": 108,
+            "decoded": "\n",
+            "is_special": false
+          },
+          {
+            "index": 4,
+            "id": 1841,
+            "decoded": "What",
+            "is_special": false
+          },
+          {
+            "index": 5,
+            "id": 603,
+            "decoded": " is",
+            "is_special": false
+          },
+          {
+            "index": 6,
+            "id": 235248,
+            "decoded": " ",
+            "is_special": false
+          },
+          {
+            "index": 7,
+            "id": 235274,
+            "decoded": "1",
+            "is_special": false
+          },
+          {
+            "index": 8,
+            "id": 235324,
+            "decoded": "7",
+            "is_special": false
+          },
+          {
+            "index": 9,
+            "id": 649,
+            "decoded": " *",
+            "is_special": false
+          },
+          {
+            "index": 10,
+            "id": 235248,
+            "decoded": " ",
+            "is_special": false
+          },
+          {
+            "index": 11,
+            "id": 235284,
+            "decoded": "2",
+            "is_special": false
+          },
+          {
+            "index": 12,
+            "id": 235304,
+            "decoded": "3",
+            "is_special": false
+          },
+          {
+            "index": 13,
+            "id": 235336,
+            "decoded": "?",
+            "is_special": false
+          },
+          {
+            "index": 14,
+            "id": 107,
+            "decoded": "<end_of_turn>",
+            "is_special": true
+          },
+          {
+            "index": 15,
+            "id": 108,
+            "decoded": "\n",
+            "is_special": false
+          },
+          {
+            "index": 16,
+            "id": 106,
+            "decoded": "<start_of_turn>",
+            "is_special": true
+          },
+          {
+            "index": 17,
+            "id": 2516,
+            "decoded": "model",
+            "is_special": false
+          },
+          {
+            "index": 18,
+            "id": 108,
+            "decoded": "\n",
+            "is_special": false
+          }
+        ],
+        "t_inst": {
+          "position_index": 13,
+          "semantic_name": "t_inst",
+          "token_id": 235336,
+          "decoded_token": "?",
+          "model_family": "gemma-2-9b-it",
+          "chat_template_hash": "ecd6ae513fe1",
+          "context_before": [
+            "7",
+            " *",
+            " ",
+            "2",
+            "3",
+            "?",
+            "<end_of_turn>",
+            "\n",
+            "<start_of_turn>",
+            "model"
+          ],
+          "context_after": [
+            "<end_of_turn>",
+            "\n",
+            "<start_of_turn>",
+            "model",
+            "\n"
+          ],
+          "method": "generic_subsequence_search"
+        },
+        "t_post": {
+          "position_index": 18,
+          "semantic_name": "t_post",
+          "token_id": 108,
+          "decoded_token": "\n",
+          "model_family": "gemma-2-9b-it",
+          "chat_template_hash": "ecd6ae513fe1",
+          "context_before": [
+            "?",
+            "<end_of_turn>",
+            "\n",
+            "<start_of_turn>",
+            "model"
+          ],
+          "context_after": [],
+          "method": "last_token_of_rendered_prompt"
+        }
+      },
+      {
+        "instruction": "Translate 'good morning' into French, German, and Japanese, and explain any cultural notes about greeting time-of-day in each.",
+        "full_token_count": 37,
+        "full_tokens": [
+          {
+            "index": 0,
+            "id": 2,
+            "decoded": "<bos>",
+            "is_special": true
+          },
+          {
+            "index": 1,
+            "id": 106,
+            "decoded": "<start_of_turn>",
+            "is_special": true
+          },
+          {
+            "index": 2,
+            "id": 1645,
+            "decoded": "user",
+            "is_special": false
+          },
+          {
+            "index": 3,
+            "id": 108,
+            "decoded": "\n",
+            "is_special": false
+          },
+          {
+            "index": 4,
+            "id": 49688,
+            "decoded": "Translate",
+            "is_special": false
+          },
+          {
+            "index": 5,
+            "id": 777,
+            "decoded": " '",
+            "is_special": false
+          },
+          {
+            "index": 6,
+            "id": 8311,
+            "decoded": "good",
+            "is_special": false
+          },
+          {
+            "index": 7,
+            "id": 5764,
+            "decoded": " morning",
+            "is_special": false
+          },
+          {
+            "index": 8,
+            "id": 235303,
+            "decoded": "'",
+            "is_special": false
+          },
+          {
+            "index": 9,
+            "id": 1280,
+            "decoded": " into",
+            "is_special": false
+          },
+          {
+            "index": 10,
+            "id": 6987,
+            "decoded": " French",
+            "is_special": false
+          },
+          {
+            "index": 11,
+            "id": 235269,
+            "decoded": ",",
+            "is_special": false
+          },
+          {
+            "index": 12,
+            "id": 5132,
+            "decoded": " German",
+            "is_special": false
+          },
+          {
+            "index": 13,
+            "id": 235269,
+            "decoded": ",",
+            "is_special": false
+          },
+          {
+            "index": 14,
+            "id": 578,
+            "decoded": " and",
+            "is_special": false
+          },
+          {
+            "index": 15,
+            "id": 11430,
+            "decoded": " Japanese",
+            "is_special": false
+          },
+          {
+            "index": 16,
+            "id": 235269,
+            "decoded": ",",
+            "is_special": false
+          },
+          {
+            "index": 17,
+            "id": 578,
+            "decoded": " and",
+            "is_special": false
+          },
+          {
+            "index": 18,
+            "id": 10200,
+            "decoded": " explain",
+            "is_special": false
+          },
+          {
+            "index": 19,
+            "id": 1089,
+            "decoded": " any",
+            "is_special": false
+          },
+          {
+            "index": 20,
+            "id": 10831,
+            "decoded": " cultural",
+            "is_special": false
+          },
+          {
+            "index": 21,
+            "id": 8467,
+            "decoded": " notes",
+            "is_special": false
+          },
+          {
+            "index": 22,
+            "id": 1105,
+            "decoded": " about",
+            "is_special": false
+          },
+          {
+            "index": 23,
+            "id": 32338,
+            "decoded": " greeting",
+            "is_special": false
+          },
+          {
+            "index": 24,
+            "id": 1069,
+            "decoded": " time",
+            "is_special": false
+          },
+          {
+            "index": 25,
+            "id": 235290,
+            "decoded": "-",
+            "is_special": false
+          },
+          {
+            "index": 26,
+            "id": 559,
+            "decoded": "of",
+            "is_special": false
+          },
+          {
+            "index": 27,
+            "id": 235290,
+            "decoded": "-",
+            "is_special": false
+          },
+          {
+            "index": 28,
+            "id": 1311,
+            "decoded": "day",
+            "is_special": false
+          },
+          {
+            "index": 29,
+            "id": 575,
+            "decoded": " in",
+            "is_special": false
+          },
+          {
+            "index": 30,
+            "id": 1853,
+            "decoded": " each",
+            "is_special": false
+          },
+          {
+            "index": 31,
+            "id": 235265,
+            "decoded": ".",
+            "is_special": false
+          },
+          {
+            "index": 32,
+            "id": 107,
+            "decoded": "<end_of_turn>",
+            "is_special": true
+          },
+          {
+            "index": 33,
+            "id": 108,
+            "decoded": "\n",
+            "is_special": false
+          },
+          {
+            "index": 34,
+            "id": 106,
+            "decoded": "<start_of_turn>",
+            "is_special": true
+          },
+          {
+            "index": 35,
+            "id": 2516,
+            "decoded": "model",
+            "is_special": false
+          },
+          {
+            "index": 36,
+            "id": 108,
+            "decoded": "\n",
+            "is_special": false
+          }
+        ],
+        "t_inst": {
+          "position_index": 31,
+          "semantic_name": "t_inst",
+          "token_id": 235265,
+          "decoded_token": ".",
+          "model_family": "gemma-2-9b-it",
+          "chat_template_hash": "ecd6ae513fe1",
+          "context_before": [
+            "of",
+            "-",
+            "day",
+            " in",
+            " each",
+            ".",
+            "<end_of_turn>",
+            "\n",
+            "<start_of_turn>",
+            "model"
+          ],
+          "context_after": [
+            "<end_of_turn>",
+            "\n",
+            "<start_of_turn>",
+            "model",
+            "\n"
+          ],
+          "method": "generic_subsequence_search"
+        },
+        "t_post": {
+          "position_index": 36,
+          "semantic_name": "t_post",
+          "token_id": 108,
+          "decoded_token": "\n",
+          "model_family": "gemma-2-9b-it",
+          "chat_template_hash": "ecd6ae513fe1",
+          "context_before": [
+            ".",
+            "<end_of_turn>",
+            "\n",
+            "<start_of_turn>",
+            "model"
+          ],
+          "context_after": [],
+          "method": "last_token_of_rendered_prompt"
+        }
+      },
+      {
+        "instruction": "List three prime numbers.",
+        "full_token_count": 14,
+        "full_tokens": [
+          {
+            "index": 0,
+            "id": 2,
+            "decoded": "<bos>",
+            "is_special": true
+          },
+          {
+            "index": 1,
+            "id": 106,
+            "decoded": "<start_of_turn>",
+            "is_special": true
+          },
+          {
+            "index": 2,
+            "id": 1645,
+            "decoded": "user",
+            "is_special": false
+          },
+          {
+            "index": 3,
+            "id": 108,
+            "decoded": "\n",
+            "is_special": false
+          },
+          {
+            "index": 4,
+            "id": 1268,
+            "decoded": "List",
+            "is_special": false
+          },
+          {
+            "index": 5,
+            "id": 2149,
+            "decoded": " three",
+            "is_special": false
+          },
+          {
+            "index": 6,
+            "id": 9280,
+            "decoded": " prime",
+            "is_special": false
+          },
+          {
+            "index": 7,
+            "id": 5968,
+            "decoded": " numbers",
+            "is_special": false
+          },
+          {
+            "index": 8,
+            "id": 235265,
+            "decoded": ".",
+            "is_special": false
+          },
+          {
+            "index": 9,
+            "id": 107,
+            "decoded": "<end_of_turn>",
+            "is_special": true
+          },
+          {
+            "index": 10,
+            "id": 108,
+            "decoded": "\n",
+            "is_special": false
+          },
+          {
+            "index": 11,
+            "id": 106,
+            "decoded": "<start_of_turn>",
+            "is_special": true
+          },
+          {
+            "index": 12,
+            "id": 2516,
+            "decoded": "model",
+            "is_special": false
+          },
+          {
+            "index": 13,
+            "id": 108,
+            "decoded": "\n",
+            "is_special": false
+          }
+        ],
+        "t_inst": {
+          "position_index": 8,
+          "semantic_name": "t_inst",
+          "token_id": 235265,
+          "decoded_token": ".",
+          "model_family": "gemma-2-9b-it",
+          "chat_template_hash": "ecd6ae513fe1",
+          "context_before": [
+            "\n",
+            "List",
+            " three",
+            " prime",
+            " numbers",
+            ".",
+            "<end_of_turn>",
+            "\n",
+            "<start_of_turn>",
+            "model"
+          ],
+          "context_after": [
+            "<end_of_turn>",
+            "\n",
+            "<start_of_turn>",
+            "model",
+            "\n"
+          ],
+          "method": "generic_subsequence_search"
+        },
+        "t_post": {
+          "position_index": 13,
+          "semantic_name": "t_post",
+          "token_id": 108,
+          "decoded_token": "\n",
+          "model_family": "gemma-2-9b-it",
+          "chat_template_hash": "ecd6ae513fe1",
+          "context_before": [
+            ".",
+            "<end_of_turn>",
+            "\n",
+            "<start_of_turn>",
+            "model"
+          ],
+          "context_after": [],
+          "method": "last_token_of_rendered_prompt"
+        }
+      }
+    ]
+  }
+}
