@@ -108,6 +108,12 @@ def main(args):
     out_dir = os.path.join(args.output_dir, model_alias)
     langs = args.langs.split(',')
 
+    real_mechs = args.mechanisms.split(',') if args.mechanisms else REAL_MECHS
+    all_conds = real_mechs + ['placebo']
+    if args.mechanisms:
+        print(f"Using --mechanisms override: {real_mechs} (module default REAL_MECHS={REAL_MECHS} "
+              f"NOT used)\n")
+
     keep_ids = None
     if args.ids_key:
         with open(SPLITS_PATH) as f:
@@ -135,10 +141,10 @@ def main(args):
                 continue
             by_id.setdefault(c['id'], {})[c['condition']] = c['instruction']
 
-        print(f"\n[{lang}] Extracting paired diffs for {ALL_CONDS}  "
+        print(f"\n[{lang}] Extracting paired diffs for {all_conds}  "
               f"({len(by_id)} candidate instructions after id filtering)...")
         diffs_by_mech, ids_by_mech = {}, {}
-        for mech in ALL_CONDS:
+        for mech in all_conds:
             pids = [pid for pid in by_id if 'plain' in by_id[pid] and mech in by_id[pid]]
             plain_instrs = [by_id[pid]['plain'] for pid in pids]
             mech_instrs = [by_id[pid][mech] for pid in pids]
@@ -191,6 +197,16 @@ if __name__ == '__main__':
                               "(e.g. 'direction_ids', 'test_ids', 'cross_lingual_direction_ids'). "
                               "Default: no filtering, use every matched instruction.")
     parser.add_argument('--batch_size',  type=int, default=8)
+    parser.add_argument('--mechanisms',  type=str, default=None,
+                         help="Comma-separated real-mechanism names to extract (placebo is always "
+                              "added automatically) -- overrides the module-level REAL_MECHS "
+                              "default. Needed for any mechanism set other than the original 6 "
+                              "(e.g. the corrected taxonomy's "
+                              "prefix_injection,refusal_suppression,persona_roleplay,"
+                              "encoding_obfuscation,payload_splitting,distractors_negated), since "
+                              "the default would silently look for mechanisms that no longer exist "
+                              "in templates_en.json (missing conditions -> n=0 with a warning, not "
+                              "an error) while never attempting ones it doesn't know about at all.")
     args = parser.parse_args()
     if args.model_alias is None:
         args.model_alias = os.path.basename(args.model_path)

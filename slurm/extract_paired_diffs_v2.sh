@@ -45,13 +45,17 @@ IDS_KEY_ARG=""
 if [ -n "$IDS_KEY" ]; then
     IDS_KEY_ARG="--ids_key $IDS_KEY"
 fi
+MECHANISMS_ARG=""
+if [ -n "$MECHANISMS" ]; then
+    MECHANISMS_ARG="--mechanisms $MECHANISMS"
+fi
 
 cd ~/new_experiment
 mkdir -p slurm/logs
 source ~/thesis_experiment/Multilingual-Refusal/venv/bin/activate
 export PYTHONPATH=/home/h24/baga0553/thesis_experiment/Multilingual-Refusal:/home/h24/baga0553/experiment_thesis:$PYTHONPATH
 
-echo "Model: $MODEL_ALIAS  Langs: $LANGS  Suffix: $SUFFIX  ids_key: ${IDS_KEY:-none}  Start: $(date)"
+echo "Model: $MODEL_ALIAS  Langs: $LANGS  Suffix: $SUFFIX  ids_key: ${IDS_KEY:-none}  mechanisms: ${MECHANISMS:-default(old 6)}  Start: $(date)"
 
 python scripts/18_extract_paired_diffs.py \
     --model_path  "$MODEL_PATH" \
@@ -60,6 +64,7 @@ python scripts/18_extract_paired_diffs.py \
     --langs       "$LANGS" \
     --suffix      "$SUFFIX" \
     $IDS_KEY_ARG \
+    $MECHANISMS_ARG \
     --batch_size  8
 
 echo "Done: $(date)"
