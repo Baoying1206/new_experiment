@@ -118,6 +118,39 @@ def main(args):
     ids = sorted(pid for pid in by_id if 'plain' in by_id[pid] and all(m in by_id[pid] for m in ALL_CONDS))
     print(f"{len(ids)} instructions with plain + all 7 conditions present\n")
 
+    out_dir = os.path.join(args.output_dir, args.model_alias)
+    out_path = os.path.join(out_dir, f'delta_r_h_{args.lang}{args.suffix}_{args.ids_key}.pt')
+
+    if args.dry_run:
+        print("=== DRY RUN (no model loaded, no GPU work) ===")
+        print(f"  model_alias:            {args.model_alias}")
+        print(f"  ids_key:                {args.ids_key}")
+        print(f"  expected instruction count (splits.json['{args.ids_key}']): {len(keep_ids)}")
+        print(f"  actual matched instruction count (plain + all 7 conditions present): {len(ids)}")
+        if len(ids) != len(keep_ids):
+            print(f"  WARNING: matched count != splits.json count -- some ids in "
+                  f"splits.json['{args.ids_key}'] are missing from completions_{args.lang}{args.suffix}.json "
+                  f"(missing conditions or entirely absent id). {len(keep_ids) - len(ids)} ids would be dropped.")
+        print(f"  conditions: {ALL_CONDS} ({len(REAL_MECHS)} real mechanisms + placebo)")
+        print(f"  axis file (refusal_direction v3): "
+              f"{os.path.join(v3_dir, f'refusal_dir_v3_{args.lang}.pt')}  "
+              f"exists={os.path.exists(os.path.join(v3_dir, f'refusal_dir_v3_{args.lang}.pt'))}")
+        print(f"  axis file (harmfulness_direction v2): "
+              f"{os.path.join(v2_dir, f'harmfulness_dir_v2_{args.lang}.pt')}  "
+              f"exists={os.path.exists(os.path.join(v2_dir, f'harmfulness_dir_v2_{args.lang}.pt'))}")
+        print(f"  refusal_direction shape:    {tuple(refusal_dir.shape)}  (n_layers, d_model)")
+        print(f"  harmfulness_direction shape: {tuple(harmfulness_dir.shape)}  (n_layers, d_model)")
+        n_layers_expected = refusal_dir.shape[0]
+        print(f"  expected delta_R/delta_H tensor shape per condition: "
+              f"[{len(ids)}, {n_layers_expected}]  (n_instructions, n_layers)")
+        print(f"  output path: {out_path}")
+        if os.path.exists(out_path):
+            print(f"  WARNING: output path already exists -- running without --dry_run WILL OVERWRITE IT.")
+        else:
+            print(f"  output path does not exist yet -- safe to write.")
+        print("\nDRY RUN complete -- no GPU job, no files written. Re-run without --dry_run to extract.")
+        return
+
     print("Loading model...")
     model_base = construct_model_base(args.model_path, lang=args.lang)
     n_layers = model_base.model.config.num_hidden_layers
@@ -182,9 +215,7 @@ def main(args):
     delta_R_pc = {mech: delta_R[mech] - delta_R['placebo'] for mech in REAL_MECHS}
     delta_H_pc = {mech: delta_H[mech] - delta_H['placebo'] for mech in REAL_MECHS}
 
-    out_dir = os.path.join(args.output_dir, args.model_alias)
     os.makedirs(out_dir, exist_ok=True)
-    out_path = os.path.join(out_dir, f'delta_r_h_{args.lang}{args.suffix}_{args.ids_key}.pt')
     torch.save({
         'instruction_ids': ids, 'n_layers': n_layers, 'ids_key': args.ids_key,
         'delta_R': delta_R, 'delta_H': delta_H,
@@ -202,5 +233,8 @@ if __name__ == '__main__':
     parser.add_argument('--lang',        type=str, default='en')
     parser.add_argument('--suffix',      type=str, default='_full572')
     parser.add_argument('--ids_key',     type=str, default='direction_ids')
+    parser.add_argument('--dry_run',     action='store_true',
+                         help="Print planned config (model/ids_key/counts/shapes/paths) and exit "
+                              "without loading the model or writing any file.")
     args = parser.parse_args()
     main(args)
