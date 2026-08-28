@@ -11,6 +11,14 @@ onto a single shared position. This is the literal Experiment 2 requirement.
   delta_H_i,mech = dot(act(mech, x_i, t_inst) - act(plain, x_i, t_inst_of_plain),
                         harmfulness_direction_hat)   [per layer]
 
+refusal_direction is the v3 refused-vs-accepted behavioral direction
+(scripts/26_rebuild_refusal_direction_behavioral.py, output_v3_behavioral_refusal/),
+matching arXiv 2507.11878's actual contrast -- NOT the v2 harmful-vs-harmless
+simplification (output_v2_dual_position/), superseded once v3 validated well
+(large held-out Cohen's d) and showed lower collinearity with
+harmfulness_direction than v2 did. harmfulness_direction is still v2
+(harmful-vs-harmless at t_inst already matches the paper).
+
 t_post is the templated/plain prompt's own last token (always well-defined,
 same method as before). t_inst for a TEMPLATED condition is located
 structurally (scripts/utils/token_positions.py's get_user_turn_end_position:
@@ -82,8 +90,14 @@ def extract_sequence_and_positions(model_base, text, model_alias, n_layers):
 def main(args):
     from pipeline.model_utils.model_factory import construct_model_base
 
+    # refusal_direction: v3 (refused-vs-accepted, matching arXiv 2507.11878's actual
+    # contrast, validated via held-out Cohen's d in
+    # scripts/26_rebuild_refusal_direction_behavioral.py) -- NOT v2 (harmful-vs-harmless,
+    # the earlier documented simplification, superseded once the behavioral version
+    # was confirmed to validate well and to be less collinear with harmfulness_direction).
+    v3_dir = os.path.join(args.output_dir, 'output_v3_behavioral_refusal', args.model_alias)
     v2_dir = os.path.join(args.output_dir, 'output_v2_dual_position', args.model_alias)
-    refusal_dir = torch.load(os.path.join(v2_dir, f'refusal_dir_v2_{args.lang}.pt'), map_location='cpu').float()
+    refusal_dir = torch.load(os.path.join(v3_dir, f'refusal_dir_v3_{args.lang}.pt'), map_location='cpu').float()
     harmfulness_dir = torch.load(os.path.join(v2_dir, f'harmfulness_dir_v2_{args.lang}.pt'), map_location='cpu').float()
     refusal_hat = F.normalize(refusal_dir, dim=-1)        # [n_layers, d_model]
     harmfulness_hat = F.normalize(harmfulness_dir, dim=-1)  # [n_layers, d_model]
