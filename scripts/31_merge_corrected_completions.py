@@ -8,9 +8,9 @@ instead of paying for a full 8-condition regeneration:
     _taxonomy_correction_note -- only persona_roleplay's CO/MG *label*
     changed, not its template text or generated completions).
   - completions_{lang}{new_suffix}.json: the freshly-generated NEW mechanisms
-    (payload_splitting, distractor_instructions), built from
+    (payload_splitting, distractors_negated), built from
     generation_input_{lang}{new_suffix}.json (02_build_templated_data.py
-    --only_mechanisms payload_splitting,distractor_instructions --skip_plain).
+    --only_mechanisms payload_splitting,distractors_negated --skip_plain).
 
 Output: completions_{lang}{corrected_suffix}.json, with exactly 8 conditions
 per instruction id (KEPT_CONDITIONS + NEW_MECHANISMS), same schema as any
@@ -31,7 +31,7 @@ import os
 SCRIPT_DIR = os.path.dirname(__file__)
 KEPT_CONDITIONS = ['plain', 'placebo', 'prefix_injection', 'refusal_suppression',
                     'persona_roleplay', 'encoding_obfuscation']
-NEW_MECHANISMS = ['payload_splitting', 'distractor_instructions']
+NEW_MECHANISMS = ['payload_splitting', 'distractors_negated']
 ALL_CORRECTED_CONDITIONS = KEPT_CONDITIONS + NEW_MECHANISMS
 
 
