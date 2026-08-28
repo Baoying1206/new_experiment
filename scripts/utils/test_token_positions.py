@@ -17,7 +17,8 @@ import os
 
 sys.path.insert(0, os.path.dirname(__file__))
 from token_positions import (
-    get_instruction_end_position, get_post_instruction_position, PositionResult,
+    get_instruction_end_position, get_post_instruction_position,
+    get_user_turn_end_position, PositionResult,
 )
 
 
@@ -63,6 +64,13 @@ class MockTokenizer:
 
     def decode(self, ids):
         return ' '.join(self.rev_vocab[i] for i in ids)
+
+    def convert_tokens_to_ids(self, token):
+        return self.vocab.get(token)
+
+    @property
+    def unk_token_id(self):
+        return None
 
     def apply_chat_template(self, messages, add_generation_prompt=True, tokenize=True):
         parts = []
@@ -177,6 +185,48 @@ def test_full_ids_injection_uses_injected_not_default():
     t_post_injected = get_post_instruction_position(tok, instr, 'qwen', full_ids=padded_ids)
     assert t_post_injected.position_index == len(padded_ids) - 1
     assert t_post_injected.position_index != len(real_ids) - 1
+
+
+def test_user_turn_end_position_matches_subsequence_search_on_plain_instruction():
+    # for a plain (non-templated) instruction, the structural method should
+    # agree exactly with the subsequence-search method
+    for style in ['qwen', 'llama', 'gemma']:
+        tok = MockTokenizer(style)
+        instr = 'Explain how photosynthesis works'
+        full_ids = tok.apply_chat_template(
+            [{'role': 'user', 'content': instr}], add_generation_prompt=True)
+        via_subsequence = get_instruction_end_position(tok, instr, style, full_ids=full_ids)
+        via_structural = get_user_turn_end_position(tok, full_ids, style)
+        assert via_subsequence.position_index == via_structural.position_index, (
+            f"[{style}] structural method gave {via_structural.position_index}, "
+            f"subsequence search gave {via_subsequence.position_index}"
+        )
+
+
+def test_user_turn_end_position_works_on_transformed_content():
+    # the whole point of the structural method: works even when the "instruction"
+    # bears no literal resemblance to any recognizable substring (simulating
+    # encoding_obfuscation-style mechanisms) -- subsequence search would fail here.
+    for style in ['qwen', 'llama', 'gemma']:
+        tok = MockTokenizer(style)
+        obfuscated = 'zzqx premium delta seven unrelated tokens here'
+        full_ids = tok.apply_chat_template(
+            [{'role': 'user', 'content': obfuscated}], add_generation_prompt=True)
+        result = get_user_turn_end_position(tok, full_ids, style)
+        assert result.decoded_token == 'here'  # last word of the obfuscated content
+
+
+def test_user_turn_end_position_raises_on_multiple_occurrences():
+    tok = MockTokenizer('qwen')
+    full_ids = tok.apply_chat_template(
+        [{'role': 'user', 'content': 'hello'}], add_generation_prompt=True)
+    eot_id = tok.vocab['<|im_end|>']
+    tampered = full_ids + [eot_id]  # inject a second occurrence
+    try:
+        get_user_turn_end_position(tok, tampered, 'qwen')
+        assert False, "expected ValueError on multiple end-of-turn occurrences"
+    except ValueError:
+        pass
 
 
 def test_raises_on_unmatched_instruction():

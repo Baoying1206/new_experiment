@@ -173,3 +173,74 @@ def get_instruction_end_position(tokenizer, instruction, model_family, system=No
 # generic subsequence search fails validation for a given model family -- do not
 # pre-populate with unverified guesses.
 MODEL_FAMILY_ADAPTERS = {}
+
+
+# Confirmed via scripts/audits/audit_token_positions.py (real tokenizers, all 3
+# models, output/audits/token_position_audit.md) and scripts/23_extract_reference_directions.py's
+# dry runs against the real pipeline: the token immediately AFTER t_inst is
+# always this one, closing the user's turn. Used by get_user_turn_end_position
+# below for a position-finding method that works even when the raw instruction
+# text is not recoverable as a literal substring (e.g. the encoding_obfuscation
+# mechanism transforms the instruction text itself) -- unlike
+# get_instruction_end_position's subsequence search, which requires the literal
+# instruction text to still be present.
+EOT_TOKEN_STR_BY_FAMILY_SUBSTRING = [
+    ('qwen', '<|im_end|>'),
+    ('llama', '<|eot_id|>'),
+    ('gemma', '<end_of_turn>'),
+]
+
+
+def _eot_token_str_for_family(model_family):
+    fam_lower = model_family.lower()
+    for substr, tok in EOT_TOKEN_STR_BY_FAMILY_SUBSTRING:
+        if substr in fam_lower:
+            return tok
+    raise ValueError(
+        f"No known end-of-turn token for model_family={model_family!r} -- add an "
+        f"entry to EOT_TOKEN_STR_BY_FAMILY_SUBSTRING after confirming it via "
+        f"scripts/audits/audit_token_positions.py for this model, don't guess."
+    )
+
+
+def get_user_turn_end_position(tokenizer, full_ids, model_family) -> PositionResult:
+    """t_inst, located structurally (last token before the user-turn's closing
+    special token) rather than via subsequence search. Works on ANY user-turn
+    content, including template-wrapped or encoded/obfuscated instructions
+    where the raw instruction text is no longer recoverable as a literal
+    substring -- use this (not get_instruction_end_position) for templated
+    conditions in delta_R/delta_H extraction. full_ids must be the actual
+    tokenized sequence the activations were extracted from (e.g. from
+    model_base.tokenize_instructions_fn), batch_size=1 / no padding.
+
+    Assumes a single-turn conversation (exactly one occurrence of the
+    end-of-turn token, closing the user's message) -- true for this project's
+    prompts (system=None, one user turn, then the assistant generation
+    prompt). Raises ValueError if that assumption doesn't hold (0 or >1
+    occurrences), rather than silently picking one."""
+    eot_str = _eot_token_str_for_family(model_family)
+    eot_id = tokenizer.convert_tokens_to_ids(eot_str)
+    if eot_id is None or eot_id == getattr(tokenizer, 'unk_token_id', None):
+        raise ValueError(f"Could not resolve end-of-turn token {eot_str!r} to a valid id "
+                          f"for model_family={model_family!r}")
+
+    occurrences = [i for i, tid in enumerate(full_ids) if tid == eot_id]
+    if len(occurrences) != 1:
+        raise ValueError(
+            f"Expected exactly 1 occurrence of the end-of-turn token {eot_str!r} "
+            f"(id={eot_id}) in full_ids, found {len(occurrences)} -- this method "
+            f"assumes a single-turn conversation; investigate before using it on "
+            f"multi-turn or differently-structured prompts. full_ids={full_ids}"
+        )
+    idx = occurrences[0] - 1
+    if idx < 0:
+        raise ValueError(f"End-of-turn token found at position 0 -- no content before it "
+                          f"to treat as t_inst.")
+    return PositionResult(
+        position_index=idx, semantic_name='t_inst',
+        token_id=full_ids[idx], decoded_token=tokenizer.decode([full_ids[idx]]),
+        model_family=model_family, chat_template_hash=_chat_template_hash(tokenizer),
+        context_before=_decode_context(tokenizer, full_ids, idx)[:-1],
+        context_after=_decode_context(tokenizer, full_ids, idx)[len(_decode_context(tokenizer, full_ids, idx)) // 2 + 1:],
+        method='structural_end_of_turn_boundary',
+    )
