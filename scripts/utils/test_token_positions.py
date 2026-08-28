@@ -145,6 +145,40 @@ def test_no_bare_int_returned():
         assert required_field in d, f"missing required metadata field: {required_field}"
 
 
+def test_full_ids_injection_matches_default():
+    # a caller passing pre-built full_ids (e.g. from a pipeline's own
+    # tokenize_instructions_fn) must get the same positions as the default
+    # apply_chat_template path, when the ids are actually identical -- this
+    # is the mechanism real direction extraction relies on to avoid a
+    # tokenization-pipeline mismatch between position-finding and the
+    # activations actually being indexed.
+    for style in ['qwen', 'llama', 'gemma']:
+        tok = MockTokenizer(style)
+        instr = 'What is the capital of France'
+        default_ids = tok.apply_chat_template(
+            [{'role': 'user', 'content': instr}], add_generation_prompt=True)
+        t_inst_default = get_instruction_end_position(tok, instr, style)
+        t_post_default = get_post_instruction_position(tok, instr, style)
+        t_inst_injected = get_instruction_end_position(tok, instr, style, full_ids=default_ids)
+        t_post_injected = get_post_instruction_position(tok, instr, style, full_ids=default_ids)
+        assert t_inst_default.position_index == t_inst_injected.position_index
+        assert t_post_default.position_index == t_post_injected.position_index
+
+
+def test_full_ids_injection_uses_injected_not_default():
+    # if the injected full_ids differs from what apply_chat_template would
+    # produce, the result must reflect the INJECTED sequence, not silently
+    # fall back to recomputing via apply_chat_template.
+    tok = MockTokenizer('qwen')
+    instr = 'What is the capital of France'
+    real_ids = tok.apply_chat_template(
+        [{'role': 'user', 'content': instr}], add_generation_prompt=True)
+    padded_ids = real_ids + [tok._id_for('\n')]  # append one extra token
+    t_post_injected = get_post_instruction_position(tok, instr, 'qwen', full_ids=padded_ids)
+    assert t_post_injected.position_index == len(padded_ids) - 1
+    assert t_post_injected.position_index != len(real_ids) - 1
+
+
 def test_raises_on_unmatched_instruction():
     # simulate a template that transforms the instruction text so it can no
     # longer be found verbatim -- must raise, not silently guess

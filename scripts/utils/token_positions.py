@@ -79,7 +79,20 @@ def _decode_context(tokenizer, ids, center, window=5):
 
 
 def render_full_prompt_ids(tokenizer, instruction, model_family, system=None):
-    """Applies the chat template with add_generation_prompt=True. Returns token id list."""
+    """Applies the tokenizer's OWN chat template (add_generation_prompt=True) via
+    apply_chat_template. Returns token id list.
+
+    WARNING: this is only a reasonable default for a generic, model-agnostic check
+    (e.g. scripts/audits/audit_token_positions.py, which has no model_base
+    instance to work with, only a bare tokenizer). It is NOT guaranteed to
+    produce the same token sequence as this repo's actual generation/extraction
+    pipeline (pipeline/model_utils/*_model.py's _get_tokenize_instructions_fn),
+    which hand-rolls its own chat-template string per model family instead of
+    using apply_chat_template. For any real activation extraction (direction
+    building, paired-diff extraction, etc.), build full_ids from
+    model_base.tokenize_instructions_fn's actual output and pass it in via the
+    full_ids parameter below -- do not rely on this function's output matching
+    the pipeline's tokenization without checking."""
     messages = []
     if system:
         messages.append({'role': 'system', 'content': system})
@@ -88,10 +101,20 @@ def render_full_prompt_ids(tokenizer, instruction, model_family, system=None):
     return ids
 
 
-def get_post_instruction_position(tokenizer, instruction, model_family, system=None) -> PositionResult:
+def get_post_instruction_position(tokenizer, instruction, model_family, system=None, full_ids=None) -> PositionResult:
     """t_post: last token of the fully-rendered prompt (existing positions=[-1] convention,
-    given an explicit name here)."""
-    full_ids = render_full_prompt_ids(tokenizer, instruction, model_family, system=system)
+    given an explicit name here).
+
+    full_ids: if provided, used directly instead of calling apply_chat_template --
+    pass in the actual ids produced by whatever tokenization pipeline built the
+    activations you're locating a position within (e.g.
+    model_base.tokenize_instructions_fn(instructions=[instruction]).input_ids[0]),
+    so the position is guaranteed consistent with those activations. Assumes
+    full_ids has no trailing padding (i.e. was built with batch_size=1 / no
+    padding) -- t_post is defined as literally the last token, so a padded
+    sequence would give the wrong index."""
+    if full_ids is None:
+        full_ids = render_full_prompt_ids(tokenizer, instruction, model_family, system=system)
     idx = len(full_ids) - 1
     return PositionResult(
         position_index=idx, semantic_name='t_post',
@@ -102,11 +125,15 @@ def get_post_instruction_position(tokenizer, instruction, model_family, system=N
     )
 
 
-def get_instruction_end_position(tokenizer, instruction, model_family, system=None) -> PositionResult:
+def get_instruction_end_position(tokenizer, instruction, model_family, system=None, full_ids=None) -> PositionResult:
     """t_inst: last token of the raw instruction text, located via subsequence search
     within the full rendered prompt. Raises ValueError if no exact match is found --
-    callers must not fall back to guessing; that model family needs an explicit adapter."""
-    full_ids = render_full_prompt_ids(tokenizer, instruction, model_family, system=system)
+    callers must not fall back to guessing; that model family needs an explicit adapter.
+
+    full_ids: see get_post_instruction_position -- pass in the pipeline's actual
+    tokenized output for real extraction; only omit for a generic apply_chat_template-based check."""
+    if full_ids is None:
+        full_ids = render_full_prompt_ids(tokenizer, instruction, model_family, system=system)
     instr_ids = tokenizer.encode(instruction, add_special_tokens=False)
 
     if not instr_ids:
