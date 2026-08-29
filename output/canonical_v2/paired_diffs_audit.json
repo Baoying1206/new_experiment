@@ -1,0 +1,505 @@
+{
+  "lang": "en",
+  "suffix": "_full572_corrected",
+  "n_direction_ids": 300,
+  "per_model": {
+    "Qwen2.5-7B-Instruct": {
+      "path": "output/Qwen2.5-7B-Instruct/paired_diffs_en_full572_corrected.pt",
+      "exists": true,
+      "top_level_keys": [
+        "d_model",
+        "diffs",
+        "ids_key",
+        "instruction_ids",
+        "n_layers"
+      ],
+      "instruction_ids_shape": "per_mechanism_dict",
+      "per_mechanism": {
+        "prefix_injection": {
+          "count": 300,
+          "unique_count": 300,
+          "has_duplicates": false,
+          "set_equals_direction_ids": true,
+          "missing_from_this_mech": [],
+          "extra_in_this_mech": []
+        },
+        "refusal_suppression": {
+          "count": 300,
+          "unique_count": 300,
+          "has_duplicates": false,
+          "set_equals_direction_ids": true,
+          "missing_from_this_mech": [],
+          "extra_in_this_mech": []
+        },
+        "persona_roleplay": {
+          "count": 300,
+          "unique_count": 300,
+          "has_duplicates": false,
+          "set_equals_direction_ids": true,
+          "missing_from_this_mech": [],
+          "extra_in_this_mech": []
+        },
+        "encoding_obfuscation": {
+          "count": 300,
+          "unique_count": 300,
+          "has_duplicates": false,
+          "set_equals_direction_ids": true,
+          "missing_from_this_mech": [],
+          "extra_in_this_mech": []
+        },
+        "payload_splitting": {
+          "count": 300,
+          "unique_count": 300,
+          "has_duplicates": false,
+          "set_equals_direction_ids": true,
+          "missing_from_this_mech": [],
+          "extra_in_this_mech": []
+        },
+        "distractors_negated": {
+          "count": 300,
+          "unique_count": 300,
+          "has_duplicates": false,
+          "set_equals_direction_ids": true,
+          "missing_from_this_mech": [],
+          "extra_in_this_mech": []
+        },
+        "placebo": {
+          "count": 300,
+          "unique_count": 300,
+          "has_duplicates": false,
+          "set_equals_direction_ids": true,
+          "missing_from_this_mech": [],
+          "extra_in_this_mech": []
+        }
+      },
+      "instruction_id_order_identical_across_mechanisms": true,
+      "n_layers_field": 28,
+      "d_model_field": 3584,
+      "ids_key_field": "direction_ids",
+      "diffs_present": true,
+      "mechanisms_in_diffs": [
+        "distractors_negated",
+        "encoding_obfuscation",
+        "payload_splitting",
+        "persona_roleplay",
+        "placebo",
+        "prefix_injection",
+        "refusal_suppression"
+      ],
+      "expected_mechanisms": [
+        "distractors_negated",
+        "encoding_obfuscation",
+        "payload_splitting",
+        "persona_roleplay",
+        "placebo",
+        "prefix_injection",
+        "refusal_suppression"
+      ],
+      "missing_mechanisms": [],
+      "unexpected_extra_mechanisms": [],
+      "tensor_shapes_dtypes": {
+        "prefix_injection": {
+          "shape": [
+            300,
+            28,
+            3584
+          ],
+          "dtype": "torch.float32"
+        },
+        "refusal_suppression": {
+          "shape": [
+            300,
+            28,
+            3584
+          ],
+          "dtype": "torch.float32"
+        },
+        "persona_roleplay": {
+          "shape": [
+            300,
+            28,
+            3584
+          ],
+          "dtype": "torch.float32"
+        },
+        "encoding_obfuscation": {
+          "shape": [
+            300,
+            28,
+            3584
+          ],
+          "dtype": "torch.float32"
+        },
+        "payload_splitting": {
+          "shape": [
+            300,
+            28,
+            3584
+          ],
+          "dtype": "torch.float32"
+        },
+        "distractors_negated": {
+          "shape": [
+            300,
+            28,
+            3584
+          ],
+          "dtype": "torch.float32"
+        },
+        "placebo": {
+          "shape": [
+            300,
+            28,
+            3584
+          ],
+          "dtype": "torch.float32"
+        }
+      },
+      "nonfinite_counts": {
+        "prefix_injection": 0,
+        "refusal_suppression": 0,
+        "persona_roleplay": 0,
+        "encoding_obfuscation": 0,
+        "payload_splitting": 0,
+        "distractors_negated": 0,
+        "placebo": 0
+      },
+      "has_valid_mask_field": false,
+      "has_failures_field": false,
+      "has_placebo_calibrated_fields_in_file": false,
+      "placebo_calibration_note": "18_extract_paired_diffs.py's save code only writes raw 'diffs' (uncalibrated, including placebo's own raw diff) -- placebo calibration must be computed downstream by subtracting diffs['placebo'] per-instruction, never assume it's pre-done."
+    },
+    "Meta-Llama-3.1-8B-Instruct": {
+      "path": "output/Meta-Llama-3.1-8B-Instruct/paired_diffs_en_full572_corrected.pt",
+      "exists": true,
+      "top_level_keys": [
+        "d_model",
+        "diffs",
+        "ids_key",
+        "instruction_ids",
+        "n_layers"
+      ],
+      "instruction_ids_shape": "per_mechanism_dict",
+      "per_mechanism": {
+        "prefix_injection": {
+          "count": 300,
+          "unique_count": 300,
+          "has_duplicates": false,
+          "set_equals_direction_ids": true,
+          "missing_from_this_mech": [],
+          "extra_in_this_mech": []
+        },
+        "refusal_suppression": {
+          "count": 300,
+          "unique_count": 300,
+          "has_duplicates": false,
+          "set_equals_direction_ids": true,
+          "missing_from_this_mech": [],
+          "extra_in_this_mech": []
+        },
+        "persona_roleplay": {
+          "count": 300,
+          "unique_count": 300,
+          "has_duplicates": false,
+          "set_equals_direction_ids": true,
+          "missing_from_this_mech": [],
+          "extra_in_this_mech": []
+        },
+        "encoding_obfuscation": {
+          "count": 300,
+          "unique_count": 300,
+          "has_duplicates": false,
+          "set_equals_direction_ids": true,
+          "missing_from_this_mech": [],
+          "extra_in_this_mech": []
+        },
+        "payload_splitting": {
+          "count": 300,
+          "unique_count": 300,
+          "has_duplicates": false,
+          "set_equals_direction_ids": true,
+          "missing_from_this_mech": [],
+          "extra_in_this_mech": []
+        },
+        "distractors_negated": {
+          "count": 300,
+          "unique_count": 300,
+          "has_duplicates": false,
+          "set_equals_direction_ids": true,
+          "missing_from_this_mech": [],
+          "extra_in_this_mech": []
+        },
+        "placebo": {
+          "count": 300,
+          "unique_count": 300,
+          "has_duplicates": false,
+          "set_equals_direction_ids": true,
+          "missing_from_this_mech": [],
+          "extra_in_this_mech": []
+        }
+      },
+      "instruction_id_order_identical_across_mechanisms": true,
+      "n_layers_field": 32,
+      "d_model_field": 4096,
+      "ids_key_field": "direction_ids",
+      "diffs_present": true,
+      "mechanisms_in_diffs": [
+        "distractors_negated",
+        "encoding_obfuscation",
+        "payload_splitting",
+        "persona_roleplay",
+        "placebo",
+        "prefix_injection",
+        "refusal_suppression"
+      ],
+      "expected_mechanisms": [
+        "distractors_negated",
+        "encoding_obfuscation",
+        "payload_splitting",
+        "persona_roleplay",
+        "placebo",
+        "prefix_injection",
+        "refusal_suppression"
+      ],
+      "missing_mechanisms": [],
+      "unexpected_extra_mechanisms": [],
+      "tensor_shapes_dtypes": {
+        "prefix_injection": {
+          "shape": [
+            300,
+            32,
+            4096
+          ],
+          "dtype": "torch.float32"
+        },
+        "refusal_suppression": {
+          "shape": [
+            300,
+            32,
+            4096
+          ],
+          "dtype": "torch.float32"
+        },
+        "persona_roleplay": {
+          "shape": [
+            300,
+            32,
+            4096
+          ],
+          "dtype": "torch.float32"
+        },
+        "encoding_obfuscation": {
+          "shape": [
+            300,
+            32,
+            4096
+          ],
+          "dtype": "torch.float32"
+        },
+        "payload_splitting": {
+          "shape": [
+            300,
+            32,
+            4096
+          ],
+          "dtype": "torch.float32"
+        },
+        "distractors_negated": {
+          "shape": [
+            300,
+            32,
+            4096
+          ],
+          "dtype": "torch.float32"
+        },
+        "placebo": {
+          "shape": [
+            300,
+            32,
+            4096
+          ],
+          "dtype": "torch.float32"
+        }
+      },
+      "nonfinite_counts": {
+        "prefix_injection": 0,
+        "refusal_suppression": 0,
+        "persona_roleplay": 0,
+        "encoding_obfuscation": 0,
+        "payload_splitting": 0,
+        "distractors_negated": 0,
+        "placebo": 0
+      },
+      "has_valid_mask_field": false,
+      "has_failures_field": false,
+      "has_placebo_calibrated_fields_in_file": false,
+      "placebo_calibration_note": "18_extract_paired_diffs.py's save code only writes raw 'diffs' (uncalibrated, including placebo's own raw diff) -- placebo calibration must be computed downstream by subtracting diffs['placebo'] per-instruction, never assume it's pre-done."
+    },
+    "gemma-2-9b-it": {
+      "path": "output/gemma-2-9b-it/paired_diffs_en_full572_corrected.pt",
+      "exists": true,
+      "top_level_keys": [
+        "d_model",
+        "diffs",
+        "ids_key",
+        "instruction_ids",
+        "n_layers"
+      ],
+      "instruction_ids_shape": "per_mechanism_dict",
+      "per_mechanism": {
+        "prefix_injection": {
+          "count": 300,
+          "unique_count": 300,
+          "has_duplicates": false,
+          "set_equals_direction_ids": true,
+          "missing_from_this_mech": [],
+          "extra_in_this_mech": []
+        },
+        "refusal_suppression": {
+          "count": 300,
+          "unique_count": 300,
+          "has_duplicates": false,
+          "set_equals_direction_ids": true,
+          "missing_from_this_mech": [],
+          "extra_in_this_mech": []
+        },
+        "persona_roleplay": {
+          "count": 300,
+          "unique_count": 300,
+          "has_duplicates": false,
+          "set_equals_direction_ids": true,
+          "missing_from_this_mech": [],
+          "extra_in_this_mech": []
+        },
+        "encoding_obfuscation": {
+          "count": 300,
+          "unique_count": 300,
+          "has_duplicates": false,
+          "set_equals_direction_ids": true,
+          "missing_from_this_mech": [],
+          "extra_in_this_mech": []
+        },
+        "payload_splitting": {
+          "count": 300,
+          "unique_count": 300,
+          "has_duplicates": false,
+          "set_equals_direction_ids": true,
+          "missing_from_this_mech": [],
+          "extra_in_this_mech": []
+        },
+        "distractors_negated": {
+          "count": 300,
+          "unique_count": 300,
+          "has_duplicates": false,
+          "set_equals_direction_ids": true,
+          "missing_from_this_mech": [],
+          "extra_in_this_mech": []
+        },
+        "placebo": {
+          "count": 300,
+          "unique_count": 300,
+          "has_duplicates": false,
+          "set_equals_direction_ids": true,
+          "missing_from_this_mech": [],
+          "extra_in_this_mech": []
+        }
+      },
+      "instruction_id_order_identical_across_mechanisms": true,
+      "n_layers_field": 42,
+      "d_model_field": 3584,
+      "ids_key_field": "direction_ids",
+      "diffs_present": true,
+      "mechanisms_in_diffs": [
+        "distractors_negated",
+        "encoding_obfuscation",
+        "payload_splitting",
+        "persona_roleplay",
+        "placebo",
+        "prefix_injection",
+        "refusal_suppression"
+      ],
+      "expected_mechanisms": [
+        "distractors_negated",
+        "encoding_obfuscation",
+        "payload_splitting",
+        "persona_roleplay",
+        "placebo",
+        "prefix_injection",
+        "refusal_suppression"
+      ],
+      "missing_mechanisms": [],
+      "unexpected_extra_mechanisms": [],
+      "tensor_shapes_dtypes": {
+        "prefix_injection": {
+          "shape": [
+            300,
+            42,
+            3584
+          ],
+          "dtype": "torch.float32"
+        },
+        "refusal_suppression": {
+          "shape": [
+            300,
+            42,
+            3584
+          ],
+          "dtype": "torch.float32"
+        },
+        "persona_roleplay": {
+          "shape": [
+            300,
+            42,
+            3584
+          ],
+          "dtype": "torch.float32"
+        },
+        "encoding_obfuscation": {
+          "shape": [
+            300,
+            42,
+            3584
+          ],
+          "dtype": "torch.float32"
+        },
+        "payload_splitting": {
+          "shape": [
+            300,
+            42,
+            3584
+          ],
+          "dtype": "torch.float32"
+        },
+        "distractors_negated": {
+          "shape": [
+            300,
+            42,
+            3584
+          ],
+          "dtype": "torch.float32"
+        },
+        "placebo": {
+          "shape": [
+            300,
+            42,
+            3584
+          ],
+          "dtype": "torch.float32"
+        }
+      },
+      "nonfinite_counts": {
+        "prefix_injection": 0,
+        "refusal_suppression": 0,
+        "persona_roleplay": 0,
+        "encoding_obfuscation": 0,
+        "payload_splitting": 0,
+        "distractors_negated": 0,
+        "placebo": 0
+      },
+      "has_valid_mask_field": false,
+      "has_failures_field": false,
+      "has_placebo_calibrated_fields_in_file": false,
+      "placebo_calibration_note": "18_extract_paired_diffs.py's save code only writes raw 'diffs' (uncalibrated, including placebo's own raw diff) -- placebo calibration must be computed downstream by subtracting diffs['placebo'] per-instruction, never assume it's pre-done."
+    }
+  }
+}
