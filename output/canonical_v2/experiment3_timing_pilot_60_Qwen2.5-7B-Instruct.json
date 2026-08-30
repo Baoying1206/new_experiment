@@ -1,0 +1,256 @@
+{
+  "metadata": {
+    "git_commit": "1061a620ece929bcba639b5bd13b925ce9d92be9",
+    "model_alias": "Qwen2.5-7B-Instruct",
+    "model_path": "/home/h24/baga0553/models/Qwen2.5-7B-Instruct",
+    "fixed_layer": 16,
+    "hook_semantics": "additive h - alpha*c_G at last prefill token, single-fire",
+    "direction_config_hash": "3f30db793472bc65deb48094aa3092e17082901a8bf35a79673dc5c75dd748a8",
+    "direction_config_payload": {
+      "taxonomy_config_sha256": "07bc0eecbf6f74bd7256abe48661dd06d14769a68bb6a86a335996eb0d439ced",
+      "fixed_layer": 16,
+      "estimator": "mean",
+      "raw_or_pc": "placebo_calibrated",
+      "gdef": "unit_normalized",
+      "frozen_grouping": {
+        "template_specific": [
+          "prefix_injection"
+        ],
+        "subgroups": {
+          "CO_reduced": [
+            "refusal_suppression",
+            "persona_roleplay"
+          ],
+          "MG_full": [
+            "encoding_obfuscation",
+            "payload_splitting",
+            "distractors_negated"
+          ]
+        }
+      },
+      "CO_mechs": [
+        "prefix_injection",
+        "refusal_suppression",
+        "persona_roleplay"
+      ],
+      "MG_mechs": [
+        "encoding_obfuscation",
+        "payload_splitting",
+        "distractors_negated"
+      ]
+    },
+    "generation_config_hash": "db27f5185aefafbcb067b7d9a7dd9acf7ee3a0f4cdd30be8a4b24277ce979eeb",
+    "generation_config_payload": {
+      "model_path": "/home/h24/baga0553/models/Qwen2.5-7B-Instruct",
+      "max_new_tokens": 200,
+      "do_sample": false,
+      "dtype": "bfloat16"
+    },
+    "judge_prompt_version": "wildguard_prompt_v1_from_03_generate_and_label",
+    "judge_model_version": "allenai/wildguard",
+    "prompt_manifest": {
+      "harmful_ids": [
+        "p029",
+        "p304",
+        "p477",
+        "p522",
+        "p543"
+      ],
+      "benign_ids": [
+        "bv002",
+        "bv035",
+        "bv046",
+        "bv072",
+        "bv078"
+      ],
+      "harmful_ids_hash": "4f3e270ffd9ec9d211afc27d28f5c2441f72c20bfa8b4a91e5492a895143aec6",
+      "benign_ids_hash": "d1a05b4fe9461156d53f6507052586ca115c623f9632c8c98ecb41cea87ef4c2",
+      "seed_harmful": 20260901,
+      "seed_benign": 20260902,
+      "n_prompts": 60
+    },
+    "gpu_name": "NVIDIA L40S",
+    "model_load_time_s": 30.356779098510742,
+    "wildguard_load_time_s": 22.588995695114136,
+    "start_timestamp_utc": "2026-08-30T22:43:42.960007+00:00",
+    "end_timestamp_utc": "2026-08-30T22:45:34.359758+00:00"
+  },
+  "determinism_check": {
+    "passed": true,
+    "n_mismatches": 0,
+    "mismatches": []
+  },
+  "generation_metrics": {
+    "no_hook": {
+      "condition": "no_hook",
+      "alpha": null,
+      "n_prompts": 60,
+      "total_wall_seconds": 14.961742162704468,
+      "rows_per_hour": 14436.821437708566,
+      "total_prompt_tokens": 3925,
+      "total_generated_tokens": 6432,
+      "generated_tokens_per_second": 429.896460589544,
+      "mean_generation_tokens": 107.2,
+      "median_generation_tokens": 83,
+      "p90_generation_tokens": 200,
+      "eos_rate": 0.7,
+      "per_batch_wall_seconds": [
+        14.961742162704468
+      ],
+      "peak_gpu_memory_bytes": 34574382080,
+      "batch_size": 60,
+      "max_new_tokens": 200,
+      "model_dtype": "bfloat16",
+      "intervention_count": null,
+      "warning_count": 0,
+      "invalid_record_count": 0
+    },
+    "hook_alpha_zero": {
+      "condition": "hook_alpha_zero",
+      "alpha": 0.0,
+      "n_prompts": 60,
+      "total_wall_seconds": 14.584912061691284,
+      "rows_per_hour": 14809.825324030948,
+      "total_prompt_tokens": 3925,
+      "total_generated_tokens": 6432,
+      "generated_tokens_per_second": 441.00368742669934,
+      "mean_generation_tokens": 107.2,
+      "median_generation_tokens": 83,
+      "p90_generation_tokens": 200,
+      "eos_rate": 0.7,
+      "per_batch_wall_seconds": [
+        14.584912061691284
+      ],
+      "peak_gpu_memory_bytes": 34574652416,
+      "batch_size": 60,
+      "max_new_tokens": 200,
+      "model_dtype": "bfloat16",
+      "intervention_count": 1,
+      "warning_count": 0,
+      "invalid_record_count": 0
+    },
+    "global_alpha_one": {
+      "condition": "global_alpha_one",
+      "alpha": 1.0,
+      "n_prompts": 60,
+      "total_wall_seconds": 14.621838808059692,
+      "rows_per_hour": 14772.423826813,
+      "total_prompt_tokens": 3925,
+      "total_generated_tokens": 7475,
+      "generated_tokens_per_second": 511.2216115991999,
+      "mean_generation_tokens": 124.58333333333333,
+      "median_generation_tokens": 130,
+      "p90_generation_tokens": 200,
+      "eos_rate": 0.6833333333333333,
+      "per_batch_wall_seconds": [
+        14.621838808059692
+      ],
+      "peak_gpu_memory_bytes": 34574652416,
+      "batch_size": 60,
+      "max_new_tokens": 200,
+      "model_dtype": "bfloat16",
+      "intervention_count": 1,
+      "warning_count": 0,
+      "invalid_record_count": 0
+    }
+  },
+  "judge_metrics": {
+    "no_hook": {
+      "n_judged_new": 60,
+      "n_cache_hits": 0,
+      "total_wall_seconds": 6.39738130569458,
+      "rows_per_hour": 33763.8151735194,
+      "n_parse_failures": 0
+    },
+    "hook_alpha_zero": {
+      "n_judged_new": 0,
+      "n_cache_hits": 60,
+      "total_wall_seconds": 2.384185791015625e-07,
+      "rows_per_hour": null,
+      "n_parse_failures": 0
+    },
+    "global_alpha_one": {
+      "n_judged_new": 58,
+      "n_cache_hits": 2,
+      "total_wall_seconds": 6.162708520889282,
+      "rows_per_hour": 33881.206500720575,
+      "n_parse_failures": 0
+    }
+  },
+  "comparisons": {
+    "no_hook_vs_hook_alpha_zero (plumbing overhead)": {
+      "rows_per_hour": {
+        "no_hook": 14436.821437708566,
+        "hook_alpha_zero": 14809.825324030948,
+        "delta": 373.00388632238173
+      },
+      "total_wall_seconds": {
+        "no_hook": 14.961742162704468,
+        "hook_alpha_zero": 14.584912061691284,
+        "delta": -0.3768301010131836
+      },
+      "generated_tokens_per_second": {
+        "no_hook": 429.896460589544,
+        "hook_alpha_zero": 441.00368742669934,
+        "delta": 11.107226837155338
+      },
+      "mean_generation_tokens": {
+        "no_hook": 107.2,
+        "hook_alpha_zero": 107.2,
+        "delta": 0.0
+      },
+      "median_generation_tokens": {
+        "no_hook": 83,
+        "hook_alpha_zero": 83,
+        "delta": 0
+      },
+      "p90_generation_tokens": {
+        "no_hook": 200,
+        "hook_alpha_zero": 200,
+        "delta": 0
+      },
+      "eos_rate": {
+        "no_hook": 0.7,
+        "hook_alpha_zero": 0.7,
+        "delta": 0.0
+      }
+    },
+    "hook_alpha_zero_vs_global_alpha_one (intervention effect)": {
+      "rows_per_hour": {
+        "hook_alpha_zero": 14809.825324030948,
+        "global_alpha_one": 14772.423826813,
+        "delta": -37.40149721794842
+      },
+      "total_wall_seconds": {
+        "hook_alpha_zero": 14.584912061691284,
+        "global_alpha_one": 14.621838808059692,
+        "delta": 0.0369267463684082
+      },
+      "generated_tokens_per_second": {
+        "hook_alpha_zero": 441.00368742669934,
+        "global_alpha_one": 511.2216115991999,
+        "delta": 70.21792417250055
+      },
+      "mean_generation_tokens": {
+        "hook_alpha_zero": 107.2,
+        "global_alpha_one": 124.58333333333333,
+        "delta": 17.383333333333326
+      },
+      "median_generation_tokens": {
+        "hook_alpha_zero": 83,
+        "global_alpha_one": 130,
+        "delta": 47
+      },
+      "p90_generation_tokens": {
+        "hook_alpha_zero": 200,
+        "global_alpha_one": 200,
+        "delta": 0
+      },
+      "eos_rate": {
+        "hook_alpha_zero": 0.7,
+        "global_alpha_one": 0.6833333333333333,
+        "delta": -0.016666666666666607
+      }
+    }
+  }
+}

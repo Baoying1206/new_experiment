@@ -1,0 +1,281 @@
+{
+  "metadata": {
+    "git_commit": "9b8f21e1a26eb5e4fe54b50c8f658daed9c6b528",
+    "model_alias": "gemma-2-9b-it",
+    "model_path": "/home/h24/baga0553/models/gemma-2-9b-it",
+    "fixed_layer": 25,
+    "hook_semantics": "additive h - alpha*c_G at last prefill token, single-fire",
+    "direction_config_hash": "ddb05eb209976c40c9a3b7aababf8dc0b1d1af4a70a38da0df06c7bceb69a43d",
+    "direction_config_payload": {
+      "taxonomy_config_sha256": "07bc0eecbf6f74bd7256abe48661dd06d14769a68bb6a86a335996eb0d439ced",
+      "fixed_layer": 25,
+      "estimator": "mean",
+      "raw_or_pc": "placebo_calibrated",
+      "gdef": "unit_normalized",
+      "frozen_grouping": {
+        "template_specific": [
+          "prefix_injection"
+        ],
+        "subgroups": {
+          "CO_reduced": [
+            "refusal_suppression",
+            "persona_roleplay"
+          ],
+          "MG_full": [
+            "encoding_obfuscation",
+            "payload_splitting",
+            "distractors_negated"
+          ]
+        }
+      },
+      "CO_mechs": [
+        "prefix_injection",
+        "refusal_suppression",
+        "persona_roleplay"
+      ],
+      "MG_mechs": [
+        "encoding_obfuscation",
+        "payload_splitting",
+        "distractors_negated"
+      ]
+    },
+    "generation_config_hash": "8d0efb3233746dd523955a314e65720fbc9519134439434e8d680cb2f1b5aad2",
+    "generation_config_payload": {
+      "model_path": "/home/h24/baga0553/models/gemma-2-9b-it",
+      "max_new_tokens": 200,
+      "do_sample": false,
+      "dtype": "bfloat16"
+    },
+    "judge_prompt_version": "wildguard_prompt_v1_from_03_generate_and_label",
+    "judge_model_version": "allenai/wildguard",
+    "prompt_manifest": {
+      "harmful_ids": [
+        "p029",
+        "p304",
+        "p477",
+        "p522",
+        "p543"
+      ],
+      "benign_ids": [
+        "bv002",
+        "bv035",
+        "bv046",
+        "bv072",
+        "bv078"
+      ],
+      "harmful_ids_hash": "4f3e270ffd9ec9d211afc27d28f5c2441f72c20bfa8b4a91e5492a895143aec6",
+      "benign_ids_hash": "d1a05b4fe9461156d53f6507052586ca115c623f9632c8c98ecb41cea87ef4c2",
+      "seed_harmful": 20260901,
+      "seed_benign": 20260902,
+      "n_prompts": 60
+    },
+    "gpu_name": "NVIDIA L40S",
+    "model_load_time_s": 34.62418293952942,
+    "wildguard_load_time_s": 27.161983013153076,
+    "start_timestamp_utc": "2026-08-30T22:56:46.395587+00:00",
+    "end_timestamp_utc": "2026-08-30T22:59:55.971794+00:00"
+  },
+  "determinism_check": {
+    "passed": true,
+    "n_mismatches": 0,
+    "mismatches": []
+  },
+  "generation_metrics": {
+    "no_hook": {
+      "condition": "no_hook",
+      "alpha": null,
+      "n_prompts": 60,
+      "total_wall_seconds": 38.7997772693634,
+      "rows_per_hour": 5567.042266774949,
+      "total_prompt_tokens": 3962,
+      "total_generated_tokens": 7489,
+      "generated_tokens_per_second": 193.01657192535924,
+      "mean_generation_tokens": 124.81666666666666,
+      "median_generation_tokens": 158,
+      "p90_generation_tokens": 200,
+      "eos_rate": 0.5833333333333334,
+      "n_batches": 4,
+      "per_batch_wall_seconds": [
+        9.71372652053833,
+        11.253881692886353,
+        9.247786283493042,
+        8.584364414215088
+      ],
+      "peak_gpu_memory_bytes": 26818942464,
+      "batch_size": 15,
+      "max_new_tokens": 200,
+      "model_dtype": "bfloat16",
+      "intervention_count_distribution": [],
+      "intervention_count_all_batches_equal_one": null,
+      "warning_count": 0,
+      "invalid_record_count": 0
+    },
+    "hook_alpha_zero": {
+      "condition": "hook_alpha_zero",
+      "alpha": 0.0,
+      "n_prompts": 60,
+      "total_wall_seconds": 38.11214566230774,
+      "rows_per_hour": 5667.484636364105,
+      "total_prompt_tokens": 3962,
+      "total_generated_tokens": 7489,
+      "generated_tokens_per_second": 196.49903908208697,
+      "mean_generation_tokens": 124.81666666666666,
+      "median_generation_tokens": 158,
+      "p90_generation_tokens": 200,
+      "eos_rate": 0.5833333333333334,
+      "n_batches": 4,
+      "per_batch_wall_seconds": [
+        9.141060590744019,
+        11.230921745300293,
+        9.25065565109253,
+        8.488036870956421
+      ],
+      "peak_gpu_memory_bytes": 26818229760,
+      "batch_size": 15,
+      "max_new_tokens": 200,
+      "model_dtype": "bfloat16",
+      "intervention_count_distribution": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "intervention_count_all_batches_equal_one": true,
+      "warning_count": 0,
+      "invalid_record_count": 0
+    },
+    "global_alpha_one": {
+      "condition": "global_alpha_one",
+      "alpha": 1.0,
+      "n_prompts": 60,
+      "total_wall_seconds": 38.09526228904724,
+      "rows_per_hour": 5669.996399056218,
+      "total_prompt_tokens": 3962,
+      "total_generated_tokens": 7582,
+      "generated_tokens_per_second": 199.02737360020484,
+      "mean_generation_tokens": 126.36666666666666,
+      "median_generation_tokens": 146,
+      "p90_generation_tokens": 200,
+      "eos_rate": 0.6166666666666667,
+      "n_batches": 4,
+      "per_batch_wall_seconds": [
+        9.10347867012024,
+        11.228056192398071,
+        9.264014482498169,
+        8.491411924362183
+      ],
+      "peak_gpu_memory_bytes": 26818229760,
+      "batch_size": 15,
+      "max_new_tokens": 200,
+      "model_dtype": "bfloat16",
+      "intervention_count_distribution": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "intervention_count_all_batches_equal_one": true,
+      "warning_count": 0,
+      "invalid_record_count": 0
+    }
+  },
+  "judge_metrics": {
+    "no_hook": {
+      "n_judged_new": 60,
+      "n_cache_hits": 0,
+      "total_wall_seconds": 6.21732497215271,
+      "rows_per_hour": 34741.62939326161,
+      "n_parse_failures": 0
+    },
+    "hook_alpha_zero": {
+      "n_judged_new": 0,
+      "n_cache_hits": 60,
+      "total_wall_seconds": 4.76837158203125e-07,
+      "rows_per_hour": null,
+      "n_parse_failures": 0
+    },
+    "global_alpha_one": {
+      "n_judged_new": 34,
+      "n_cache_hits": 26,
+      "total_wall_seconds": 3.766695022583008,
+      "rows_per_hour": 32495.33059251086,
+      "n_parse_failures": 0
+    }
+  },
+  "comparisons": {
+    "no_hook_vs_hook_alpha_zero (plumbing overhead)": {
+      "rows_per_hour": {
+        "no_hook": 5567.042266774949,
+        "hook_alpha_zero": 5667.484636364105,
+        "delta": 100.44236958915644
+      },
+      "total_wall_seconds": {
+        "no_hook": 38.7997772693634,
+        "hook_alpha_zero": 38.11214566230774,
+        "delta": -0.6876316070556641
+      },
+      "generated_tokens_per_second": {
+        "no_hook": 193.01657192535924,
+        "hook_alpha_zero": 196.49903908208697,
+        "delta": 3.482467156727722
+      },
+      "mean_generation_tokens": {
+        "no_hook": 124.81666666666666,
+        "hook_alpha_zero": 124.81666666666666,
+        "delta": 0.0
+      },
+      "median_generation_tokens": {
+        "no_hook": 158,
+        "hook_alpha_zero": 158,
+        "delta": 0
+      },
+      "p90_generation_tokens": {
+        "no_hook": 200,
+        "hook_alpha_zero": 200,
+        "delta": 0
+      },
+      "eos_rate": {
+        "no_hook": 0.5833333333333334,
+        "hook_alpha_zero": 0.5833333333333334,
+        "delta": 0.0
+      }
+    },
+    "hook_alpha_zero_vs_global_alpha_one (intervention effect)": {
+      "rows_per_hour": {
+        "hook_alpha_zero": 5667.484636364105,
+        "global_alpha_one": 5669.996399056218,
+        "delta": 2.511762692112825
+      },
+      "total_wall_seconds": {
+        "hook_alpha_zero": 38.11214566230774,
+        "global_alpha_one": 38.09526228904724,
+        "delta": -0.016883373260498047
+      },
+      "generated_tokens_per_second": {
+        "hook_alpha_zero": 196.49903908208697,
+        "global_alpha_one": 199.02737360020484,
+        "delta": 2.528334518117873
+      },
+      "mean_generation_tokens": {
+        "hook_alpha_zero": 124.81666666666666,
+        "global_alpha_one": 126.36666666666666,
+        "delta": 1.5499999999999972
+      },
+      "median_generation_tokens": {
+        "hook_alpha_zero": 158,
+        "global_alpha_one": 146,
+        "delta": -12
+      },
+      "p90_generation_tokens": {
+        "hook_alpha_zero": 200,
+        "global_alpha_one": 200,
+        "delta": 0
+      },
+      "eos_rate": {
+        "hook_alpha_zero": 0.5833333333333334,
+        "global_alpha_one": 0.6166666666666667,
+        "delta": 0.033333333333333326
+      }
+    }
+  }
+}
