@@ -498,24 +498,32 @@ def run_timing_pilot(args):
         'comparisons': comparisons,
     }
 
+    # Filenames include model_alias -- these are per-model cross-model hook
+    # audits (Qwen/Llama/Gemma each run this same phase); a shared filename
+    # would let a later model's run silently overwrite an earlier model's
+    # already-passed results.
     out_dir = os.path.join(args.output_path, 'canonical_v2')
     os.makedirs(out_dir, exist_ok=True)
-    with open(os.path.join(out_dir, 'experiment3_timing_pilot_60.json'), 'w') as f:
+    json_name = f'experiment3_timing_pilot_60_{model_alias}.json'
+    gen_name = f'experiment3_timing_pilot_generations_{model_alias}.jsonl'
+    judge_name = f'experiment3_timing_pilot_judgements_{model_alias}.jsonl'
+
+    with open(os.path.join(out_dir, json_name), 'w') as f:
         json.dump(result, f, indent=2)
 
-    gen_path = os.path.join(out_dir, 'experiment3_timing_pilot_generations.jsonl')
+    gen_path = os.path.join(out_dir, gen_name)
     if os.path.exists(gen_path):
         os.remove(gen_path)
     for condition in TIMING_PILOT_CONDITIONS:
         append_jsonl(gen_path, all_records[condition])
 
-    judge_path = os.path.join(out_dir, 'experiment3_timing_pilot_judgements.jsonl')
+    judge_path = os.path.join(out_dir, judge_name)
     if os.path.exists(judge_path):
         os.remove(judge_path)
     for condition in TIMING_PILOT_CONDITIONS:
         append_jsonl(judge_path, all_judgements[condition])
 
-    print(f"\nSaved: experiment3_timing_pilot_60.json / _generations.jsonl / _judgements.jsonl in {out_dir}")
+    print(f"\nSaved: {json_name} / {gen_name} / {judge_name} in {out_dir}")
     print("\n=== SUMMARY ===")
     print(json.dumps({'determinism_passed': det_ok, 'generation_metrics_summary':
                        {c: {k: v for k, v in m.items() if k in
