@@ -285,6 +285,23 @@ existing results are unaffected by this defect and required no re-run**.
 - `output/canonical_v2/experiment3_corrected_completions_audit.json` — the
   post-repair re-run of the audit; must show `OVERALL_PASS: true` before
   any defence-generation driver is implemented.
+- `scripts/39_defence_pilot.py` — the first script in this project that
+  actually touches a real model/GPU for the defence protocol. Deliberately
+  tiny and NOT the driver: 1 model (Llama), 4 real `validation_ids`
+  instructions, 1 template (`persona_roleplay`), 1 condition (Global),
+  1 alpha (1.0). Confirms the hook fires exactly once per batch on a real
+  `model.model.layers[19]` forward call; reports a real GPU name (sacct/
+  sinfo report no GRES info on this cluster — see
+  `output/canonical_v2/experiment3_throughput_pilot.json`'s contents once
+  run); measures isolated target-generation-only and WildGuard-only
+  throughput (historical `slurm/logs/generate_en572_*.out` fuse both into
+  one timestamp with no boundary marker, so only a combined rate could be
+  computed from those). Reuses `03_generate_and_label.py`'s exact
+  `WILDGUARD_PROMPT`/`_parse_wildguard` rather than a new prompt, and
+  `pipeline`'s existing `generate_completions`/`add_hooks` machinery rather
+  than a hand-rolled generation loop. No output from this pilot is a
+  reportable defence-efficacy result — it is a timing/correctness check
+  only, run before committing to the full validation-sweep GPU budget.
 
 ## Conventions
 
