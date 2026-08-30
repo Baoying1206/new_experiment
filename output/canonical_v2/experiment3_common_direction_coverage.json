@@ -1,0 +1,2884 @@
+{
+  "metadata": {
+    "taxonomy_version": "wei_canonical_v2",
+    "config_path": "/a/slurm-login-internal-home/h24/baga0553/new_experiment/templates/templates_en.json",
+    "CO_mechs": [
+      "prefix_injection",
+      "refusal_suppression",
+      "persona_roleplay"
+    ],
+    "MG_mechs": [
+      "encoding_obfuscation",
+      "payload_splitting",
+      "distractors_negated"
+    ],
+    "active_mechanisms": [
+      "prefix_injection",
+      "refusal_suppression",
+      "persona_roleplay",
+      "encoding_obfuscation",
+      "payload_splitting",
+      "distractors_negated"
+    ],
+    "direction_ids_count": 300,
+    "validation_ids_used": false,
+    "test_ids_used": false,
+    "fixed_layers_0based": {
+      "Qwen2.5-7B-Instruct": 16,
+      "Meta-Llama-3.1-8B-Instruct": 19,
+      "gemma-2-9b-it": 25
+    },
+    "estimators": [
+      "mean",
+      "median",
+      "trimmed_mean"
+    ],
+    "trim_frac": 0.1,
+    "raw_pc_versions": [
+      "raw",
+      "placebo_calibrated"
+    ],
+    "primary_combination": {
+      "estimator": "mean",
+      "raw_or_pc": "placebo_calibrated",
+      "gdef": "unit_normalized"
+    },
+    "sensitivity_gdef": "raw_magnitude",
+    "placebo_calibration": "aggregate template_k and placebo separately (per estimator), then subtract the two aggregated vectors: dtilde_k = d_k - d_placebo",
+    "common_direction_definitions": {
+      "unit_normalized (primary)": "g = normalize(mean_k(dtilde_k / ||dtilde_k||))",
+      "raw_magnitude (sensitivity)": "g = normalize(mean_k(dtilde_k))"
+    },
+    "bootstrap_n": 2000,
+    "bootstrap_seed": 20260830,
+    "bootstrap_scope": "primary estimator+raw_pc combo (mean, placebo_calibrated) only; both g-definitions (unit_normalized, raw_magnitude) bootstrapped",
+    "layerwise_scope": "point estimates only, primary estimator+raw_pc combo, both g-definitions, all layers; not used to reselect the fixed layer",
+    "git_commit": "1b644593582ce9f75ea79dc4003994e011d88df7",
+    "torch_version": "2.3.0+cu121",
+    "per_model": {
+      "Qwen2.5-7B-Instruct": {
+        "input_file": "output/Qwen2.5-7B-Instruct/paired_diffs_en_full572_corrected.pt",
+        "n_layers": 28,
+        "fixed_layer_0based": 16,
+        "fixed_layer_ordinal": 17,
+        "relative_depth_of_fixed_layer": 0.5925925925925926,
+        "n_ids_used": 300
+      },
+      "Meta-Llama-3.1-8B-Instruct": {
+        "input_file": "output/Meta-Llama-3.1-8B-Instruct/paired_diffs_en_full572_corrected.pt",
+        "n_layers": 32,
+        "fixed_layer_0based": 19,
+        "fixed_layer_ordinal": 20,
+        "relative_depth_of_fixed_layer": 0.6129032258064516,
+        "n_ids_used": 300
+      },
+      "gemma-2-9b-it": {
+        "input_file": "output/gemma-2-9b-it/paired_diffs_en_full572_corrected.pt",
+        "n_layers": 42,
+        "fixed_layer_0based": 25,
+        "fixed_layer_ordinal": 26,
+        "relative_depth_of_fixed_layer": 0.6097560975609756,
+        "n_ids_used": 300
+      }
+    },
+    "warnings": []
+  },
+  "per_model_fixed_layer_sweep": {
+    "Qwen2.5-7B-Instruct": {
+      "mean": {
+        "raw": {
+          "unit_normalized": {
+            "per_mechanism": {
+              "prefix_injection": {
+                "category": "CO",
+                "C_k": 0.8302323222160339,
+                "cosine_to_own_leave_one_out_prototype": 0.6075426340103149,
+                "cosine_to_other_category_prototype": 0.672771692276001,
+                "A_k": -0.06522905826568604,
+                "parallel_energy_fraction": 0.6892857088522284,
+                "residual_energy_fraction": 0.3107142911477716
+              },
+              "refusal_suppression": {
+                "category": "CO",
+                "C_k": 0.8666179776191711,
+                "cosine_to_own_leave_one_out_prototype": 0.6799915432929993,
+                "cosine_to_other_category_prototype": 0.5435693860054016,
+                "A_k": 0.13642215728759766,
+                "parallel_energy_fraction": 0.7510267191327422,
+                "residual_energy_fraction": 0.24897328086725778
+              },
+              "persona_roleplay": {
+                "category": "CO",
+                "C_k": 0.7792009711265564,
+                "cosine_to_own_leave_one_out_prototype": 0.5137583613395691,
+                "cosine_to_other_category_prototype": 0.3226762115955353,
+                "A_k": 0.1910821497440338,
+                "parallel_energy_fraction": 0.6071541534045686,
+                "residual_energy_fraction": 0.3928458465954314
+              },
+              "encoding_obfuscation": {
+                "category": "MG",
+                "C_k": 0.8540524840354919,
+                "cosine_to_own_leave_one_out_prototype": 0.6621024012565613,
+                "cosine_to_other_category_prototype": 0.5165327191352844,
+                "A_k": 0.14556968212127686,
+                "parallel_energy_fraction": 0.7294056454871942,
+                "residual_energy_fraction": 0.2705943545128058
+              },
+              "payload_splitting": {
+                "category": "MG",
+                "C_k": 0.9005942940711975,
+                "cosine_to_own_leave_one_out_prototype": 0.758634090423584,
+                "cosine_to_other_category_prototype": 0.6180214285850525,
+                "A_k": 0.1406126618385315,
+                "parallel_energy_fraction": 0.8110700825135986,
+                "residual_energy_fraction": 0.18892991748640142
+              },
+              "distractors_negated": {
+                "category": "MG",
+                "C_k": 0.7803974747657776,
+                "cosine_to_own_leave_one_out_prototype": 0.5252195000648499,
+                "cosine_to_other_category_prototype": 0.4411308169364929,
+                "A_k": 0.08408868312835693,
+                "parallel_energy_fraction": 0.6090202186208025,
+                "residual_energy_fraction": 0.39097978137919753
+              }
+            },
+            "per_category": {
+              "CO": {
+                "mean_coverage": 0.8253504633903503,
+                "median_coverage": 0.8302323222160339,
+                "minimum_coverage": 0.7792009711265564,
+                "coverage_range": 0.08741700649261475,
+                "coverage_standard_deviation": 0.043912503868341446,
+                "resultant_length": 0.8253504037857056
+              },
+              "MG": {
+                "mean_coverage": 0.845014750957489,
+                "median_coverage": 0.8540524840354919,
+                "minimum_coverage": 0.7803974747657776,
+                "coverage_range": 0.12019681930541992,
+                "coverage_standard_deviation": 0.060605935752391815,
+                "resultant_length": 0.8450148105621338
+              }
+            }
+          },
+          "raw_magnitude": {
+            "per_mechanism": {
+              "prefix_injection": {
+                "category": "CO",
+                "C_k": 0.8935092091560364,
+                "cosine_to_own_leave_one_out_prototype": 0.6257168650627136,
+                "cosine_to_other_category_prototype": 0.6720975637435913,
+                "A_k": -0.046380698680877686,
+                "parallel_energy_fraction": 0.7983587068466456,
+                "residual_energy_fraction": 0.20164129315335444
+              },
+              "refusal_suppression": {
+                "category": "CO",
+                "C_k": 0.8644192218780518,
+                "cosine_to_own_leave_one_out_prototype": 0.6896824836730957,
+                "cosine_to_other_category_prototype": 0.5434938073158264,
+                "A_k": 0.1461886763572693,
+                "parallel_energy_fraction": 0.7472205911522565,
+                "residual_energy_fraction": 0.2527794088477435
+              },
+              "persona_roleplay": {
+                "category": "CO",
+                "C_k": 0.69427490234375,
+                "cosine_to_own_leave_one_out_prototype": 0.5043013691902161,
+                "cosine_to_other_category_prototype": 0.3236315846443176,
+                "A_k": 0.18066978454589844,
+                "parallel_energy_fraction": 0.4820176400244236,
+                "residual_energy_fraction": 0.5179823599755764
+              },
+              "encoding_obfuscation": {
+                "category": "MG",
+                "C_k": 0.8704301118850708,
+                "cosine_to_own_leave_one_out_prototype": 0.6674565076828003,
+                "cosine_to_other_category_prototype": 0.54425048828125,
+                "A_k": 0.12320601940155029,
+                "parallel_energy_fraction": 0.7576485796762569,
+                "residual_energy_fraction": 0.24235142032374313
+              },
+              "payload_splitting": {
+                "category": "MG",
+                "C_k": 0.9023024439811707,
+                "cosine_to_own_leave_one_out_prototype": 0.7666948437690735,
+                "cosine_to_other_category_prototype": 0.6482128500938416,
+                "A_k": 0.11848199367523193,
+                "parallel_energy_fraction": 0.8141497004143936,
+                "residual_energy_fraction": 0.1858502995856064
+              },
+              "distractors_negated": {
+                "category": "MG",
+                "C_k": 0.7608472108840942,
+                "cosine_to_own_leave_one_out_prototype": 0.5218816995620728,
+                "cosine_to_other_category_prototype": 0.47247880697250366,
+                "A_k": 0.04940289258956909,
+                "parallel_energy_fraction": 0.5788884783101054,
+                "residual_energy_fraction": 0.42111152168989463
+              }
+            },
+            "per_category": {
+              "CO": {
+                "mean_coverage": 0.817401111125946,
+                "median_coverage": 0.8644192218780518,
+                "minimum_coverage": 0.69427490234375,
+                "coverage_range": 0.19923430681228638,
+                "coverage_standard_deviation": 0.10761786252260208,
+                "resultant_length": 0.8253504037857056
+              },
+              "MG": {
+                "mean_coverage": 0.8445265889167786,
+                "median_coverage": 0.8704301118850708,
+                "minimum_coverage": 0.7608472108840942,
+                "coverage_range": 0.14145523309707642,
+                "coverage_standard_deviation": 0.07420000433921814,
+                "resultant_length": 0.8450148105621338
+              }
+            }
+          }
+        },
+        "placebo_calibrated": {
+          "unit_normalized": {
+            "per_mechanism": {
+              "prefix_injection": {
+                "category": "CO",
+                "C_k": 0.8090331554412842,
+                "cosine_to_own_leave_one_out_prototype": 0.5658106803894043,
+                "cosine_to_other_category_prototype": 0.6566737294197083,
+                "A_k": -0.09086304903030396,
+                "parallel_energy_fraction": 0.6545346466032811,
+                "residual_energy_fraction": 0.3454653533967189
+              },
+              "refusal_suppression": {
+                "category": "CO",
+                "C_k": 0.8760632872581482,
+                "cosine_to_own_leave_one_out_prototype": 0.6982699036598206,
+                "cosine_to_other_category_prototype": 0.5446774959564209,
+                "A_k": 0.15359240770339966,
+                "parallel_energy_fraction": 0.7674868832815527,
+                "residual_energy_fraction": 0.23251311671844732
+              },
+              "persona_roleplay": {
+                "category": "CO",
+                "C_k": 0.7797814607620239,
+                "cosine_to_own_leave_one_out_prototype": 0.5129330158233643,
+                "cosine_to_other_category_prototype": 0.3229828476905823,
+                "A_k": 0.18995016813278198,
+                "parallel_energy_fraction": 0.6080591265481559,
+                "residual_energy_fraction": 0.39194087345184414
+              },
+              "encoding_obfuscation": {
+                "category": "MG",
+                "C_k": 0.8561857342720032,
+                "cosine_to_own_leave_one_out_prototype": 0.6657409071922302,
+                "cosine_to_other_category_prototype": 0.5253180861473083,
+                "A_k": 0.14042282104492188,
+                "parallel_energy_fraction": 0.7330540115708892,
+                "residual_energy_fraction": 0.26694598842911077
+              },
+              "payload_splitting": {
+                "category": "MG",
+                "C_k": 0.895557165145874,
+                "cosine_to_own_leave_one_out_prototype": 0.7472613453865051,
+                "cosine_to_other_category_prototype": 0.5846826434135437,
+                "A_k": 0.16257870197296143,
+                "parallel_energy_fraction": 0.8020226360441143,
+                "residual_energy_fraction": 0.19797736395588572
+              },
+              "distractors_negated": {
+                "category": "MG",
+                "C_k": 0.7785159349441528,
+                "cosine_to_own_leave_one_out_prototype": 0.5212032794952393,
+                "cosine_to_other_category_prototype": 0.45476582646369934,
+                "A_k": 0.06643745303153992,
+                "parallel_energy_fraction": 0.6060870609619684,
+                "residual_energy_fraction": 0.3939129390380316
+              }
+            },
+            "per_category": {
+              "CO": {
+                "mean_coverage": 0.8216260075569153,
+                "median_coverage": 0.8090331554412842,
+                "minimum_coverage": 0.7797814607620239,
+                "coverage_range": 0.09628182649612427,
+                "coverage_standard_deviation": 0.0493607297539711,
+                "resultant_length": 0.8216260075569153
+              },
+              "MG": {
+                "mean_coverage": 0.8434195518493652,
+                "median_coverage": 0.8561857342720032,
+                "minimum_coverage": 0.7785159349441528,
+                "coverage_range": 0.11704123020172119,
+                "coverage_standard_deviation": 0.059555795043706894,
+                "resultant_length": 0.8434194922447205
+              }
+            }
+          },
+          "raw_magnitude": {
+            "per_mechanism": {
+              "prefix_injection": {
+                "category": "CO",
+                "C_k": 0.8711749315261841,
+                "cosine_to_own_leave_one_out_prototype": 0.5849112272262573,
+                "cosine_to_other_category_prototype": 0.6556195616722107,
+                "A_k": -0.07070833444595337,
+                "parallel_energy_fraction": 0.7589457613196515,
+                "residual_energy_fraction": 0.24105423868034848
+              },
+              "refusal_suppression": {
+                "category": "CO",
+                "C_k": 0.8728995323181152,
+                "cosine_to_own_leave_one_out_prototype": 0.6980865001678467,
+                "cosine_to_other_category_prototype": 0.5441907644271851,
+                "A_k": 0.15389573574066162,
+                "parallel_energy_fraction": 0.7619535935211843,
+                "residual_energy_fraction": 0.2380464064788157
+              },
+              "persona_roleplay": {
+                "category": "CO",
+                "C_k": 0.7009247541427612,
+                "cosine_to_own_leave_one_out_prototype": 0.49985918402671814,
+                "cosine_to_other_category_prototype": 0.32372814416885376,
+                "A_k": 0.17613103985786438,
+                "parallel_energy_fraction": 0.4912955109700903,
+                "residual_energy_fraction": 0.5087044890299097
+              },
+              "encoding_obfuscation": {
+                "category": "MG",
+                "C_k": 0.8727622032165527,
+                "cosine_to_own_leave_one_out_prototype": 0.6678521037101746,
+                "cosine_to_other_category_prototype": 0.5485479235649109,
+                "A_k": 0.11930418014526367,
+                "parallel_energy_fraction": 0.7617138633634113,
+                "residual_energy_fraction": 0.2382861366365887
+              },
+              "payload_splitting": {
+                "category": "MG",
+                "C_k": 0.894614577293396,
+                "cosine_to_own_leave_one_out_prototype": 0.7556787729263306,
+                "cosine_to_other_category_prototype": 0.6155498027801514,
+                "A_k": 0.1401289701461792,
+                "parallel_energy_fraction": 0.8003352419058416,
+                "residual_energy_fraction": 0.1996647580941584
+              },
+              "distractors_negated": {
+                "category": "MG",
+                "C_k": 0.7614821195602417,
+                "cosine_to_own_leave_one_out_prototype": 0.5173506736755371,
+                "cosine_to_other_category_prototype": 0.478969931602478,
+                "A_k": 0.03838074207305908,
+                "parallel_energy_fraction": 0.5798550184099582,
+                "residual_energy_fraction": 0.42014498159004177
+              }
+            },
+            "per_category": {
+              "CO": {
+                "mean_coverage": 0.8149997591972351,
+                "median_coverage": 0.8711749315261841,
+                "minimum_coverage": 0.7009247541427612,
+                "coverage_range": 0.171974778175354,
+                "coverage_standard_deviation": 0.09879560023546219,
+                "resultant_length": 0.8216260075569153
+              },
+              "MG": {
+                "mean_coverage": 0.8429529666900635,
+                "median_coverage": 0.8727622032165527,
+                "minimum_coverage": 0.7614821195602417,
+                "coverage_range": 0.1331324577331543,
+                "coverage_standard_deviation": 0.07139682024717331,
+                "resultant_length": 0.8434194922447205
+              }
+            }
+          }
+        }
+      },
+      "median": {
+        "raw": {
+          "unit_normalized": {
+            "per_mechanism": {
+              "prefix_injection": {
+                "category": "CO",
+                "C_k": 0.8310937881469727,
+                "cosine_to_own_leave_one_out_prototype": 0.6095802187919617,
+                "cosine_to_other_category_prototype": 0.6767688989639282,
+                "A_k": -0.06718868017196655,
+                "parallel_energy_fraction": 0.6907168846964851,
+                "residual_energy_fraction": 0.30928311530351493
+              },
+              "refusal_suppression": {
+                "category": "CO",
+                "C_k": 0.8675568699836731,
+                "cosine_to_own_leave_one_out_prototype": 0.6822627186775208,
+                "cosine_to_other_category_prototype": 0.5468823909759521,
+                "A_k": 0.1353803277015686,
+                "parallel_energy_fraction": 0.7526549226558679,
+                "residual_energy_fraction": 0.24734507734413214
+              },
+              "persona_roleplay": {
+                "category": "CO",
+                "C_k": 0.7800048589706421,
+                "cosine_to_own_leave_one_out_prototype": 0.515598475933075,
+                "cosine_to_other_category_prototype": 0.32355695962905884,
+                "A_k": 0.1920415163040161,
+                "parallel_energy_fraction": 0.6084075800178113,
+                "residual_energy_fraction": 0.39159241998218874
+              },
+              "encoding_obfuscation": {
+                "category": "MG",
+                "C_k": 0.8572909235954285,
+                "cosine_to_own_leave_one_out_prototype": 0.6698086261749268,
+                "cosine_to_other_category_prototype": 0.5227010250091553,
+                "A_k": 0.14710760116577148,
+                "parallel_energy_fraction": 0.7349477276791028,
+                "residual_energy_fraction": 0.26505227232089723
+              },
+              "payload_splitting": {
+                "category": "MG",
+                "C_k": 0.9025921821594238,
+                "cosine_to_own_leave_one_out_prototype": 0.7639743089675903,
+                "cosine_to_other_category_prototype": 0.6214537024497986,
+                "A_k": 0.14252060651779175,
+                "parallel_energy_fraction": 0.8146726472953105,
+                "residual_energy_fraction": 0.18532735270468947
+              },
+              "distractors_negated": {
+                "category": "MG",
+                "C_k": 0.7854140400886536,
+                "cosine_to_own_leave_one_out_prototype": 0.5355556607246399,
+                "cosine_to_other_category_prototype": 0.4446521997451782,
+                "A_k": 0.09090346097946167,
+                "parallel_energy_fraction": 0.6168752143683811,
+                "residual_energy_fraction": 0.3831247856316189
+              }
+            },
+            "per_category": {
+              "CO": {
+                "mean_coverage": 0.8262184262275696,
+                "median_coverage": 0.8310937881469727,
+                "minimum_coverage": 0.7800048589706421,
+                "coverage_range": 0.087552011013031,
+                "coverage_standard_deviation": 0.04397914186120033,
+                "resultant_length": 0.8262185454368591
+              },
+              "MG": {
+                "mean_coverage": 0.8484323620796204,
+                "median_coverage": 0.8572909235954285,
+                "minimum_coverage": 0.7854140400886536,
+                "coverage_range": 0.11717814207077026,
+                "coverage_standard_deviation": 0.059089209884405136,
+                "resultant_length": 0.8484324216842651
+              }
+            }
+          },
+          "raw_magnitude": {
+            "per_mechanism": {
+              "prefix_injection": {
+                "category": "CO",
+                "C_k": 0.8946212530136108,
+                "cosine_to_own_leave_one_out_prototype": 0.6281096935272217,
+                "cosine_to_other_category_prototype": 0.6761766076087952,
+                "A_k": -0.048066914081573486,
+                "parallel_energy_fraction": 0.8003471863436431,
+                "residual_energy_fraction": 0.1996528136563569
+              },
+              "refusal_suppression": {
+                "category": "CO",
+                "C_k": 0.8654963374137878,
+                "cosine_to_own_leave_one_out_prototype": 0.6919529438018799,
+                "cosine_to_other_category_prototype": 0.5468605160713196,
+                "A_k": 0.1450924277305603,
+                "parallel_energy_fraction": 0.7490839100766813,
+                "residual_energy_fraction": 0.2509160899233187
+              },
+              "persona_roleplay": {
+                "category": "CO",
+                "C_k": 0.6942369937896729,
+                "cosine_to_own_leave_one_out_prototype": 0.5060755610466003,
+                "cosine_to_other_category_prototype": 0.32457494735717773,
+                "A_k": 0.1815006136894226,
+                "parallel_energy_fraction": 0.48196500354612226,
+                "residual_energy_fraction": 0.5180349964538777
+              },
+              "encoding_obfuscation": {
+                "category": "MG",
+                "C_k": 0.8726288676261902,
+                "cosine_to_own_leave_one_out_prototype": 0.6746091246604919,
+                "cosine_to_other_category_prototype": 0.5509157180786133,
+                "A_k": 0.12369340658187866,
+                "parallel_energy_fraction": 0.761481140614567,
+                "residual_energy_fraction": 0.23851885938543305
+              },
+              "payload_splitting": {
+                "category": "MG",
+                "C_k": 0.9040483236312866,
+                "cosine_to_own_leave_one_out_prototype": 0.7715361714363098,
+                "cosine_to_other_category_prototype": 0.6522809267044067,
+                "A_k": 0.11925524473190308,
+                "parallel_energy_fraction": 0.8173033714605396,
+                "residual_energy_fraction": 0.18269662853946045
+              },
+              "distractors_negated": {
+                "category": "MG",
+                "C_k": 0.7673165798187256,
+                "cosine_to_own_leave_one_out_prototype": 0.5323642492294312,
+                "cosine_to_other_category_prototype": 0.4769432842731476,
+                "A_k": 0.05542096495628357,
+                "parallel_energy_fraction": 0.5887747336647067,
+                "residual_energy_fraction": 0.4112252663352933
+              }
+            },
+            "per_category": {
+              "CO": {
+                "mean_coverage": 0.818118155002594,
+                "median_coverage": 0.8654963374137878,
+                "minimum_coverage": 0.6942369937896729,
+                "coverage_range": 0.200384259223938,
+                "coverage_standard_deviation": 0.10826808959245682,
+                "resultant_length": 0.8262185454368591
+              },
+              "MG": {
+                "mean_coverage": 0.8479979038238525,
+                "median_coverage": 0.8726288676261902,
+                "minimum_coverage": 0.7673165798187256,
+                "coverage_range": 0.13673174381256104,
+                "coverage_standard_deviation": 0.07161637395620346,
+                "resultant_length": 0.8484324216842651
+              }
+            }
+          }
+        },
+        "placebo_calibrated": {
+          "unit_normalized": {
+            "per_mechanism": {
+              "prefix_injection": {
+                "category": "CO",
+                "C_k": 0.8083533048629761,
+                "cosine_to_own_leave_one_out_prototype": 0.5640747547149658,
+                "cosine_to_other_category_prototype": 0.6589028835296631,
+                "A_k": -0.09482812881469727,
+                "parallel_energy_fraction": 0.6534350654828955,
+                "residual_energy_fraction": 0.34656493451710446
+              },
+              "refusal_suppression": {
+                "category": "CO",
+                "C_k": 0.8755543231964111,
+                "cosine_to_own_leave_one_out_prototype": 0.6968166828155518,
+                "cosine_to_other_category_prototype": 0.5437335968017578,
+                "A_k": 0.15308308601379395,
+                "parallel_energy_fraction": 0.7665953728679256,
+                "residual_energy_fraction": 0.23340462713207444
+              },
+              "persona_roleplay": {
+                "category": "CO",
+                "C_k": 0.7779548168182373,
+                "cosine_to_own_leave_one_out_prototype": 0.5092139840126038,
+                "cosine_to_other_category_prototype": 0.3179418444633484,
+                "A_k": 0.19127213954925537,
+                "parallel_energy_fraction": 0.6052136970106972,
+                "residual_energy_fraction": 0.39478630298930284
+              },
+              "encoding_obfuscation": {
+                "category": "MG",
+                "C_k": 0.858518123626709,
+                "cosine_to_own_leave_one_out_prototype": 0.6713795065879822,
+                "cosine_to_other_category_prototype": 0.5275246500968933,
+                "A_k": 0.14385485649108887,
+                "parallel_energy_fraction": 0.7370533685955252,
+                "residual_energy_fraction": 0.26294663140447483
+              },
+              "payload_splitting": {
+                "category": "MG",
+                "C_k": 0.8971724510192871,
+                "cosine_to_own_leave_one_out_prototype": 0.7515459656715393,
+                "cosine_to_other_category_prototype": 0.5847921371459961,
+                "A_k": 0.1667538285255432,
+                "parallel_energy_fraction": 0.8049184068679551,
+                "residual_energy_fraction": 0.19508159313204487
+              },
+              "distractors_negated": {
+                "category": "MG",
+                "C_k": 0.7824811339378357,
+                "cosine_to_own_leave_one_out_prototype": 0.5293371677398682,
+                "cosine_to_other_category_prototype": 0.4553947150707245,
+                "A_k": 0.07394245266914368,
+                "parallel_energy_fraction": 0.6122767249686412,
+                "residual_energy_fraction": 0.38772327503135884
+              }
+            },
+            "per_category": {
+              "CO": {
+                "mean_coverage": 0.8206208348274231,
+                "median_coverage": 0.8083533048629761,
+                "minimum_coverage": 0.7779548168182373,
+                "coverage_range": 0.09759950637817383,
+                "coverage_standard_deviation": 0.04994281381368637,
+                "resultant_length": 0.8206207156181335
+              },
+              "MG": {
+                "mean_coverage": 0.8460572361946106,
+                "median_coverage": 0.858518123626709,
+                "minimum_coverage": 0.7824811339378357,
+                "coverage_range": 0.11469131708145142,
+                "coverage_standard_deviation": 0.05835220590233803,
+                "resultant_length": 0.8460574150085449
+              }
+            }
+          },
+          "raw_magnitude": {
+            "per_mechanism": {
+              "prefix_injection": {
+                "category": "CO",
+                "C_k": 0.8716068863868713,
+                "cosine_to_own_leave_one_out_prototype": 0.5836232900619507,
+                "cosine_to_other_category_prototype": 0.6578965783119202,
+                "A_k": -0.07427328824996948,
+                "parallel_energy_fraction": 0.7596985643970164,
+                "residual_energy_fraction": 0.24030143560298356
+              },
+              "refusal_suppression": {
+                "category": "CO",
+                "C_k": 0.8722632527351379,
+                "cosine_to_own_leave_one_out_prototype": 0.6968787312507629,
+                "cosine_to_other_category_prototype": 0.543321967124939,
+                "A_k": 0.15355676412582397,
+                "parallel_energy_fraction": 0.7608431820720831,
+                "residual_energy_fraction": 0.23915681792791688
+              },
+              "persona_roleplay": {
+                "category": "CO",
+                "C_k": 0.6974630951881409,
+                "cosine_to_own_leave_one_out_prototype": 0.49588853120803833,
+                "cosine_to_other_category_prototype": 0.31873372197151184,
+                "A_k": 0.1771548092365265,
+                "parallel_energy_fraction": 0.48645476914942165,
+                "residual_energy_fraction": 0.5135452308505783
+              },
+              "encoding_obfuscation": {
+                "category": "MG",
+                "C_k": 0.8740668892860413,
+                "cosine_to_own_leave_one_out_prototype": 0.6729417443275452,
+                "cosine_to_other_category_prototype": 0.551622748374939,
+                "A_k": 0.1213189959526062,
+                "parallel_energy_fraction": 0.7639929269461767,
+                "residual_energy_fraction": 0.2360070730538233
+              },
+              "payload_splitting": {
+                "category": "MG",
+                "C_k": 0.8959481120109558,
+                "cosine_to_own_leave_one_out_prototype": 0.7594112157821655,
+                "cosine_to_other_category_prototype": 0.616784930229187,
+                "A_k": 0.14262628555297852,
+                "parallel_energy_fraction": 0.8027230194159962,
+                "residual_energy_fraction": 0.19727698058400378
+              },
+              "distractors_negated": {
+                "category": "MG",
+                "C_k": 0.7669137716293335,
+                "cosine_to_own_leave_one_out_prototype": 0.5256035923957825,
+                "cosine_to_other_category_prototype": 0.48065003752708435,
+                "A_k": 0.04495355486869812,
+                "parallel_energy_fraction": 0.5881567331147295,
+                "residual_energy_fraction": 0.4118432668852705
+              }
+            },
+            "per_category": {
+              "CO": {
+                "mean_coverage": 0.81377774477005,
+                "median_coverage": 0.8716068863868713,
+                "minimum_coverage": 0.6974630951881409,
+                "coverage_range": 0.17480015754699707,
+                "coverage_standard_deviation": 0.1007319763302803,
+                "resultant_length": 0.8206207156181335
+              },
+              "MG": {
+                "mean_coverage": 0.8456428647041321,
+                "median_coverage": 0.8740668892860413,
+                "minimum_coverage": 0.7669137716293335,
+                "coverage_range": 0.12903434038162231,
+                "coverage_standard_deviation": 0.06905364990234375,
+                "resultant_length": 0.8460574150085449
+              }
+            }
+          }
+        }
+      },
+      "trimmed_mean": {
+        "raw": {
+          "unit_normalized": {
+            "per_mechanism": {
+              "prefix_injection": {
+                "category": "CO",
+                "C_k": 0.8305476903915405,
+                "cosine_to_own_leave_one_out_prototype": 0.6083875298500061,
+                "cosine_to_other_category_prototype": 0.6746929287910461,
+                "A_k": -0.06630539894104004,
+                "parallel_energy_fraction": 0.6898094660147223,
+                "residual_energy_fraction": 0.31019053398527774
+              },
+              "refusal_suppression": {
+                "category": "CO",
+                "C_k": 0.867439329624176,
+                "cosine_to_own_leave_one_out_prototype": 0.6818954944610596,
+                "cosine_to_other_category_prototype": 0.5455425381660461,
+                "A_k": 0.13635295629501343,
+                "parallel_energy_fraction": 0.7524509905788399,
+                "residual_energy_fraction": 0.2475490094211601
+              },
+              "persona_roleplay": {
+                "category": "CO",
+                "C_k": 0.7796916961669922,
+                "cosine_to_own_leave_one_out_prototype": 0.5148882269859314,
+                "cosine_to_other_category_prototype": 0.32273849844932556,
+                "A_k": 0.19214972853660583,
+                "parallel_energy_fraction": 0.6079191410717613,
+                "residual_energy_fraction": 0.39208085892823874
+              },
+              "encoding_obfuscation": {
+                "category": "MG",
+                "C_k": 0.8557983040809631,
+                "cosine_to_own_leave_one_out_prototype": 0.6662620306015015,
+                "cosine_to_other_category_prototype": 0.5192755460739136,
+                "A_k": 0.1469864845275879,
+                "parallel_energy_fraction": 0.7323907372678526,
+                "residual_energy_fraction": 0.26760926273214736
+              },
+              "payload_splitting": {
+                "category": "MG",
+                "C_k": 0.9016929864883423,
+                "cosine_to_own_leave_one_out_prototype": 0.7615659236907959,
+                "cosine_to_other_category_prototype": 0.6199905276298523,
+                "A_k": 0.1415753960609436,
+                "parallel_energy_fraction": 0.8130502418822658,
+                "residual_energy_fraction": 0.18694975811773418
+              },
+              "distractors_negated": {
+                "category": "MG",
+                "C_k": 0.7831099629402161,
+                "cosine_to_own_leave_one_out_prototype": 0.5308072566986084,
+                "cosine_to_other_category_prototype": 0.4428926706314087,
+                "A_k": 0.08791458606719971,
+                "parallel_energy_fraction": 0.6132612140562266,
+                "residual_energy_fraction": 0.3867387859437734
+              }
+            },
+            "per_category": {
+              "CO": {
+                "mean_coverage": 0.8258929252624512,
+                "median_coverage": 0.8305476903915405,
+                "minimum_coverage": 0.7796916961669922,
+                "coverage_range": 0.08774763345718384,
+                "coverage_standard_deviation": 0.04405862092971802,
+                "resultant_length": 0.8258928656578064
+              },
+              "MG": {
+                "mean_coverage": 0.8468670845031738,
+                "median_coverage": 0.8557983040809631,
+                "minimum_coverage": 0.7831099629402161,
+                "coverage_range": 0.11858302354812622,
+                "coverage_standard_deviation": 0.05979388207197189,
+                "resultant_length": 0.8468669056892395
+              }
+            }
+          },
+          "raw_magnitude": {
+            "per_mechanism": {
+              "prefix_injection": {
+                "category": "CO",
+                "C_k": 0.8939602971076965,
+                "cosine_to_own_leave_one_out_prototype": 0.6268374919891357,
+                "cosine_to_other_category_prototype": 0.6740726232528687,
+                "A_k": -0.04723513126373291,
+                "parallel_energy_fraction": 0.7991650128048811,
+                "residual_energy_fraction": 0.20083498719511894
+              },
+              "refusal_suppression": {
+                "category": "CO",
+                "C_k": 0.8653427362442017,
+                "cosine_to_own_leave_one_out_prototype": 0.6914701461791992,
+                "cosine_to_other_category_prototype": 0.5454971194267273,
+                "A_k": 0.14597302675247192,
+                "parallel_energy_fraction": 0.748818051170602,
+                "residual_energy_fraction": 0.25118194882939804
+              },
+              "persona_roleplay": {
+                "category": "CO",
+                "C_k": 0.6942995190620422,
+                "cosine_to_own_leave_one_out_prototype": 0.5053220987319946,
+                "cosine_to_other_category_prototype": 0.32372134923934937,
+                "A_k": 0.18160074949264526,
+                "parallel_energy_fraction": 0.48205182216978315,
+                "residual_energy_fraction": 0.5179481778302168
+              },
+              "encoding_obfuscation": {
+                "category": "MG",
+                "C_k": 0.8717164397239685,
+                "cosine_to_own_leave_one_out_prototype": 0.6714251041412354,
+                "cosine_to_other_category_prototype": 0.5473499894142151,
+                "A_k": 0.12407511472702026,
+                "parallel_energy_fraction": 0.7598895512850312,
+                "residual_energy_fraction": 0.24011044871496878
+              },
+              "payload_splitting": {
+                "category": "MG",
+                "C_k": 0.9033319354057312,
+                "cosine_to_own_leave_one_out_prototype": 0.7694085836410522,
+                "cosine_to_other_category_prototype": 0.6505074501037598,
+                "A_k": 0.11890113353729248,
+                "parallel_energy_fraction": 0.8160085855238641,
+                "residual_energy_fraction": 0.18399141447613587
+              },
+              "distractors_negated": {
+                "category": "MG",
+                "C_k": 0.7641538977622986,
+                "cosine_to_own_leave_one_out_prototype": 0.5275490880012512,
+                "cosine_to_other_category_prototype": 0.47470006346702576,
+                "A_k": 0.052849024534225464,
+                "parallel_energy_fraction": 0.5839311794653135,
+                "residual_energy_fraction": 0.4160688205346865
+              }
+            },
+            "per_category": {
+              "CO": {
+                "mean_coverage": 0.8178675174713135,
+                "median_coverage": 0.8653427362442017,
+                "minimum_coverage": 0.6942995190620422,
+                "coverage_range": 0.1996607780456543,
+                "coverage_standard_deviation": 0.10796540230512619,
+                "resultant_length": 0.8258928656578064
+              },
+              "MG": {
+                "mean_coverage": 0.8464007377624512,
+                "median_coverage": 0.8717164397239685,
+                "minimum_coverage": 0.7641538977622986,
+                "coverage_range": 0.13917803764343262,
+                "coverage_standard_deviation": 0.07296091318130493,
+                "resultant_length": 0.8468669056892395
+              }
+            }
+          }
+        },
+        "placebo_calibrated": {
+          "unit_normalized": {
+            "per_mechanism": {
+              "prefix_injection": {
+                "category": "CO",
+                "C_k": 0.8086720108985901,
+                "cosine_to_own_leave_one_out_prototype": 0.5649047493934631,
+                "cosine_to_other_category_prototype": 0.6576727628707886,
+                "A_k": -0.09276801347732544,
+                "parallel_energy_fraction": 0.6539504212107694,
+                "residual_energy_fraction": 0.3460495787892306
+              },
+              "refusal_suppression": {
+                "category": "CO",
+                "C_k": 0.8759812712669373,
+                "cosine_to_own_leave_one_out_prototype": 0.6979076862335205,
+                "cosine_to_other_category_prototype": 0.5441872477531433,
+                "A_k": 0.1537204384803772,
+                "parallel_energy_fraction": 0.7673431876104395,
+                "residual_energy_fraction": 0.23265681238956049
+              },
+              "persona_roleplay": {
+                "category": "CO",
+                "C_k": 0.7787187099456787,
+                "cosine_to_own_leave_one_out_prototype": 0.5108104348182678,
+                "cosine_to_other_category_prototype": 0.3193351626396179,
+                "A_k": 0.1914752721786499,
+                "parallel_energy_fraction": 0.6064028292194621,
+                "residual_energy_fraction": 0.3935971707805379
+              },
+              "encoding_obfuscation": {
+                "category": "MG",
+                "C_k": 0.8574178218841553,
+                "cosine_to_own_leave_one_out_prototype": 0.6687172651290894,
+                "cosine_to_other_category_prototype": 0.5257602334022522,
+                "A_k": 0.14295703172683716,
+                "parallel_energy_fraction": 0.735165321284569,
+                "residual_energy_fraction": 0.264834678715431
+              },
+              "payload_splitting": {
+                "category": "MG",
+                "C_k": 0.8964083790779114,
+                "cosine_to_own_leave_one_out_prototype": 0.7495193481445312,
+                "cosine_to_other_category_prototype": 0.5846509337425232,
+                "A_k": 0.16486841440200806,
+                "parallel_energy_fraction": 0.8035479820810885,
+                "residual_energy_fraction": 0.19645201791891154
+              },
+              "distractors_negated": {
+                "category": "MG",
+                "C_k": 0.7805840969085693,
+                "cosine_to_own_leave_one_out_prototype": 0.5254477262496948,
+                "cosine_to_other_category_prototype": 0.4546518623828888,
+                "A_k": 0.07079586386680603,
+                "parallel_energy_fraction": 0.6093115323465668,
+                "residual_energy_fraction": 0.39068846765343324
+              }
+            },
+            "per_category": {
+              "CO": {
+                "mean_coverage": 0.8211240172386169,
+                "median_coverage": 0.8086720108985901,
+                "minimum_coverage": 0.7787187099456787,
+                "coverage_range": 0.09726256132125854,
+                "coverage_standard_deviation": 0.04981255158782005,
+                "resultant_length": 0.8211239576339722
+              },
+              "MG": {
+                "mean_coverage": 0.8448033928871155,
+                "median_coverage": 0.8574178218841553,
+                "minimum_coverage": 0.7805840969085693,
+                "coverage_range": 0.11582428216934204,
+                "coverage_standard_deviation": 0.05893350765109062,
+                "resultant_length": 0.8448034524917603
+              }
+            }
+          },
+          "raw_magnitude": {
+            "per_mechanism": {
+              "prefix_injection": {
+                "category": "CO",
+                "C_k": 0.8714848756790161,
+                "cosine_to_own_leave_one_out_prototype": 0.5843790769577026,
+                "cosine_to_other_category_prototype": 0.6566517353057861,
+                "A_k": -0.0722726583480835,
+                "parallel_energy_fraction": 0.7594858885372702,
+                "residual_energy_fraction": 0.24051411146272983
+              },
+              "refusal_suppression": {
+                "category": "CO",
+                "C_k": 0.8728111386299133,
+                "cosine_to_own_leave_one_out_prototype": 0.6978556513786316,
+                "cosine_to_other_category_prototype": 0.5437307357788086,
+                "A_k": 0.154124915599823,
+                "parallel_energy_fraction": 0.7617992837164458,
+                "residual_energy_fraction": 0.23820071628355421
+              },
+              "persona_roleplay": {
+                "category": "CO",
+                "C_k": 0.6987782716751099,
+                "cosine_to_own_leave_one_out_prototype": 0.497585266828537,
+                "cosine_to_other_category_prototype": 0.3200913369655609,
+                "A_k": 0.17749392986297607,
+                "parallel_energy_fraction": 0.48829107296525365,
+                "residual_energy_fraction": 0.5117089270347464
+              },
+              "encoding_obfuscation": {
+                "category": "MG",
+                "C_k": 0.8735513687133789,
+                "cosine_to_own_leave_one_out_prototype": 0.6706414222717285,
+                "cosine_to_other_category_prototype": 0.549601137638092,
+                "A_k": 0.12104028463363647,
+                "parallel_energy_fraction": 0.7630919937810177,
+                "residual_energy_fraction": 0.23690800621898234
+              },
+              "payload_splitting": {
+                "category": "MG",
+                "C_k": 0.8953869342803955,
+                "cosine_to_own_leave_one_out_prototype": 0.7577025294303894,
+                "cosine_to_other_category_prototype": 0.6162043809890747,
+                "A_k": 0.1414981484413147,
+                "parallel_energy_fraction": 0.8017177620800453,
+                "residual_energy_fraction": 0.1982822379199547
+              },
+              "distractors_negated": {
+                "category": "MG",
+                "C_k": 0.7641375660896301,
+                "cosine_to_own_leave_one_out_prototype": 0.5216598510742188,
+                "cosine_to_other_category_prototype": 0.4794836640357971,
+                "A_k": 0.04217618703842163,
+                "parallel_energy_fraction": 0.5839062199093839,
+                "residual_energy_fraction": 0.41609378009061615
+              }
+            },
+            "per_category": {
+              "CO": {
+                "mean_coverage": 0.8143580555915833,
+                "median_coverage": 0.8714848756790161,
+                "minimum_coverage": 0.6987782716751099,
+                "coverage_range": 0.17403286695480347,
+                "coverage_standard_deviation": 0.10009726136922836,
+                "resultant_length": 0.8211239576339722
+              },
+              "MG": {
+                "mean_coverage": 0.8443586230278015,
+                "median_coverage": 0.8735513687133789,
+                "minimum_coverage": 0.7641375660896301,
+                "coverage_range": 0.13124936819076538,
+                "coverage_standard_deviation": 0.07032610476016998,
+                "resultant_length": 0.8448034524917603
+              }
+            }
+          }
+        }
+      }
+    },
+    "Meta-Llama-3.1-8B-Instruct": {
+      "mean": {
+        "raw": {
+          "unit_normalized": {
+            "per_mechanism": {
+              "prefix_injection": {
+                "category": "CO",
+                "C_k": 0.7934879064559937,
+                "cosine_to_own_leave_one_out_prototype": 0.48143500089645386,
+                "cosine_to_other_category_prototype": 0.4314069151878357,
+                "A_k": 0.050028085708618164,
+                "parallel_energy_fraction": 0.6296230576919157,
+                "residual_energy_fraction": 0.37037694230808427
+              },
+              "refusal_suppression": {
+                "category": "CO",
+                "C_k": 0.5889511108398438,
+                "cosine_to_own_leave_one_out_prototype": 0.15851588547229767,
+                "cosine_to_other_category_prototype": 0.5044068694114685,
+                "A_k": -0.34589098393917084,
+                "parallel_energy_fraction": 0.3468634109594859,
+                "residual_energy_fraction": 0.6531365890405141
+              },
+              "persona_roleplay": {
+                "category": "CO",
+                "C_k": 0.795246958732605,
+                "cosine_to_own_leave_one_out_prototype": 0.4847813844680786,
+                "cosine_to_other_category_prototype": 0.3460639715194702,
+                "A_k": 0.1387174129486084,
+                "parallel_energy_fraction": 0.6324177253734575,
+                "residual_energy_fraction": 0.36758227462654247
+              },
+              "encoding_obfuscation": {
+                "category": "MG",
+                "C_k": 0.8047423958778381,
+                "cosine_to_own_leave_one_out_prototype": 0.5644180774688721,
+                "cosine_to_other_category_prototype": 0.32992759346961975,
+                "A_k": 0.23449048399925232,
+                "parallel_energy_fraction": 0.6476103237232032,
+                "residual_energy_fraction": 0.35238967627679685
+              },
+              "payload_splitting": {
+                "category": "MG",
+                "C_k": 0.8979657888412476,
+                "cosine_to_own_leave_one_out_prototype": 0.7500784397125244,
+                "cosine_to_other_category_prototype": 0.5603339672088623,
+                "A_k": 0.1897444725036621,
+                "parallel_energy_fraction": 0.806342557929284,
+                "residual_energy_fraction": 0.193657442070716
+              },
+              "distractors_negated": {
+                "category": "MG",
+                "C_k": 0.8044429421424866,
+                "cosine_to_own_leave_one_out_prototype": 0.5638715028762817,
+                "cosine_to_other_category_prototype": 0.5855529308319092,
+                "A_k": -0.02168142795562744,
+                "parallel_energy_fraction": 0.64712844716286,
+                "residual_energy_fraction": 0.35287155283714
+              }
+            },
+            "per_category": {
+              "CO": {
+                "mean_coverage": 0.725895345211029,
+                "median_coverage": 0.7934879064559937,
+                "minimum_coverage": 0.5889511108398438,
+                "coverage_range": 0.20629584789276123,
+                "coverage_standard_deviation": 0.11860042810440063,
+                "resultant_length": 0.725895345211029
+              },
+              "MG": {
+                "mean_coverage": 0.8357170224189758,
+                "median_coverage": 0.8047423958778381,
+                "minimum_coverage": 0.8044429421424866,
+                "coverage_range": 0.09352284669876099,
+                "coverage_standard_deviation": 0.05390920490026474,
+                "resultant_length": 0.8357169032096863
+              }
+            }
+          },
+          "raw_magnitude": {
+            "per_mechanism": {
+              "prefix_injection": {
+                "category": "CO",
+                "C_k": 0.7550197839736938,
+                "cosine_to_own_leave_one_out_prototype": 0.40120309591293335,
+                "cosine_to_other_category_prototype": 0.38704758882522583,
+                "A_k": 0.01415550708770752,
+                "parallel_energy_fraction": 0.5700548741916833,
+                "residual_energy_fraction": 0.4299451258083167
+              },
+              "refusal_suppression": {
+                "category": "CO",
+                "C_k": 0.6906781792640686,
+                "cosine_to_own_leave_one_out_prototype": 0.15780237317085266,
+                "cosine_to_other_category_prototype": 0.4978608787059784,
+                "A_k": -0.34005850553512573,
+                "parallel_energy_fraction": 0.4770363473115289,
+                "residual_energy_fraction": 0.5229636526884711
+              },
+              "persona_roleplay": {
+                "category": "CO",
+                "C_k": 0.7094764709472656,
+                "cosine_to_own_leave_one_out_prototype": 0.4526209235191345,
+                "cosine_to_other_category_prototype": 0.3133559823036194,
+                "A_k": 0.13926494121551514,
+                "parallel_energy_fraction": 0.5033568628277862,
+                "residual_energy_fraction": 0.49664313717221376
+              },
+              "encoding_obfuscation": {
+                "category": "MG",
+                "C_k": 0.876701295375824,
+                "cosine_to_own_leave_one_out_prototype": 0.5762827396392822,
+                "cosine_to_other_category_prototype": 0.3621608316898346,
+                "A_k": 0.21412190794944763,
+                "parallel_energy_fraction": 0.7686051613136478,
+                "residual_energy_fraction": 0.23139483868635224
+              },
+              "payload_splitting": {
+                "category": "MG",
+                "C_k": 0.8782653212547302,
+                "cosine_to_own_leave_one_out_prototype": 0.7366464138031006,
+                "cosine_to_other_category_prototype": 0.5774669647216797,
+                "A_k": 0.1591794490814209,
+                "parallel_energy_fraction": 0.7713499745186745,
+                "residual_energy_fraction": 0.22865002548132551
+              },
+              "distractors_negated": {
+                "category": "MG",
+                "C_k": 0.7287893891334534,
+                "cosine_to_own_leave_one_out_prototype": 0.5353022813796997,
+                "cosine_to_other_category_prototype": 0.5988726615905762,
+                "A_k": -0.06357038021087646,
+                "parallel_energy_fraction": 0.5311339737135121,
+                "residual_energy_fraction": 0.4688660262864879
+              }
+            },
+            "per_category": {
+              "CO": {
+                "mean_coverage": 0.718391478061676,
+                "median_coverage": 0.7094764709472656,
+                "minimum_coverage": 0.6906781792640686,
+                "coverage_range": 0.06434160470962524,
+                "coverage_standard_deviation": 0.033084265887737274,
+                "resultant_length": 0.725895345211029
+              },
+              "MG": {
+                "mean_coverage": 0.8279187083244324,
+                "median_coverage": 0.876701295375824,
+                "minimum_coverage": 0.7287893891334534,
+                "coverage_range": 0.14947593212127686,
+                "coverage_standard_deviation": 0.08585203438997269,
+                "resultant_length": 0.8357169032096863
+              }
+            }
+          }
+        },
+        "placebo_calibrated": {
+          "unit_normalized": {
+            "per_mechanism": {
+              "prefix_injection": {
+                "category": "CO",
+                "C_k": 0.8309633731842041,
+                "cosine_to_own_leave_one_out_prototype": 0.571662962436676,
+                "cosine_to_other_category_prototype": 0.505397379398346,
+                "A_k": 0.06626558303833008,
+                "parallel_energy_fraction": 0.6905001275736709,
+                "residual_energy_fraction": 0.30949987242632915
+              },
+              "refusal_suppression": {
+                "category": "CO",
+                "C_k": 0.5960679054260254,
+                "cosine_to_own_leave_one_out_prototype": 0.1868489384651184,
+                "cosine_to_other_category_prototype": 0.495302677154541,
+                "A_k": -0.3084537386894226,
+                "parallel_energy_fraction": 0.35529694787896915,
+                "residual_energy_fraction": 0.6447030521210309
+              },
+              "persona_roleplay": {
+                "category": "CO",
+                "C_k": 0.8285177946090698,
+                "cosine_to_own_leave_one_out_prototype": 0.5667210221290588,
+                "cosine_to_other_category_prototype": 0.43994590640068054,
+                "A_k": 0.1267751157283783,
+                "parallel_energy_fraction": 0.6864417359838768,
+                "residual_energy_fraction": 0.3135582640161232
+              },
+              "encoding_obfuscation": {
+                "category": "MG",
+                "C_k": 0.8080960512161255,
+                "cosine_to_own_leave_one_out_prototype": 0.5733445286750793,
+                "cosine_to_other_category_prototype": 0.3627135455608368,
+                "A_k": 0.21063098311424255,
+                "parallel_energy_fraction": 0.6530192279910949,
+                "residual_energy_fraction": 0.3469807720089051
+              },
+              "payload_splitting": {
+                "category": "MG",
+                "C_k": 0.902411162853241,
+                "cosine_to_own_leave_one_out_prototype": 0.7616943120956421,
+                "cosine_to_other_category_prototype": 0.5816510915756226,
+                "A_k": 0.18004322052001953,
+                "parallel_energy_fraction": 0.8143459068421386,
+                "residual_energy_fraction": 0.1856540931578614
+              },
+              "distractors_negated": {
+                "category": "MG",
+                "C_k": 0.8154661655426025,
+                "cosine_to_own_leave_one_out_prototype": 0.5869181156158447,
+                "cosine_to_other_category_prototype": 0.6690047383308411,
+                "A_k": -0.08208662271499634,
+                "parallel_energy_fraction": 0.6649850671447552,
+                "residual_energy_fraction": 0.33501493285524475
+              }
+            },
+            "per_category": {
+              "CO": {
+                "mean_coverage": 0.7518496513366699,
+                "median_coverage": 0.8285177946090698,
+                "minimum_coverage": 0.5960679054260254,
+                "coverage_range": 0.2348954677581787,
+                "coverage_standard_deviation": 0.1349165290594101,
+                "resultant_length": 0.7518496513366699
+              },
+              "MG": {
+                "mean_coverage": 0.841991126537323,
+                "median_coverage": 0.8154661655426025,
+                "minimum_coverage": 0.8080960512161255,
+                "coverage_range": 0.09431511163711548,
+                "coverage_standard_deviation": 0.05245488882064819,
+                "resultant_length": 0.8419911861419678
+              }
+            }
+          },
+          "raw_magnitude": {
+            "per_mechanism": {
+              "prefix_injection": {
+                "category": "CO",
+                "C_k": 0.8273618817329407,
+                "cosine_to_own_leave_one_out_prototype": 0.5307902693748474,
+                "cosine_to_other_category_prototype": 0.46195006370544434,
+                "A_k": 0.06884020566940308,
+                "parallel_energy_fraction": 0.6845276833446725,
+                "residual_energy_fraction": 0.3154723166553275
+              },
+              "refusal_suppression": {
+                "category": "CO",
+                "C_k": 0.6279867887496948,
+                "cosine_to_own_leave_one_out_prototype": 0.18697930872440338,
+                "cosine_to_other_category_prototype": 0.490125834941864,
+                "A_k": -0.30314652621746063,
+                "parallel_energy_fraction": 0.39436740684415383,
+                "residual_energy_fraction": 0.6056325931558462
+              },
+              "persona_roleplay": {
+                "category": "CO",
+                "C_k": 0.7968611717224121,
+                "cosine_to_own_leave_one_out_prototype": 0.5651711225509644,
+                "cosine_to_other_category_prototype": 0.40435364842414856,
+                "A_k": 0.1608174741268158,
+                "parallel_energy_fraction": 0.6349877269988156,
+                "residual_energy_fraction": 0.36501227300118444
+              },
+              "encoding_obfuscation": {
+                "category": "MG",
+                "C_k": 0.8724953532218933,
+                "cosine_to_own_leave_one_out_prototype": 0.5807554125785828,
+                "cosine_to_other_category_prototype": 0.37194716930389404,
+                "A_k": 0.20880824327468872,
+                "parallel_energy_fraction": 0.7612481413937964,
+                "residual_energy_fraction": 0.23875185860620363
+              },
+              "payload_splitting": {
+                "category": "MG",
+                "C_k": 0.8824153542518616,
+                "cosine_to_own_leave_one_out_prototype": 0.7485591769218445,
+                "cosine_to_other_category_prototype": 0.588454008102417,
+                "A_k": 0.1601051688194275,
+                "parallel_energy_fraction": 0.7786568574194384,
+                "residual_energy_fraction": 0.22134314258056165
+              },
+              "distractors_negated": {
+                "category": "MG",
+                "C_k": 0.7526667714118958,
+                "cosine_to_own_leave_one_out_prototype": 0.5584380030632019,
+                "cosine_to_other_category_prototype": 0.6726958155632019,
+                "A_k": -0.1142578125,
+                "parallel_energy_fraction": 0.5665072687876069,
+                "residual_energy_fraction": 0.43349273121239307
+              }
+            },
+            "per_category": {
+              "CO": {
+                "mean_coverage": 0.750736653804779,
+                "median_coverage": 0.7968611717224121,
+                "minimum_coverage": 0.6279867887496948,
+                "coverage_range": 0.19937509298324585,
+                "coverage_standard_deviation": 0.1073927953839302,
+                "resultant_length": 0.7518496513366699
+              },
+              "MG": {
+                "mean_coverage": 0.8358591198921204,
+                "median_coverage": 0.8724953532218933,
+                "minimum_coverage": 0.7526667714118958,
+                "coverage_range": 0.12974858283996582,
+                "coverage_standard_deviation": 0.07221725583076477,
+                "resultant_length": 0.8419911861419678
+              }
+            }
+          }
+        }
+      },
+      "median": {
+        "raw": {
+          "unit_normalized": {
+            "per_mechanism": {
+              "prefix_injection": {
+                "category": "CO",
+                "C_k": 0.7953087091445923,
+                "cosine_to_own_leave_one_out_prototype": 0.4900605082511902,
+                "cosine_to_other_category_prototype": 0.4543292224407196,
+                "A_k": 0.03573128581047058,
+                "parallel_energy_fraction": 0.6325159428412377,
+                "residual_energy_fraction": 0.3674840571587623
+              },
+              "refusal_suppression": {
+                "category": "CO",
+                "C_k": 0.6021475791931152,
+                "cosine_to_own_leave_one_out_prototype": 0.1818467080593109,
+                "cosine_to_other_category_prototype": 0.49956122040748596,
+                "A_k": -0.31771451234817505,
+                "parallel_energy_fraction": 0.362581707128129,
+                "residual_energy_fraction": 0.637418292871871
+              },
+              "persona_roleplay": {
+                "category": "CO",
+                "C_k": 0.8027545213699341,
+                "cosine_to_own_leave_one_out_prototype": 0.5043084621429443,
+                "cosine_to_other_category_prototype": 0.3678894639015198,
+                "A_k": 0.13641899824142456,
+                "parallel_energy_fraction": 0.644414821579872,
+                "residual_energy_fraction": 0.35558517842012805
+              },
+              "encoding_obfuscation": {
+                "category": "MG",
+                "C_k": 0.7982599139213562,
+                "cosine_to_own_leave_one_out_prototype": 0.5515779852867126,
+                "cosine_to_other_category_prototype": 0.33949488401412964,
+                "A_k": 0.212083101272583,
+                "parallel_energy_fraction": 0.637218890173731,
+                "residual_energy_fraction": 0.362781109826269
+              },
+              "payload_splitting": {
+                "category": "MG",
+                "C_k": 0.8955774307250977,
+                "cosine_to_own_leave_one_out_prototype": 0.7441446781158447,
+                "cosine_to_other_category_prototype": 0.569350004196167,
+                "A_k": 0.17479467391967773,
+                "parallel_energy_fraction": 0.8020589344241671,
+                "residual_energy_fraction": 0.1979410655758329
+              },
+              "distractors_negated": {
+                "category": "MG",
+                "C_k": 0.8063530921936035,
+                "cosine_to_own_leave_one_out_prototype": 0.5663127899169922,
+                "cosine_to_other_category_prototype": 0.5931479334831238,
+                "A_k": -0.026835143566131592,
+                "parallel_energy_fraction": 0.650205309290186,
+                "residual_energy_fraction": 0.34979469070981395
+              }
+            },
+            "per_category": {
+              "CO": {
+                "mean_coverage": 0.7334036231040955,
+                "median_coverage": 0.7953087091445923,
+                "minimum_coverage": 0.6021475791931152,
+                "coverage_range": 0.20060694217681885,
+                "coverage_standard_deviation": 0.1137320026755333,
+                "resultant_length": 0.7334036231040955
+              },
+              "MG": {
+                "mean_coverage": 0.833396852016449,
+                "median_coverage": 0.8063530921936035,
+                "minimum_coverage": 0.7982599139213562,
+                "coverage_range": 0.09731751680374146,
+                "coverage_standard_deviation": 0.0540018230676651,
+                "resultant_length": 0.8333967328071594
+              }
+            }
+          },
+          "raw_magnitude": {
+            "per_mechanism": {
+              "prefix_injection": {
+                "category": "CO",
+                "C_k": 0.754288911819458,
+                "cosine_to_own_leave_one_out_prototype": 0.4116525650024414,
+                "cosine_to_other_category_prototype": 0.40773922204971313,
+                "A_k": 0.0039133429527282715,
+                "parallel_energy_fraction": 0.5689517624937821,
+                "residual_energy_fraction": 0.4310482375062179
+              },
+              "refusal_suppression": {
+                "category": "CO",
+                "C_k": 0.7033758163452148,
+                "cosine_to_own_leave_one_out_prototype": 0.18020698428153992,
+                "cosine_to_other_category_prototype": 0.49430572986602783,
+                "A_k": -0.3140987455844879,
+                "parallel_energy_fraction": 0.4947375390192974,
+                "residual_energy_fraction": 0.5052624609807026
+              },
+              "persona_roleplay": {
+                "category": "CO",
+                "C_k": 0.7199086546897888,
+                "cosine_to_own_leave_one_out_prototype": 0.4708325266838074,
+                "cosine_to_other_category_prototype": 0.3337765038013458,
+                "A_k": 0.13705602288246155,
+                "parallel_energy_fraction": 0.5182684710972616,
+                "residual_energy_fraction": 0.4817315289027384
+              },
+              "encoding_obfuscation": {
+                "category": "MG",
+                "C_k": 0.8741683959960938,
+                "cosine_to_own_leave_one_out_prototype": 0.5628616213798523,
+                "cosine_to_other_category_prototype": 0.37079930305480957,
+                "A_k": 0.19206231832504272,
+                "parallel_energy_fraction": 0.7641703845583834,
+                "residual_energy_fraction": 0.23582961544161662
+              },
+              "payload_splitting": {
+                "category": "MG",
+                "C_k": 0.8725786209106445,
+                "cosine_to_own_leave_one_out_prototype": 0.7263733744621277,
+                "cosine_to_other_category_prototype": 0.5830972790718079,
+                "A_k": 0.14327609539031982,
+                "parallel_energy_fraction": 0.7613934496703223,
+                "residual_energy_fraction": 0.2386065503296777
+              },
+              "distractors_negated": {
+                "category": "MG",
+                "C_k": 0.728204607963562,
+                "cosine_to_own_leave_one_out_prototype": 0.5353062152862549,
+                "cosine_to_other_category_prototype": 0.6033629179000854,
+                "A_k": -0.06805670261383057,
+                "parallel_energy_fraction": 0.530281951059365,
+                "residual_energy_fraction": 0.46971804894063496
+              }
+            },
+            "per_category": {
+              "CO": {
+                "mean_coverage": 0.7258577942848206,
+                "median_coverage": 0.7199086546897888,
+                "minimum_coverage": 0.7033758163452148,
+                "coverage_range": 0.050913095474243164,
+                "coverage_standard_deviation": 0.025972677394747734,
+                "resultant_length": 0.7334036231040955
+              },
+              "MG": {
+                "mean_coverage": 0.8249838948249817,
+                "median_coverage": 0.8725786209106445,
+                "minimum_coverage": 0.728204607963562,
+                "coverage_range": 0.14596378803253174,
+                "coverage_standard_deviation": 0.08381707221269608,
+                "resultant_length": 0.8333967328071594
+              }
+            }
+          }
+        },
+        "placebo_calibrated": {
+          "unit_normalized": {
+            "per_mechanism": {
+              "prefix_injection": {
+                "category": "CO",
+                "C_k": 0.8260955810546875,
+                "cosine_to_own_leave_one_out_prototype": 0.5576831698417664,
+                "cosine_to_other_category_prototype": 0.5053471922874451,
+                "A_k": 0.05233597755432129,
+                "parallel_energy_fraction": 0.6824339090380818,
+                "residual_energy_fraction": 0.31756609096191823
+              },
+              "refusal_suppression": {
+                "category": "CO",
+                "C_k": 0.5828985571861267,
+                "cosine_to_own_leave_one_out_prototype": 0.16439232230186462,
+                "cosine_to_other_category_prototype": 0.4651162326335907,
+                "A_k": -0.3007239103317261,
+                "parallel_energy_fraction": 0.33977072796966823,
+                "residual_energy_fraction": 0.6602292720303318
+              },
+              "persona_roleplay": {
+                "category": "CO",
+                "C_k": 0.8257451057434082,
+                "cosine_to_own_leave_one_out_prototype": 0.5569775104522705,
+                "cosine_to_other_category_prototype": 0.4304633140563965,
+                "A_k": 0.12651419639587402,
+                "parallel_energy_fraction": 0.6818549796591924,
+                "residual_energy_fraction": 0.3181450203408076
+              },
+              "encoding_obfuscation": {
+                "category": "MG",
+                "C_k": 0.7958501577377319,
+                "cosine_to_own_leave_one_out_prototype": 0.5476250648498535,
+                "cosine_to_other_category_prototype": 0.34574565291404724,
+                "A_k": 0.20187941193580627,
+                "parallel_energy_fraction": 0.6333774735711728,
+                "residual_energy_fraction": 0.3666225264288272
+              },
+              "payload_splitting": {
+                "category": "MG",
+                "C_k": 0.8966431617736816,
+                "cosine_to_own_leave_one_out_prototype": 0.7467337250709534,
+                "cosine_to_other_category_prototype": 0.5693618655204773,
+                "A_k": 0.17737185955047607,
+                "parallel_energy_fraction": 0.8039689595555046,
+                "residual_energy_fraction": 0.19603104044449537
+              },
+              "distractors_negated": {
+                "category": "MG",
+                "C_k": 0.8102505207061768,
+                "cosine_to_own_leave_one_out_prototype": 0.5738651752471924,
+                "cosine_to_other_category_prototype": 0.6538275480270386,
+                "A_k": -0.07996237277984619,
+                "parallel_energy_fraction": 0.6565059063046306,
+                "residual_energy_fraction": 0.34349409369536943
+              }
+            },
+            "per_category": {
+              "CO": {
+                "mean_coverage": 0.7449131011962891,
+                "median_coverage": 0.8257451057434082,
+                "minimum_coverage": 0.5828985571861267,
+                "coverage_range": 0.2431970238685608,
+                "coverage_standard_deviation": 0.14030879735946655,
+                "resultant_length": 0.7449129819869995
+              },
+              "MG": {
+                "mean_coverage": 0.834247887134552,
+                "median_coverage": 0.8102505207061768,
+                "minimum_coverage": 0.7958501577377319,
+                "coverage_range": 0.10079300403594971,
+                "coverage_standard_deviation": 0.05451343581080437,
+                "resultant_length": 0.8342478275299072
+              }
+            }
+          },
+          "raw_magnitude": {
+            "per_mechanism": {
+              "prefix_injection": {
+                "category": "CO",
+                "C_k": 0.8213900327682495,
+                "cosine_to_own_leave_one_out_prototype": 0.515559196472168,
+                "cosine_to_other_category_prototype": 0.45773062109947205,
+                "A_k": 0.05782857537269592,
+                "parallel_energy_fraction": 0.674681585931026,
+                "residual_energy_fraction": 0.325318414068974
+              },
+              "refusal_suppression": {
+                "category": "CO",
+                "C_k": 0.6164553165435791,
+                "cosine_to_own_leave_one_out_prototype": 0.16427668929100037,
+                "cosine_to_other_category_prototype": 0.4620223343372345,
+                "A_k": -0.29774564504623413,
+                "parallel_energy_fraction": 0.3800171572948443,
+                "residual_energy_fraction": 0.6199828427051557
+              },
+              "persona_roleplay": {
+                "category": "CO",
+                "C_k": 0.7935000658035278,
+                "cosine_to_own_leave_one_out_prototype": 0.5543211698532104,
+                "cosine_to_other_category_prototype": 0.3919265568256378,
+                "A_k": 0.16239461302757263,
+                "parallel_energy_fraction": 0.629642354430203,
+                "residual_energy_fraction": 0.370357645569797
+              },
+              "encoding_obfuscation": {
+                "category": "MG",
+                "C_k": 0.8675807118415833,
+                "cosine_to_own_leave_one_out_prototype": 0.5553392171859741,
+                "cosine_to_other_category_prototype": 0.35529080033302307,
+                "A_k": 0.20004841685295105,
+                "parallel_energy_fraction": 0.7526962915595483,
+                "residual_energy_fraction": 0.24730370844045169
+              },
+              "payload_splitting": {
+                "category": "MG",
+                "C_k": 0.8726338148117065,
+                "cosine_to_own_leave_one_out_prototype": 0.7292804718017578,
+                "cosine_to_other_category_prototype": 0.5756313800811768,
+                "A_k": 0.15364909172058105,
+                "parallel_energy_fraction": 0.7614897747528317,
+                "residual_energy_fraction": 0.23851022524716825
+              },
+              "distractors_negated": {
+                "category": "MG",
+                "C_k": 0.7409558892250061,
+                "cosine_to_own_leave_one_out_prototype": 0.5419142246246338,
+                "cosine_to_other_category_prototype": 0.6570485830307007,
+                "A_k": -0.1151343584060669,
+                "parallel_energy_fraction": 0.5490156297772195,
+                "residual_energy_fraction": 0.4509843702227805
+              }
+            },
+            "per_category": {
+              "CO": {
+                "mean_coverage": 0.7437818050384521,
+                "median_coverage": 0.7935000658035278,
+                "minimum_coverage": 0.6164553165435791,
+                "coverage_range": 0.2049347162246704,
+                "coverage_standard_deviation": 0.11114624887704849,
+                "resultant_length": 0.7449129819869995
+              },
+              "MG": {
+                "mean_coverage": 0.8270568251609802,
+                "median_coverage": 0.8675807118415833,
+                "minimum_coverage": 0.7409558892250061,
+                "coverage_range": 0.13167792558670044,
+                "coverage_standard_deviation": 0.07460837066173553,
+                "resultant_length": 0.8342478275299072
+              }
+            }
+          }
+        }
+      },
+      "trimmed_mean": {
+        "raw": {
+          "unit_normalized": {
+            "per_mechanism": {
+              "prefix_injection": {
+                "category": "CO",
+                "C_k": 0.7956200838088989,
+                "cosine_to_own_leave_one_out_prototype": 0.48861342668533325,
+                "cosine_to_other_category_prototype": 0.4451073110103607,
+                "A_k": 0.043506115674972534,
+                "parallel_energy_fraction": 0.6330113177600794,
+                "residual_energy_fraction": 0.36698868223992065
+              },
+              "refusal_suppression": {
+                "category": "CO",
+                "C_k": 0.5960948467254639,
+                "cosine_to_own_leave_one_out_prototype": 0.1714513599872589,
+                "cosine_to_other_category_prototype": 0.5025439858436584,
+                "A_k": -0.33109262585639954,
+                "parallel_energy_fraction": 0.35532906629265426,
+                "residual_energy_fraction": 0.6446709337073457
+              },
+              "persona_roleplay": {
+                "category": "CO",
+                "C_k": 0.7995137572288513,
+                "cosine_to_own_leave_one_out_prototype": 0.49605298042297363,
+                "cosine_to_other_category_prototype": 0.35725975036621094,
+                "A_k": 0.1387932300567627,
+                "parallel_energy_fraction": 0.6392222479981946,
+                "residual_energy_fraction": 0.3607777520018054
+              },
+              "encoding_obfuscation": {
+                "category": "MG",
+                "C_k": 0.8018832206726074,
+                "cosine_to_own_leave_one_out_prototype": 0.5589271783828735,
+                "cosine_to_other_category_prototype": 0.3356800377368927,
+                "A_k": 0.22324714064598083,
+                "parallel_energy_fraction": 0.6430166995962736,
+                "residual_energy_fraction": 0.3569833004037264
+              },
+              "payload_splitting": {
+                "category": "MG",
+                "C_k": 0.8977632522583008,
+                "cosine_to_own_leave_one_out_prototype": 0.7494421005249023,
+                "cosine_to_other_category_prototype": 0.5658562183380127,
+                "A_k": 0.18358588218688965,
+                "parallel_energy_fraction": 0.8059788571054014,
+                "residual_energy_fraction": 0.1940211428945986
+              },
+              "distractors_negated": {
+                "category": "MG",
+                "C_k": 0.8056406378746033,
+                "cosine_to_own_leave_one_out_prototype": 0.5657787919044495,
+                "cosine_to_other_category_prototype": 0.5904020667076111,
+                "A_k": -0.02462327480316162,
+                "parallel_energy_fraction": 0.6490568373949976,
+                "residual_energy_fraction": 0.35094316260500236
+              }
+            },
+            "per_category": {
+              "CO": {
+                "mean_coverage": 0.730409562587738,
+                "median_coverage": 0.7956200838088989,
+                "minimum_coverage": 0.5960948467254639,
+                "coverage_range": 0.20341891050338745,
+                "coverage_standard_deviation": 0.11633624881505966,
+                "resultant_length": 0.7304094433784485
+              },
+              "MG": {
+                "mean_coverage": 0.8350957036018372,
+                "median_coverage": 0.8056406378746033,
+                "minimum_coverage": 0.8018832206726074,
+                "coverage_range": 0.09588003158569336,
+                "coverage_standard_deviation": 0.05430419743061066,
+                "resultant_length": 0.8350957632064819
+              }
+            }
+          },
+          "raw_magnitude": {
+            "per_mechanism": {
+              "prefix_injection": {
+                "category": "CO",
+                "C_k": 0.7555508613586426,
+                "cosine_to_own_leave_one_out_prototype": 0.4088763892650604,
+                "cosine_to_other_category_prototype": 0.3993851840496063,
+                "A_k": 0.009491205215454102,
+                "parallel_energy_fraction": 0.5708571040997867,
+                "residual_energy_fraction": 0.42914289590021326
+              },
+              "refusal_suppression": {
+                "category": "CO",
+                "C_k": 0.6979354619979858,
+                "cosine_to_own_leave_one_out_prototype": 0.17037948966026306,
+                "cosine_to_other_category_prototype": 0.49670296907424927,
+                "A_k": -0.3263234794139862,
+                "parallel_energy_fraction": 0.48711390911434194,
+                "residual_energy_fraction": 0.5128860908856581
+              },
+              "persona_roleplay": {
+                "category": "CO",
+                "C_k": 0.7150006890296936,
+                "cosine_to_own_leave_one_out_prototype": 0.46285736560821533,
+                "cosine_to_other_category_prototype": 0.3236873745918274,
+                "A_k": 0.13916999101638794,
+                "parallel_energy_fraction": 0.5112259853129366,
+                "residual_energy_fraction": 0.4887740146870634
+              },
+              "encoding_obfuscation": {
+                "category": "MG",
+                "C_k": 0.8758772611618042,
+                "cosine_to_own_leave_one_out_prototype": 0.5706862807273865,
+                "cosine_to_other_category_prototype": 0.3676370084285736,
+                "A_k": 0.20304927229881287,
+                "parallel_energy_fraction": 0.7671609766203034,
+                "residual_energy_fraction": 0.23283902337969664
+              },
+              "payload_splitting": {
+                "category": "MG",
+                "C_k": 0.8765261173248291,
+                "cosine_to_own_leave_one_out_prototype": 0.7337823510169983,
+                "cosine_to_other_category_prototype": 0.5816361308097839,
+                "A_k": 0.15214622020721436,
+                "parallel_energy_fraction": 0.7682980343525401,
+                "residual_energy_fraction": 0.23170196564745993
+              },
+              "distractors_negated": {
+                "category": "MG",
+                "C_k": 0.7284553647041321,
+                "cosine_to_own_leave_one_out_prototype": 0.5357882976531982,
+                "cosine_to_other_category_prototype": 0.6019888520240784,
+                "A_k": -0.06620055437088013,
+                "parallel_energy_fraction": 0.5306472183662301,
+                "residual_energy_fraction": 0.4693527816337699
+              }
+            },
+            "per_category": {
+              "CO": {
+                "mean_coverage": 0.7228290438652039,
+                "median_coverage": 0.7150006890296936,
+                "minimum_coverage": 0.6979354619979858,
+                "coverage_range": 0.05761539936065674,
+                "coverage_standard_deviation": 0.02959468588232994,
+                "resultant_length": 0.7304094433784485
+              },
+              "MG": {
+                "mean_coverage": 0.8269529342651367,
+                "median_coverage": 0.8758772611618042,
+                "minimum_coverage": 0.7284553647041321,
+                "coverage_range": 0.14807075262069702,
+                "coverage_standard_deviation": 0.08530199527740479,
+                "resultant_length": 0.8350957632064819
+              }
+            }
+          }
+        },
+        "placebo_calibrated": {
+          "unit_normalized": {
+            "per_mechanism": {
+              "prefix_injection": {
+                "category": "CO",
+                "C_k": 0.8291036486625671,
+                "cosine_to_own_leave_one_out_prototype": 0.5656476616859436,
+                "cosine_to_other_category_prototype": 0.5057401061058044,
+                "A_k": 0.05990755558013916,
+                "parallel_energy_fraction": 0.6874128602255816,
+                "residual_energy_fraction": 0.31258713977441843
+              },
+              "refusal_suppression": {
+                "category": "CO",
+                "C_k": 0.5882225036621094,
+                "cosine_to_own_leave_one_out_prototype": 0.17367391288280487,
+                "cosine_to_other_category_prototype": 0.4792039394378662,
+                "A_k": -0.30553002655506134,
+                "parallel_energy_fraction": 0.3460057138145203,
+                "residual_energy_fraction": 0.6539942861854797
+              },
+              "persona_roleplay": {
+                "category": "CO",
+                "C_k": 0.8268125653266907,
+                "cosine_to_own_leave_one_out_prototype": 0.561023473739624,
+                "cosine_to_other_category_prototype": 0.43344709277153015,
+                "A_k": 0.12757638096809387,
+                "parallel_energy_fraction": 0.6836190181821031,
+                "residual_energy_fraction": 0.31638098181789687
+              },
+              "encoding_obfuscation": {
+                "category": "MG",
+                "C_k": 0.8020169734954834,
+                "cosine_to_own_leave_one_out_prototype": 0.5606048703193665,
+                "cosine_to_other_category_prototype": 0.3533669710159302,
+                "A_k": 0.20723789930343628,
+                "parallel_energy_fraction": 0.6432312257748549,
+                "residual_energy_fraction": 0.3567687742251451
+              },
+              "payload_splitting": {
+                "category": "MG",
+                "C_k": 0.9002307653427124,
+                "cosine_to_own_leave_one_out_prototype": 0.7558060884475708,
+                "cosine_to_other_category_prototype": 0.5749321579933167,
+                "A_k": 0.18087393045425415,
+                "parallel_energy_fraction": 0.8104154308695257,
+                "residual_energy_fraction": 0.18958456913047428
+              },
+              "distractors_negated": {
+                "category": "MG",
+                "C_k": 0.8125308752059937,
+                "cosine_to_own_leave_one_out_prototype": 0.5798596739768982,
+                "cosine_to_other_category_prototype": 0.6611480116844177,
+                "A_k": -0.08128833770751953,
+                "parallel_energy_fraction": 0.660206423163018,
+                "residual_energy_fraction": 0.33979357683698197
+              }
+            },
+            "per_category": {
+              "CO": {
+                "mean_coverage": 0.7480462193489075,
+                "median_coverage": 0.8268125653266907,
+                "minimum_coverage": 0.5882225036621094,
+                "coverage_range": 0.24088114500045776,
+                "coverage_standard_deviation": 0.13841615617275238,
+                "resultant_length": 0.7480462193489075
+              },
+              "MG": {
+                "mean_coverage": 0.8382595181465149,
+                "median_coverage": 0.8125308752059937,
+                "minimum_coverage": 0.8020169734954834,
+                "coverage_range": 0.098213791847229,
+                "coverage_standard_deviation": 0.05392550677061081,
+                "resultant_length": 0.8382595181465149
+              }
+            }
+          },
+          "raw_magnitude": {
+            "per_mechanism": {
+              "prefix_injection": {
+                "category": "CO",
+                "C_k": 0.8247854709625244,
+                "cosine_to_own_leave_one_out_prototype": 0.523819088935852,
+                "cosine_to_other_category_prototype": 0.4598824977874756,
+                "A_k": 0.06393659114837646,
+                "parallel_energy_fraction": 0.6802710731108732,
+                "residual_energy_fraction": 0.3197289268891268
+              },
+              "refusal_suppression": {
+                "category": "CO",
+                "C_k": 0.6212692856788635,
+                "cosine_to_own_leave_one_out_prototype": 0.17379608750343323,
+                "cosine_to_other_category_prototype": 0.4751197397708893,
+                "A_k": -0.30132365226745605,
+                "parallel_energy_fraction": 0.38597552532792534,
+                "residual_energy_fraction": 0.6140244746720747
+              },
+              "persona_roleplay": {
+                "category": "CO",
+                "C_k": 0.7946891188621521,
+                "cosine_to_own_leave_one_out_prototype": 0.5588352680206299,
+                "cosine_to_other_category_prototype": 0.39611348509788513,
+                "A_k": 0.16272178292274475,
+                "parallel_energy_fraction": 0.6315307956379037,
+                "residual_energy_fraction": 0.3684692043620963
+              },
+              "encoding_obfuscation": {
+                "category": "MG",
+                "C_k": 0.8703211545944214,
+                "cosine_to_own_leave_one_out_prototype": 0.5683305263519287,
+                "cosine_to_other_category_prototype": 0.3628944158554077,
+                "A_k": 0.205436110496521,
+                "parallel_energy_fraction": 0.7574589121345667,
+                "residual_energy_fraction": 0.24254108786543327
+              },
+              "payload_splitting": {
+                "category": "MG",
+                "C_k": 0.8783116340637207,
+                "cosine_to_own_leave_one_out_prototype": 0.7405242919921875,
+                "cosine_to_other_category_prototype": 0.5816295146942139,
+                "A_k": 0.15889477729797363,
+                "parallel_energy_fraction": 0.7714313265316832,
+                "residual_energy_fraction": 0.22856867346831677
+              },
+              "distractors_negated": {
+                "category": "MG",
+                "C_k": 0.7460074424743652,
+                "cosine_to_own_leave_one_out_prototype": 0.5493935942649841,
+                "cosine_to_other_category_prototype": 0.6646106839179993,
+                "A_k": -0.11521708965301514,
+                "parallel_energy_fraction": 0.5565271042271434,
+                "residual_energy_fraction": 0.44347289577285665
+              }
+            },
+            "per_category": {
+              "CO": {
+                "mean_coverage": 0.7469146251678467,
+                "median_coverage": 0.7946891188621521,
+                "minimum_coverage": 0.6212692856788635,
+                "coverage_range": 0.2035161852836609,
+                "coverage_standard_deviation": 0.10984767228364944,
+                "resultant_length": 0.7480462193489075
+              },
+              "MG": {
+                "mean_coverage": 0.8315467834472656,
+                "median_coverage": 0.8703211545944214,
+                "minimum_coverage": 0.7460074424743652,
+                "coverage_range": 0.13230419158935547,
+                "coverage_standard_deviation": 0.07418686896562576,
+                "resultant_length": 0.8382595181465149
+              }
+            }
+          }
+        }
+      }
+    },
+    "gemma-2-9b-it": {
+      "mean": {
+        "raw": {
+          "unit_normalized": {
+            "per_mechanism": {
+              "prefix_injection": {
+                "category": "CO",
+                "C_k": 0.7007774710655212,
+                "cosine_to_own_leave_one_out_prototype": 0.3233336806297302,
+                "cosine_to_other_category_prototype": 0.5066877007484436,
+                "A_k": -0.18335402011871338,
+                "parallel_energy_fraction": 0.49108906395298746,
+                "residual_energy_fraction": 0.5089109360470125
+              },
+              "refusal_suppression": {
+                "category": "CO",
+                "C_k": 0.7869182825088501,
+                "cosine_to_own_leave_one_out_prototype": 0.471474289894104,
+                "cosine_to_other_category_prototype": 0.38472145795822144,
+                "A_k": 0.08675283193588257,
+                "parallel_energy_fraction": 0.6192403833466784,
+                "residual_energy_fraction": 0.3807596166533216
+              },
+              "persona_roleplay": {
+                "category": "CO",
+                "C_k": 0.7003707885742188,
+                "cosine_to_own_leave_one_out_prototype": 0.32268863916397095,
+                "cosine_to_other_category_prototype": 0.01678706333041191,
+                "A_k": 0.30590157583355904,
+                "parallel_energy_fraction": 0.490519241488073,
+                "residual_energy_fraction": 0.509480758511927
+              },
+              "encoding_obfuscation": {
+                "category": "MG",
+                "C_k": 0.8908223509788513,
+                "cosine_to_own_leave_one_out_prototype": 0.7425013184547424,
+                "cosine_to_other_category_prototype": 0.3459128737449646,
+                "A_k": 0.39658844470977783,
+                "parallel_energy_fraction": 0.7935644610034878,
+                "residual_energy_fraction": 0.20643553899651224
+              },
+              "payload_splitting": {
+                "category": "MG",
+                "C_k": 0.8788301944732666,
+                "cosine_to_own_leave_one_out_prototype": 0.7176156640052795,
+                "cosine_to_other_category_prototype": 0.34033992886543274,
+                "A_k": 0.3772757351398468,
+                "parallel_energy_fraction": 0.7723425107179196,
+                "residual_energy_fraction": 0.2276574892820804
+              },
+              "distractors_negated": {
+                "category": "MG",
+                "C_k": 0.8130736947059631,
+                "cosine_to_own_leave_one_out_prototype": 0.5904327630996704,
+                "cosine_to_other_category_prototype": 0.3857540786266327,
+                "A_k": 0.20467868447303772,
+                "parallel_energy_fraction": 0.6610888330228057,
+                "residual_energy_fraction": 0.33891116697719426
+              }
+            },
+            "per_category": {
+              "CO": {
+                "mean_coverage": 0.72935551404953,
+                "median_coverage": 0.7007774710655212,
+                "minimum_coverage": 0.7003707885742188,
+                "coverage_range": 0.08654749393463135,
+                "coverage_standard_deviation": 0.04985123500227928,
+                "resultant_length": 0.7293554544448853
+              },
+              "MG": {
+                "mean_coverage": 0.8609087467193604,
+                "median_coverage": 0.8788301944732666,
+                "minimum_coverage": 0.8130736947059631,
+                "coverage_range": 0.07774865627288818,
+                "coverage_standard_deviation": 0.04185805842280388,
+                "resultant_length": 0.860908567905426
+              }
+            }
+          },
+          "raw_magnitude": {
+            "per_mechanism": {
+              "prefix_injection": {
+                "category": "CO",
+                "C_k": 0.7556864023208618,
+                "cosine_to_own_leave_one_out_prototype": 0.35081350803375244,
+                "cosine_to_other_category_prototype": 0.5018311738967896,
+                "A_k": -0.1510176658630371,
+                "parallel_energy_fraction": 0.5710619386526474,
+                "residual_energy_fraction": 0.4289380613473526
+              },
+              "refusal_suppression": {
+                "category": "CO",
+                "C_k": 0.8301204442977905,
+                "cosine_to_own_leave_one_out_prototype": 0.4592309594154358,
+                "cosine_to_other_category_prototype": 0.3796018064022064,
+                "A_k": 0.07962915301322937,
+                "parallel_energy_fraction": 0.6890999520411611,
+                "residual_energy_fraction": 0.31090004795883885
+              },
+              "persona_roleplay": {
+                "category": "CO",
+                "C_k": 0.571163535118103,
+                "cosine_to_own_leave_one_out_prototype": 0.32604339718818665,
+                "cosine_to_other_category_prototype": 0.017457302659749985,
+                "A_k": 0.30858609452843666,
+                "parallel_energy_fraction": 0.3262277838486085,
+                "residual_energy_fraction": 0.6737722161513915
+              },
+              "encoding_obfuscation": {
+                "category": "MG",
+                "C_k": 0.9035428762435913,
+                "cosine_to_own_leave_one_out_prototype": 0.7511306405067444,
+                "cosine_to_other_category_prototype": 0.39586320519447327,
+                "A_k": 0.3552674353122711,
+                "parallel_energy_fraction": 0.8163897292105418,
+                "residual_energy_fraction": 0.18361027078945824
+              },
+              "payload_splitting": {
+                "category": "MG",
+                "C_k": 0.8909423351287842,
+                "cosine_to_own_leave_one_out_prototype": 0.7290053367614746,
+                "cosine_to_other_category_prototype": 0.3810209631919861,
+                "A_k": 0.3479843735694885,
+                "parallel_energy_fraction": 0.7937782445247308,
+                "residual_energy_fraction": 0.20622175547526922
+              },
+              "distractors_negated": {
+                "category": "MG",
+                "C_k": 0.7855100631713867,
+                "cosine_to_own_leave_one_out_prototype": 0.5906031727790833,
+                "cosine_to_other_category_prototype": 0.44186192750930786,
+                "A_k": 0.1487412452697754,
+                "parallel_energy_fraction": 0.617026059343516,
+                "residual_energy_fraction": 0.38297394065648405
+              }
+            },
+            "per_category": {
+              "CO": {
+                "mean_coverage": 0.7189901471138,
+                "median_coverage": 0.7556864023208618,
+                "minimum_coverage": 0.571163535118103,
+                "coverage_range": 0.2589569091796875,
+                "coverage_standard_deviation": 0.13332153856754303,
+                "resultant_length": 0.7293554544448853
+              },
+              "MG": {
+                "mean_coverage": 0.8599984049797058,
+                "median_coverage": 0.8909423351287842,
+                "minimum_coverage": 0.7855100631713867,
+                "coverage_range": 0.11803281307220459,
+                "coverage_standard_deviation": 0.06481574475765228,
+                "resultant_length": 0.860908567905426
+              }
+            }
+          }
+        },
+        "placebo_calibrated": {
+          "unit_normalized": {
+            "per_mechanism": {
+              "prefix_injection": {
+                "category": "CO",
+                "C_k": 0.720090389251709,
+                "cosine_to_own_leave_one_out_prototype": 0.3804895877838135,
+                "cosine_to_other_category_prototype": 0.5344406366348267,
+                "A_k": -0.15395104885101318,
+                "parallel_energy_fraction": 0.5185301686926778,
+                "residual_energy_fraction": 0.48146983130732224
+              },
+              "refusal_suppression": {
+                "category": "CO",
+                "C_k": 0.8310384750366211,
+                "cosine_to_own_leave_one_out_prototype": 0.5804030895233154,
+                "cosine_to_other_category_prototype": 0.45262324810028076,
+                "A_k": 0.12777984142303467,
+                "parallel_energy_fraction": 0.6906249469911927,
+                "residual_energy_fraction": 0.3093750530088073
+              },
+              "persona_roleplay": {
+                "category": "CO",
+                "C_k": 0.7498201727867126,
+                "cosine_to_own_leave_one_out_prototype": 0.4300995171070099,
+                "cosine_to_other_category_prototype": 0.15364110469818115,
+                "A_k": 0.27645841240882874,
+                "parallel_energy_fraction": 0.5622302915178956,
+                "residual_energy_fraction": 0.4377697084821044
+              },
+              "encoding_obfuscation": {
+                "category": "MG",
+                "C_k": 0.8938900828361511,
+                "cosine_to_own_leave_one_out_prototype": 0.7513303160667419,
+                "cosine_to_other_category_prototype": 0.3788934350013733,
+                "A_k": 0.37243688106536865,
+                "parallel_energy_fraction": 0.7990394801928211,
+                "residual_energy_fraction": 0.20096051980717888
+              },
+              "payload_splitting": {
+                "category": "MG",
+                "C_k": 0.8859118223190308,
+                "cosine_to_own_leave_one_out_prototype": 0.734729528427124,
+                "cosine_to_other_category_prototype": 0.39270487427711487,
+                "A_k": 0.34202465415000916,
+                "parallel_energy_fraction": 0.7848397569246259,
+                "residual_energy_fraction": 0.21516024307537407
+              },
+              "distractors_negated": {
+                "category": "MG",
+                "C_k": 0.827669084072113,
+                "cosine_to_own_leave_one_out_prototype": 0.6205822229385376,
+                "cosine_to_other_category_prototype": 0.5210661888122559,
+                "A_k": 0.09951603412628174,
+                "parallel_energy_fraction": 0.6850361127287705,
+                "residual_energy_fraction": 0.3149638872712295
+              }
+            },
+            "per_category": {
+              "CO": {
+                "mean_coverage": 0.7669830322265625,
+                "median_coverage": 0.7498201727867126,
+                "minimum_coverage": 0.720090389251709,
+                "coverage_range": 0.11094808578491211,
+                "coverage_standard_deviation": 0.057430755347013474,
+                "resultant_length": 0.7669830918312073
+              },
+              "MG": {
+                "mean_coverage": 0.8691570162773132,
+                "median_coverage": 0.8859118223190308,
+                "minimum_coverage": 0.827669084072113,
+                "coverage_range": 0.06622099876403809,
+                "coverage_standard_deviation": 0.036150358617305756,
+                "resultant_length": 0.8691569566726685
+              }
+            }
+          },
+          "raw_magnitude": {
+            "per_mechanism": {
+              "prefix_injection": {
+                "category": "CO",
+                "C_k": 0.7525035738945007,
+                "cosine_to_own_leave_one_out_prototype": 0.4054086208343506,
+                "cosine_to_other_category_prototype": 0.5296930074691772,
+                "A_k": -0.12428438663482666,
+                "parallel_energy_fraction": 0.5662616287239963,
+                "residual_energy_fraction": 0.4337383712760037
+              },
+              "refusal_suppression": {
+                "category": "CO",
+                "C_k": 0.8667729496955872,
+                "cosine_to_own_leave_one_out_prototype": 0.5628496408462524,
+                "cosine_to_other_category_prototype": 0.4474231004714966,
+                "A_k": 0.11542654037475586,
+                "parallel_energy_fraction": 0.7512953463239889,
+                "residual_energy_fraction": 0.24870465367601113
+              },
+              "persona_roleplay": {
+                "category": "CO",
+                "C_k": 0.663124144077301,
+                "cosine_to_own_leave_one_out_prototype": 0.43992310762405396,
+                "cosine_to_other_category_prototype": 0.14914293587207794,
+                "A_k": 0.290780171751976,
+                "parallel_energy_fraction": 0.4397336304582531,
+                "residual_energy_fraction": 0.5602663695417469
+              },
+              "encoding_obfuscation": {
+                "category": "MG",
+                "C_k": 0.9021443128585815,
+                "cosine_to_own_leave_one_out_prototype": 0.7568366527557373,
+                "cosine_to_other_category_prototype": 0.41419196128845215,
+                "A_k": 0.34264469146728516,
+                "parallel_energy_fraction": 0.8138643612230823,
+                "residual_energy_fraction": 0.18613563877691774
+              },
+              "payload_splitting": {
+                "category": "MG",
+                "C_k": 0.8939038515090942,
+                "cosine_to_own_leave_one_out_prototype": 0.7414692044258118,
+                "cosine_to_other_category_prototype": 0.41906434297561646,
+                "A_k": 0.3224048614501953,
+                "parallel_energy_fraction": 0.7990640957427928,
+                "residual_energy_fraction": 0.2009359042572072
+              },
+              "distractors_negated": {
+                "category": "MG",
+                "C_k": 0.8102133870124817,
+                "cosine_to_own_leave_one_out_prototype": 0.6206368207931519,
+                "cosine_to_other_category_prototype": 0.5493059158325195,
+                "A_k": 0.07133090496063232,
+                "parallel_energy_fraction": 0.6564457324942374,
+                "residual_energy_fraction": 0.34355426750576257
+              }
+            },
+            "per_category": {
+              "CO": {
+                "mean_coverage": 0.7608001828193665,
+                "median_coverage": 0.7525035738945007,
+                "minimum_coverage": 0.663124144077301,
+                "coverage_range": 0.20364880561828613,
+                "coverage_standard_deviation": 0.10207758843898773,
+                "resultant_length": 0.7669830918312073
+              },
+              "MG": {
+                "mean_coverage": 0.8687538504600525,
+                "median_coverage": 0.8939038515090942,
+                "minimum_coverage": 0.8102133870124817,
+                "coverage_range": 0.09193092584609985,
+                "coverage_standard_deviation": 0.05086468160152435,
+                "resultant_length": 0.8691569566726685
+              }
+            }
+          }
+        }
+      },
+      "median": {
+        "raw": {
+          "unit_normalized": {
+            "per_mechanism": {
+              "prefix_injection": {
+                "category": "CO",
+                "C_k": 0.7046782374382019,
+                "cosine_to_own_leave_one_out_prototype": 0.3326413333415985,
+                "cosine_to_other_category_prototype": 0.5194646120071411,
+                "A_k": -0.1868232786655426,
+                "parallel_energy_fraction": 0.49657141831901086,
+                "residual_energy_fraction": 0.5034285816809891
+              },
+              "refusal_suppression": {
+                "category": "CO",
+                "C_k": 0.7901004552841187,
+                "cosine_to_own_leave_one_out_prototype": 0.480330228805542,
+                "cosine_to_other_category_prototype": 0.3882395029067993,
+                "A_k": 0.09209072589874268,
+                "parallel_energy_fraction": 0.6242587294401716,
+                "residual_energy_fraction": 0.3757412705598284
+              },
+              "persona_roleplay": {
+                "category": "CO",
+                "C_k": 0.7058880925178528,
+                "cosine_to_own_leave_one_out_prototype": 0.3345746397972107,
+                "cosine_to_other_category_prototype": 0.033810511231422424,
+                "A_k": 0.30076412856578827,
+                "parallel_energy_fraction": 0.4982779991584927,
+                "residual_energy_fraction": 0.5017220008415073
+              },
+              "encoding_obfuscation": {
+                "category": "MG",
+                "C_k": 0.8951243758201599,
+                "cosine_to_own_leave_one_out_prototype": 0.753203809261322,
+                "cosine_to_other_category_prototype": 0.36024171113967896,
+                "A_k": 0.39296209812164307,
+                "parallel_energy_fraction": 0.8012476481874309,
+                "residual_energy_fraction": 0.19875235181256912
+              },
+              "payload_splitting": {
+                "category": "MG",
+                "C_k": 0.8830200433731079,
+                "cosine_to_own_leave_one_out_prototype": 0.7280026078224182,
+                "cosine_to_other_category_prototype": 0.3537504971027374,
+                "A_k": 0.3742521107196808,
+                "parallel_energy_fraction": 0.7797243969986454,
+                "residual_energy_fraction": 0.22027560300135463
+              },
+              "distractors_negated": {
+                "category": "MG",
+                "C_k": 0.821707010269165,
+                "cosine_to_own_leave_one_out_prototype": 0.6085525155067444,
+                "cosine_to_other_category_prototype": 0.3983059823513031,
+                "A_k": 0.21024653315544128,
+                "parallel_energy_fraction": 0.6752024107254897,
+                "residual_energy_fraction": 0.3247975892745103
+              }
+            },
+            "per_category": {
+              "CO": {
+                "mean_coverage": 0.7335555553436279,
+                "median_coverage": 0.7058880925178528,
+                "minimum_coverage": 0.7046782374382019,
+                "coverage_range": 0.08542221784591675,
+                "coverage_standard_deviation": 0.048973020166158676,
+                "resultant_length": 0.7335555553436279
+              },
+              "MG": {
+                "mean_coverage": 0.8666171431541443,
+                "median_coverage": 0.8830200433731079,
+                "minimum_coverage": 0.821707010269165,
+                "coverage_range": 0.07341736555099487,
+                "coverage_standard_deviation": 0.039361387491226196,
+                "resultant_length": 0.8666170239448547
+              }
+            }
+          },
+          "raw_magnitude": {
+            "per_mechanism": {
+              "prefix_injection": {
+                "category": "CO",
+                "C_k": 0.7585194110870361,
+                "cosine_to_own_leave_one_out_prototype": 0.3594924807548523,
+                "cosine_to_other_category_prototype": 0.5150309205055237,
+                "A_k": -0.1555384397506714,
+                "parallel_energy_fraction": 0.5753516969958241,
+                "residual_energy_fraction": 0.4246483030041759
+              },
+              "refusal_suppression": {
+                "category": "CO",
+                "C_k": 0.8330667614936829,
+                "cosine_to_own_leave_one_out_prototype": 0.4672635495662689,
+                "cosine_to_other_category_prototype": 0.3836584985256195,
+                "A_k": 0.08360505104064941,
+                "parallel_energy_fraction": 0.6940002291055727,
+                "residual_energy_fraction": 0.3059997708944273
+              },
+              "persona_roleplay": {
+                "category": "CO",
+                "C_k": 0.5779914259910583,
+                "cosine_to_own_leave_one_out_prototype": 0.3380998373031616,
+                "cosine_to_other_category_prototype": 0.03437145799398422,
+                "A_k": 0.3037283793091774,
+                "parallel_energy_fraction": 0.3340740885191771,
+                "residual_energy_fraction": 0.6659259114808229
+              },
+              "encoding_obfuscation": {
+                "category": "MG",
+                "C_k": 0.9068586230278015,
+                "cosine_to_own_leave_one_out_prototype": 0.7607125043869019,
+                "cosine_to_other_category_prototype": 0.4091973602771759,
+                "A_k": 0.35151514410972595,
+                "parallel_energy_fraction": 0.8223925621598802,
+                "residual_energy_fraction": 0.1776074378401198
+              },
+              "payload_splitting": {
+                "category": "MG",
+                "C_k": 0.8936699628829956,
+                "cosine_to_own_leave_one_out_prototype": 0.738311767578125,
+                "cosine_to_other_category_prototype": 0.3934643268585205,
+                "A_k": 0.3448474407196045,
+                "parallel_energy_fraction": 0.7986460025592947,
+                "residual_energy_fraction": 0.20135399744070526
+              },
+              "distractors_negated": {
+                "category": "MG",
+                "C_k": 0.7970037460327148,
+                "cosine_to_own_leave_one_out_prototype": 0.6087618470191956,
+                "cosine_to_other_category_prototype": 0.45350542664527893,
+                "A_k": 0.15525642037391663,
+                "parallel_energy_fraction": 0.6352149711901802,
+                "residual_energy_fraction": 0.3647850288098198
+              }
+            },
+            "per_category": {
+              "CO": {
+                "mean_coverage": 0.7231925129890442,
+                "median_coverage": 0.7585194110870361,
+                "minimum_coverage": 0.5779914259910583,
+                "coverage_range": 0.2550753355026245,
+                "coverage_standard_deviation": 0.1311558187007904,
+                "resultant_length": 0.7335555553436279
+              },
+              "MG": {
+                "mean_coverage": 0.8658440709114075,
+                "median_coverage": 0.8936699628829956,
+                "minimum_coverage": 0.7970037460327148,
+                "coverage_range": 0.10985487699508667,
+                "coverage_standard_deviation": 0.0599810965359211,
+                "resultant_length": 0.8666170239448547
+              }
+            }
+          }
+        },
+        "placebo_calibrated": {
+          "unit_normalized": {
+            "per_mechanism": {
+              "prefix_injection": {
+                "category": "CO",
+                "C_k": 0.7194510102272034,
+                "cosine_to_own_leave_one_out_prototype": 0.37901198863983154,
+                "cosine_to_other_category_prototype": 0.5331178307533264,
+                "A_k": -0.15410584211349487,
+                "parallel_energy_fraction": 0.5176097561169435,
+                "residual_energy_fraction": 0.4823902438830565
+              },
+              "refusal_suppression": {
+                "category": "CO",
+                "C_k": 0.8292775750160217,
+                "cosine_to_own_leave_one_out_prototype": 0.5765042901039124,
+                "cosine_to_other_category_prototype": 0.44083645939826965,
+                "A_k": 0.1356678307056427,
+                "parallel_energy_fraction": 0.6877012964244535,
+                "residual_energy_fraction": 0.31229870357554645
+              },
+              "persona_roleplay": {
+                "category": "CO",
+                "C_k": 0.7501909136772156,
+                "cosine_to_own_leave_one_out_prototype": 0.4303075671195984,
+                "cosine_to_other_category_prototype": 0.14217227697372437,
+                "A_k": 0.288135290145874,
+                "parallel_energy_fraction": 0.5627864069638555,
+                "residual_energy_fraction": 0.4372135930361445
+              },
+              "encoding_obfuscation": {
+                "category": "MG",
+                "C_k": 0.8949668407440186,
+                "cosine_to_own_leave_one_out_prototype": 0.7541006803512573,
+                "cosine_to_other_category_prototype": 0.36898136138916016,
+                "A_k": 0.38511931896209717,
+                "parallel_energy_fraction": 0.8009656460313295,
+                "residual_energy_fraction": 0.19903435396867053
+              },
+              "payload_splitting": {
+                "category": "MG",
+                "C_k": 0.8872801065444946,
+                "cosine_to_own_leave_one_out_prototype": 0.7380942702293396,
+                "cosine_to_other_category_prototype": 0.3879702091217041,
+                "A_k": 0.3501240611076355,
+                "parallel_energy_fraction": 0.7872659874696097,
+                "residual_energy_fraction": 0.21273401253039026
+              },
+              "distractors_negated": {
+                "category": "MG",
+                "C_k": 0.8307016491889954,
+                "cosine_to_own_leave_one_out_prototype": 0.6269258856773376,
+                "cosine_to_other_category_prototype": 0.5116360783576965,
+                "A_k": 0.11528980731964111,
+                "parallel_energy_fraction": 0.6900652299653167,
+                "residual_energy_fraction": 0.3099347700346833
+              }
+            },
+            "per_category": {
+              "CO": {
+                "mean_coverage": 0.766306459903717,
+                "median_coverage": 0.7501909136772156,
+                "minimum_coverage": 0.7194510102272034,
+                "coverage_range": 0.10982656478881836,
+                "coverage_standard_deviation": 0.056659091264009476,
+                "resultant_length": 0.7663065791130066
+              },
+              "MG": {
+                "mean_coverage": 0.8709828853607178,
+                "median_coverage": 0.8872801065444946,
+                "minimum_coverage": 0.8307016491889954,
+                "coverage_range": 0.0642651915550232,
+                "coverage_standard_deviation": 0.035095635801553726,
+                "resultant_length": 0.870982825756073
+              }
+            }
+          },
+          "raw_magnitude": {
+            "per_mechanism": {
+              "prefix_injection": {
+                "category": "CO",
+                "C_k": 0.7500408887863159,
+                "cosine_to_own_leave_one_out_prototype": 0.4028433859348297,
+                "cosine_to_other_category_prototype": 0.5286759734153748,
+                "A_k": -0.12583258748054504,
+                "parallel_energy_fraction": 0.5625613348513667,
+                "residual_energy_fraction": 0.4374386651486333
+              },
+              "refusal_suppression": {
+                "category": "CO",
+                "C_k": 0.8655271530151367,
+                "cosine_to_own_leave_one_out_prototype": 0.5594512224197388,
+                "cosine_to_other_category_prototype": 0.43605107069015503,
+                "A_k": 0.12340015172958374,
+                "parallel_energy_fraction": 0.7491372526064879,
+                "residual_energy_fraction": 0.2508627473935121
+              },
+              "persona_roleplay": {
+                "category": "CO",
+                "C_k": 0.6654506325721741,
+                "cosine_to_own_leave_one_out_prototype": 0.4402874708175659,
+                "cosine_to_other_category_prototype": 0.13805069029331207,
+                "A_k": 0.30223678052425385,
+                "parallel_energy_fraction": 0.4428245443907066,
+                "residual_energy_fraction": 0.5571754556092934
+              },
+              "encoding_obfuscation": {
+                "category": "MG",
+                "C_k": 0.9027628898620605,
+                "cosine_to_own_leave_one_out_prototype": 0.7591464519500732,
+                "cosine_to_other_category_prototype": 0.40424779057502747,
+                "A_k": 0.3548986613750458,
+                "parallel_energy_fraction": 0.8149808353120989,
+                "residual_energy_fraction": 0.18501916468790114
+              },
+              "payload_splitting": {
+                "category": "MG",
+                "C_k": 0.894627034664154,
+                "cosine_to_own_leave_one_out_prototype": 0.7443358302116394,
+                "cosine_to_other_category_prototype": 0.41382795572280884,
+                "A_k": 0.33050787448883057,
+                "parallel_energy_fraction": 0.8003575311519775,
+                "residual_energy_fraction": 0.1996424688480225
+              },
+              "distractors_negated": {
+                "category": "MG",
+                "C_k": 0.8144935369491577,
+                "cosine_to_own_leave_one_out_prototype": 0.6269850730895996,
+                "cosine_to_other_category_prototype": 0.5400327444076538,
+                "A_k": 0.0869523286819458,
+                "parallel_energy_fraction": 0.6633997217319489,
+                "residual_energy_fraction": 0.33660027826805106
+              }
+            },
+            "per_category": {
+              "CO": {
+                "mean_coverage": 0.7603395581245422,
+                "median_coverage": 0.7500408887863159,
+                "minimum_coverage": 0.6654506325721741,
+                "coverage_range": 0.20007652044296265,
+                "coverage_standard_deviation": 0.1004350557923317,
+                "resultant_length": 0.7663065791130066
+              },
+              "MG": {
+                "mean_coverage": 0.8706278800964355,
+                "median_coverage": 0.894627034664154,
+                "minimum_coverage": 0.8144935369491577,
+                "coverage_range": 0.08826935291290283,
+                "coverage_standard_deviation": 0.048783618956804276,
+                "resultant_length": 0.870982825756073
+              }
+            }
+          }
+        }
+      },
+      "trimmed_mean": {
+        "raw": {
+          "unit_normalized": {
+            "per_mechanism": {
+              "prefix_injection": {
+                "category": "CO",
+                "C_k": 0.7035014033317566,
+                "cosine_to_own_leave_one_out_prototype": 0.3296419680118561,
+                "cosine_to_other_category_prototype": 0.5131522417068481,
+                "A_k": -0.18351027369499207,
+                "parallel_energy_fraction": 0.49491422448975086,
+                "residual_energy_fraction": 0.5050857755102491
+              },
+              "refusal_suppression": {
+                "category": "CO",
+                "C_k": 0.788810670375824,
+                "cosine_to_own_leave_one_out_prototype": 0.4768639802932739,
+                "cosine_to_other_category_prototype": 0.38673830032348633,
+                "A_k": 0.0901256799697876,
+                "parallel_energy_fraction": 0.6222222736987568,
+                "residual_energy_fraction": 0.3777777263012432
+              },
+              "persona_roleplay": {
+                "category": "CO",
+                "C_k": 0.7037670612335205,
+                "cosine_to_own_leave_one_out_prototype": 0.3300653398036957,
+                "cosine_to_other_category_prototype": 0.026073595508933067,
+                "A_k": 0.3039917442947626,
+                "parallel_energy_fraction": 0.4952880764772658,
+                "residual_energy_fraction": 0.5047119235227342
+              },
+              "encoding_obfuscation": {
+                "category": "MG",
+                "C_k": 0.8932002782821655,
+                "cosine_to_own_leave_one_out_prototype": 0.7483848929405212,
+                "cosine_to_other_category_prototype": 0.35383734107017517,
+                "A_k": 0.39454755187034607,
+                "parallel_energy_fraction": 0.7978067371233379,
+                "residual_energy_fraction": 0.20219326287666206
+              },
+              "payload_splitting": {
+                "category": "MG",
+                "C_k": 0.8809558749198914,
+                "cosine_to_own_leave_one_out_prototype": 0.7229309678077698,
+                "cosine_to_other_category_prototype": 0.3474698066711426,
+                "A_k": 0.3754611611366272,
+                "parallel_energy_fraction": 0.7760832535558713,
+                "residual_energy_fraction": 0.22391674644412873
+              },
+              "distractors_negated": {
+                "category": "MG",
+                "C_k": 0.8176334500312805,
+                "cosine_to_own_leave_one_out_prototype": 0.599995493888855,
+                "cosine_to_other_category_prototype": 0.3915058970451355,
+                "A_k": 0.20848959684371948,
+                "parallel_energy_fraction": 0.6685244586100545,
+                "residual_energy_fraction": 0.3314755413899455
+              }
+            },
+            "per_category": {
+              "CO": {
+                "mean_coverage": 0.7320263981819153,
+                "median_coverage": 0.7037670612335205,
+                "minimum_coverage": 0.7035014033317566,
+                "coverage_range": 0.08530926704406738,
+                "coverage_standard_deviation": 0.04917681962251663,
+                "resultant_length": 0.7320263385772705
+              },
+              "MG": {
+                "mean_coverage": 0.863929808139801,
+                "median_coverage": 0.8809558749198914,
+                "minimum_coverage": 0.8176334500312805,
+                "coverage_range": 0.07556682825088501,
+                "coverage_standard_deviation": 0.040558598935604095,
+                "resultant_length": 0.8639296889305115
+              }
+            }
+          },
+          "raw_magnitude": {
+            "per_mechanism": {
+              "prefix_injection": {
+                "category": "CO",
+                "C_k": 0.7575981616973877,
+                "cosine_to_own_leave_one_out_prototype": 0.35670724511146545,
+                "cosine_to_other_category_prototype": 0.5085296034812927,
+                "A_k": -0.15182235836982727,
+                "parallel_energy_fraction": 0.5739549746072612,
+                "residual_energy_fraction": 0.4260450253927388
+              },
+              "refusal_suppression": {
+                "category": "CO",
+                "C_k": 0.832002580165863,
+                "cosine_to_own_leave_one_out_prototype": 0.46426498889923096,
+                "cosine_to_other_category_prototype": 0.38191673159599304,
+                "A_k": 0.08234825730323792,
+                "parallel_energy_fraction": 0.6922282934026533,
+                "residual_energy_fraction": 0.30777170659734665
+              },
+              "persona_roleplay": {
+                "category": "CO",
+                "C_k": 0.5753883719444275,
+                "cosine_to_own_leave_one_out_prototype": 0.3335350453853607,
+                "cosine_to_other_category_prototype": 0.026701495051383972,
+                "A_k": 0.30683355033397675,
+                "parallel_energy_fraction": 0.33107177856885883,
+                "residual_energy_fraction": 0.6689282214311412
+              },
+              "encoding_obfuscation": {
+                "category": "MG",
+                "C_k": 0.9055100679397583,
+                "cosine_to_own_leave_one_out_prototype": 0.7564515471458435,
+                "cosine_to_other_category_prototype": 0.40328702330589294,
+                "A_k": 0.35316452383995056,
+                "parallel_energy_fraction": 0.8199484831402657,
+                "residual_energy_fraction": 0.1800515168597343
+              },
+              "payload_splitting": {
+                "category": "MG",
+                "C_k": 0.8923534154891968,
+                "cosine_to_own_leave_one_out_prototype": 0.7338600158691406,
+                "cosine_to_other_category_prototype": 0.3875848352909088,
+                "A_k": 0.3462751805782318,
+                "parallel_energy_fraction": 0.796294618135235,
+                "residual_energy_fraction": 0.20370538186476495
+              },
+              "distractors_negated": {
+                "category": "MG",
+                "C_k": 0.7913749814033508,
+                "cosine_to_own_leave_one_out_prototype": 0.6001961827278137,
+                "cosine_to_other_category_prototype": 0.4470541477203369,
+                "A_k": 0.1531420350074768,
+                "parallel_energy_fraction": 0.6262743611911539,
+                "residual_energy_fraction": 0.37372563880884613
+              }
+            },
+            "per_category": {
+              "CO": {
+                "mean_coverage": 0.7216630578041077,
+                "median_coverage": 0.7575981616973877,
+                "minimum_coverage": 0.5753883719444275,
+                "coverage_range": 0.25661420822143555,
+                "coverage_standard_deviation": 0.13202731311321259,
+                "resultant_length": 0.7320263385772705
+              },
+              "MG": {
+                "mean_coverage": 0.8630794882774353,
+                "median_coverage": 0.8923534154891968,
+                "minimum_coverage": 0.7913749814033508,
+                "coverage_range": 0.11413508653640747,
+                "coverage_standard_deviation": 0.06244538724422455,
+                "resultant_length": 0.8639296889305115
+              }
+            }
+          }
+        },
+        "placebo_calibrated": {
+          "unit_normalized": {
+            "per_mechanism": {
+              "prefix_injection": {
+                "category": "CO",
+                "C_k": 0.7210657000541687,
+                "cosine_to_own_leave_one_out_prototype": 0.38225194811820984,
+                "cosine_to_other_category_prototype": 0.5344520807266235,
+                "A_k": -0.1522001326084137,
+                "parallel_energy_fraction": 0.5199357437946084,
+                "residual_energy_fraction": 0.4800642562053916
+              },
+              "refusal_suppression": {
+                "category": "CO",
+                "C_k": 0.8299020528793335,
+                "cosine_to_own_leave_one_out_prototype": 0.5782769918441772,
+                "cosine_to_other_category_prototype": 0.4468100965023041,
+                "A_k": 0.13146689534187317,
+                "parallel_energy_fraction": 0.688737417373332,
+                "residual_energy_fraction": 0.31126258262666795
+              },
+              "persona_roleplay": {
+                "category": "CO",
+                "C_k": 0.7507943511009216,
+                "cosine_to_own_leave_one_out_prototype": 0.4319399297237396,
+                "cosine_to_other_category_prototype": 0.1498103141784668,
+                "A_k": 0.2821296155452728,
+                "parallel_energy_fraction": 0.563692157645054,
+                "residual_energy_fraction": 0.436307842354946
+              },
+              "encoding_obfuscation": {
+                "category": "MG",
+                "C_k": 0.8946079015731812,
+                "cosine_to_own_leave_one_out_prototype": 0.753148078918457,
+                "cosine_to_other_category_prototype": 0.37445029616355896,
+                "A_k": 0.37869778275489807,
+                "parallel_energy_fraction": 0.8003232975571706,
+                "residual_energy_fraction": 0.19967670244282942
+              },
+              "payload_splitting": {
+                "category": "MG",
+                "C_k": 0.8866916298866272,
+                "cosine_to_own_leave_one_out_prototype": 0.7366687059402466,
+                "cosine_to_other_category_prototype": 0.3909517526626587,
+                "A_k": 0.3457169532775879,
+                "parallel_energy_fraction": 0.7862220465110035,
+                "residual_energy_fraction": 0.21377795348899653
+              },
+              "distractors_negated": {
+                "category": "MG",
+                "C_k": 0.8294992446899414,
+                "cosine_to_own_leave_one_out_prototype": 0.6244124174118042,
+                "cosine_to_other_category_prototype": 0.5175293684005737,
+                "A_k": 0.10688304901123047,
+                "parallel_energy_fraction": 0.6880689969411833,
+                "residual_energy_fraction": 0.3119310030588167
+              }
+            },
+            "per_category": {
+              "CO": {
+                "mean_coverage": 0.7672540545463562,
+                "median_coverage": 0.7507943511009216,
+                "minimum_coverage": 0.7210657000541687,
+                "coverage_range": 0.1088363528251648,
+                "coverage_standard_deviation": 0.05625414475798607,
+                "resultant_length": 0.7672540545463562
+              },
+              "MG": {
+                "mean_coverage": 0.8702662587165833,
+                "median_coverage": 0.8866916298866272,
+                "minimum_coverage": 0.8294992446899414,
+                "coverage_range": 0.06510865688323975,
+                "coverage_standard_deviation": 0.03552645444869995,
+                "resultant_length": 0.8702663779258728
+              }
+            }
+          },
+          "raw_magnitude": {
+            "per_mechanism": {
+              "prefix_injection": {
+                "category": "CO",
+                "C_k": 0.7523646354675293,
+                "cosine_to_own_leave_one_out_prototype": 0.40620481967926025,
+                "cosine_to_other_category_prototype": 0.5298500657081604,
+                "A_k": -0.12364524602890015,
+                "parallel_energy_fraction": 0.5660525447021882,
+                "residual_energy_fraction": 0.43394745529781176
+              },
+              "refusal_suppression": {
+                "category": "CO",
+                "C_k": 0.865893542766571,
+                "cosine_to_own_leave_one_out_prototype": 0.5611958503723145,
+                "cosine_to_other_category_prototype": 0.44181761145591736,
+                "A_k": 0.1193782389163971,
+                "parallel_energy_fraction": 0.7497716274048436,
+                "residual_energy_fraction": 0.2502283725951564
+              },
+              "persona_roleplay": {
+                "category": "CO",
+                "C_k": 0.6653462648391724,
+                "cosine_to_own_leave_one_out_prototype": 0.4416467547416687,
+                "cosine_to_other_category_prototype": 0.14541666209697723,
+                "A_k": 0.29623009264469147,
+                "parallel_energy_fraction": 0.4426856521354381,
+                "residual_energy_fraction": 0.5573143478645619
+              },
+              "encoding_obfuscation": {
+                "category": "MG",
+                "C_k": 0.9026659727096558,
+                "cosine_to_own_leave_one_out_prototype": 0.7584011554718018,
+                "cosine_to_other_category_prototype": 0.4096781611442566,
+                "A_k": 0.34872299432754517,
+                "parallel_energy_fraction": 0.814805858287869,
+                "residual_energy_fraction": 0.185194141712131
+              },
+              "payload_splitting": {
+                "category": "MG",
+                "C_k": 0.8943302631378174,
+                "cosine_to_own_leave_one_out_prototype": 0.7431727051734924,
+                "cosine_to_other_category_prototype": 0.4169429540634155,
+                "A_k": 0.3262297511100769,
+                "parallel_energy_fraction": 0.7998266195641577,
+                "residual_energy_fraction": 0.20017338043584232
+              },
+              "distractors_negated": {
+                "category": "MG",
+                "C_k": 0.8126633167266846,
+                "cosine_to_own_leave_one_out_prototype": 0.6244738698005676,
+                "cosine_to_other_category_prototype": 0.5455223321914673,
+                "A_k": 0.07895153760910034,
+                "parallel_energy_fraction": 0.6604216663532156,
+                "residual_energy_fraction": 0.33957833364678436
+              }
+            },
+            "per_category": {
+              "CO": {
+                "mean_coverage": 0.7612015604972839,
+                "median_coverage": 0.7523646354675293,
+                "minimum_coverage": 0.6653462648391724,
+                "coverage_range": 0.20054727792739868,
+                "coverage_standard_deviation": 0.10056525468826294,
+                "resultant_length": 0.7672540545463562
+              },
+              "MG": {
+                "mean_coverage": 0.869886577129364,
+                "median_coverage": 0.8943302631378174,
+                "minimum_coverage": 0.8126633167266846,
+                "coverage_range": 0.09000265598297119,
+                "coverage_standard_deviation": 0.049731701612472534,
+                "resultant_length": 0.8702663779258728
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
