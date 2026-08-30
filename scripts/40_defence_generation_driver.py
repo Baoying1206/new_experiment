@@ -78,6 +78,18 @@ N_TIMING_PILOT_HARMFUL = 5
 N_TIMING_PILOT_BENIGN = 5
 TIMING_PILOT_CONDITIONS = ['no_hook', 'hook_alpha_zero', 'global_alpha_one']
 
+# Gemma2's HF implementation computes float32 logits over the FULL padded
+# sequence length for every row during prefill (not just the last position),
+# so batch_size=60 OOMs (~17GB just for logits, confirmed on job 4979:
+# "Tried to allocate 16.82 GiB"). Qwen/Llama have no such override needed.
+# A fresh hook (fresh has_intervened state) is created per sub-batch inside
+# run_condition -- this override does not weaken the single-fire guarantee,
+# it just means intervention_count_distribution will have >1 entries (each
+# still required to equal 1) instead of exactly one entry.
+CONDITION_BATCH_SIZE_OVERRIDE = {
+    'gemma-2-9b-it': 15,
+}
+
 
 def _import_by_path(name, path):
     spec = importlib.util.spec_from_file_location(name, path)
@@ -199,44 +211,63 @@ def build_timing_pilot_prompts(active_mechanisms):
 
 # ── generation runner for one condition ───────────────────────────────────
 
-def run_condition(model_base, layer_module, prompts, condition, c_G, max_new_tokens=MAX_NEW_TOKENS):
-    """condition in TIMING_PILOT_CONDITIONS. Returns (per_record_list, metrics_dict, hook_state_or_None)."""
+def run_condition(model_base, layer_module, prompts, condition, c_G, max_new_tokens=MAX_NEW_TOKENS, batch_size=None):
+    """condition in TIMING_PILOT_CONDITIONS. Splits `prompts` into chunks of
+    `batch_size` (default: one chunk = all of them); a FRESH hook (fresh
+    has_intervened state) is created PER CHUNK and asserted immediately
+    after that chunk's generate_completions() call returns -- reusing one
+    hook/state object across multiple generate_completions() calls would
+    silently skip the intervention on every chunk after the first (the
+    has_intervened flag from chunk 1 would carry over), so this must never
+    be collapsed into a single hook shared across chunks.
+    Returns (per_record_list, metrics_dict, hook_states_list, audit_log)."""
+    if batch_size is None:
+        batch_size = len(prompts)
     eos_id = model_base.tokenizer.eos_token_id
     tok = model_base.tokenize_instructions_fn(instructions=[p['instruction'] for p in prompts], system=None)
     prompt_token_counts = tok.attention_mask.sum(dim=1).tolist()
 
-    fwd_hooks, state, audit_log = [], None, []
     if condition == 'no_hook':
         alpha = None
     elif condition == 'hook_alpha_zero':
         alpha = 0.0
-        per_row_c = (alpha * c_G).unsqueeze(0).repeat(len(prompts), 1)
-        hook_fn, state = hooks_mod.make_prefill_last_token_hook(per_row_c, audit_log=audit_log)
-        fwd_hooks = [(layer_module, hook_fn)]
     elif condition == 'global_alpha_one':
         alpha = 1.0
-        per_row_c = (alpha * c_G).unsqueeze(0).repeat(len(prompts), 1)
-        hook_fn, state = hooks_mod.make_prefill_last_token_hook(per_row_c, audit_log=audit_log)
-        fwd_hooks = [(layer_module, hook_fn)]
     else:
         raise ValueError(condition)
 
     torch.cuda.reset_peak_memory_stats()
-    t0 = time.time()
-    completions = model_base.generate_completions(
-        prompts, fwd_pre_hooks=[], fwd_hooks=fwd_hooks,
-        batch_size=len(prompts), max_new_tokens=max_new_tokens,
-    )
-    wall = time.time() - t0
+    all_completions, per_batch_wall, per_batch_states, audit_log = [], [], [], []
+    t_total0 = time.time()
+    for start in range(0, len(prompts), batch_size):
+        chunk = prompts[start:start + batch_size]
+        fwd_hooks, state = [], None
+        if alpha is not None:
+            per_row_c = (alpha * c_G).unsqueeze(0).repeat(len(chunk), 1)
+            hook_fn, state = hooks_mod.make_prefill_last_token_hook(per_row_c, audit_log=audit_log)
+            fwd_hooks = [(layer_module, hook_fn)]
+        t0 = time.time()
+        chunk_completions = model_base.generate_completions(
+            chunk, fwd_pre_hooks=[], fwd_hooks=fwd_hooks,
+            batch_size=len(chunk), max_new_tokens=max_new_tokens,
+        )
+        per_batch_wall.append(time.time() - t0)
+        if state is not None:
+            # Per protocol: intervention_count != 1 for ANY batch must stop immediately,
+            # not be silently averaged away in an aggregate metric.
+            hooks_mod.assert_single_intervention(state)
+            per_batch_states.append(state)
+        all_completions.extend(chunk_completions)
+    wall = time.time() - t_total0
     peak_mem = torch.cuda.max_memory_allocated()
 
-    for c, item in zip(completions, prompts):
+    for c, item in zip(all_completions, prompts):
         for k in ('instruction_id', 'benign_or_harmful', 'template'):
             c[k] = item[k]
 
     per_record = []
     gen_lengths, eos_count = [], 0
-    for c, prompt_tok_count in zip(completions, prompt_token_counts):
+    for c, prompt_tok_count in zip(all_completions, prompt_token_counts):
         token_ids = [int(x) for x in c['generation_tokens'].split()]
         if eos_id in token_ids:
             length = token_ids.index(eos_id) + 1
@@ -259,6 +290,7 @@ def run_condition(model_base, layer_module, prompts, condition, c_G, max_new_tok
     n = len(lens_sorted)
     p90 = lens_sorted[min(n - 1, int(round(0.9 * (n - 1))))] if n else 0
     total_gen_tokens = sum(gen_lengths)
+    intervention_count_distribution = [s['intervention_count'] for s in per_batch_states]
     metrics = {
         'condition': condition, 'alpha': alpha, 'n_prompts': len(prompts),
         'total_wall_seconds': wall, 'rows_per_hour': len(prompts) / wall * 3600 if wall > 0 else None,
@@ -268,17 +300,16 @@ def run_condition(model_base, layer_module, prompts, condition, c_G, max_new_tok
         'median_generation_tokens': lens_sorted[n // 2] if n else None,
         'p90_generation_tokens': p90,
         'eos_rate': eos_count / n if n else None,
-        'per_batch_wall_seconds': [wall],
+        'n_batches': len(per_batch_wall), 'per_batch_wall_seconds': per_batch_wall,
         'peak_gpu_memory_bytes': peak_mem,
-        'batch_size': len(prompts), 'max_new_tokens': max_new_tokens,
+        'batch_size': batch_size, 'max_new_tokens': max_new_tokens,
         'model_dtype': DTYPE,
-        'intervention_count': (state['intervention_count'] if state is not None else None),
+        'intervention_count_distribution': intervention_count_distribution,
+        'intervention_count_all_batches_equal_one': (all(x == 1 for x in intervention_count_distribution)
+                                                      if intervention_count_distribution else None),
         'warning_count': len(audit_log), 'invalid_record_count': 0,
     }
-    if state is not None and state['intervention_count'] != 1:
-        metrics['invalid_record_count'] = len(prompts)
-        metrics['INVALID'] = True
-    return per_record, metrics, state, audit_log
+    return per_record, metrics, per_batch_states, audit_log
 
 
 def compare_determinism(records_a, records_b, label_a='no_hook', label_b='hook_alpha_zero'):
@@ -426,16 +457,21 @@ def run_timing_pilot(args):
     except Exception:
         pass
 
+    condition_batch_size = CONDITION_BATCH_SIZE_OVERRIDE.get(model_alias, len(prompts))
+    print(f"Using batch_size={condition_batch_size} for this model "
+          f"({'override' if model_alias in CONDITION_BATCH_SIZE_OVERRIDE else 'default: all prompts in one batch'}).")
+
     all_records, all_metrics, all_states = {}, {}, {}
     for condition in TIMING_PILOT_CONDITIONS:
         print(f"\n--- condition: {condition} ---")
-        per_record, metrics, state, audit_log = run_condition(model_base, layer_module, prompts, condition, c_G)
+        per_record, metrics, states, audit_log = run_condition(
+            model_base, layer_module, prompts, condition, c_G, batch_size=condition_batch_size)
         all_records[condition] = per_record
         all_metrics[condition] = metrics
-        all_states[condition] = state
+        all_states[condition] = states
         print(f"  {metrics}")
-        if state is not None:
-            print(f"  hook_state={state}  audit_log={audit_log}")
+        if states:
+            print(f"  hook_states={states}  audit_log={audit_log}")
 
     print("\n--- determinism check: no_hook vs hook_alpha_zero ---")
     det_ok, mismatches = compare_determinism(all_records['no_hook'], all_records['hook_alpha_zero'])
