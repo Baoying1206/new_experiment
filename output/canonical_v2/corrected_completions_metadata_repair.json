@@ -1,0 +1,81 @@
+{
+  "taxonomy_version": "wei_canonical_v2",
+  "taxonomy_config_path": "/home/h24/baga0553/new_experiment/templates/templates_en.json",
+  "taxonomy_config_sha256": "07bc0eecbf6f74bd7256abe48661dd06d14769a68bb6a86a335996eb0d439ced",
+  "git_commit": "87cc2fd190e15a32c330f060f0c1d29d4e4b9631",
+  "timestamp_utc": "2026-08-30T21:55:04.671739+00:00",
+  "mode": "apply",
+  "target_condition": "persona_roleplay",
+  "warnings": [],
+  "per_model": {
+    "Qwen2.5-7B-Instruct": {
+      "input_path": "output/Qwen2.5-7B-Instruct/completions_en_full572_corrected.json",
+      "sha256_before": "f1ff2cc797e2aaf69b06c1fc9c3516fb9a704fea6475d97f30ee92373242af1f",
+      "total_rows": 4576,
+      "changed_rows": 572,
+      "changed_field": "mechanism",
+      "old_value": "mismatched_generalization",
+      "new_value": "competing_objectives",
+      "unchanged_field_semantic_validation": "passed (all non-mechanism fields identical, verified per-record)",
+      "preflight": {
+        "total_records": 4576,
+        "persona_roleplay_records": 572,
+        "stale_mismatch_count": 572,
+        "stale_values": [
+          "mismatched_generalization"
+        ],
+        "expected_value": "competing_objectives",
+        "other_mismatches_count": 0
+      },
+      "applied": true,
+      "sha256_after": "35fd1a1ce3e92ea87720bb51910d100b120dd36f224232e83451b932d74d48c7",
+      "exists": true
+    },
+    "Meta-Llama-3.1-8B-Instruct": {
+      "input_path": "output/Meta-Llama-3.1-8B-Instruct/completions_en_full572_corrected.json",
+      "sha256_before": "bb922f27b7d49b399bc2cdb9885136cc1323287df42b2a5f689bcde7b15c94d3",
+      "total_rows": 4576,
+      "changed_rows": 572,
+      "changed_field": "mechanism",
+      "old_value": "mismatched_generalization",
+      "new_value": "competing_objectives",
+      "unchanged_field_semantic_validation": "passed (all non-mechanism fields identical, verified per-record)",
+      "preflight": {
+        "total_records": 4576,
+        "persona_roleplay_records": 572,
+        "stale_mismatch_count": 572,
+        "stale_values": [
+          "mismatched_generalization"
+        ],
+        "expected_value": "competing_objectives",
+        "other_mismatches_count": 0
+      },
+      "applied": true,
+      "sha256_after": "7c2354b3a50aa0e61b50100a0762bcfa4b8fcbb742669cabdc13a1ceec8f5f8a",
+      "exists": true
+    },
+    "gemma-2-9b-it": {
+      "input_path": "output/gemma-2-9b-it/completions_en_full572_corrected.json",
+      "sha256_before": "aa58329653193db80f139593569c9583bf07c67def5fc47e6d05972bb22f0f20",
+      "total_rows": 4576,
+      "changed_rows": 572,
+      "changed_field": "mechanism",
+      "old_value": "mismatched_generalization",
+      "new_value": "competing_objectives",
+      "unchanged_field_semantic_validation": "passed (all non-mechanism fields identical, verified per-record)",
+      "preflight": {
+        "total_records": 4576,
+        "persona_roleplay_records": 572,
+        "stale_mismatch_count": 572,
+        "stale_values": [
+          "mismatched_generalization"
+        ],
+        "expected_value": "competing_objectives",
+        "other_mismatches_count": 0
+      },
+      "applied": true,
+      "sha256_after": "5081ef6df2797603766c8a0513c4079ae841f8a9aa9bc9b8acbd1c589eef0495",
+      "exists": true
+    }
+  }
+}
