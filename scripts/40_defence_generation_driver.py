@@ -1,0 +1,552 @@
+"""
+Exp3 defence generation driver. Supports two phases:
+  --phase timing-pilot : the ONLY phase authorized to actually run right now.
+                          60 real validation prompts (5 harmful + 5 benign
+                          validation_ids, each rendered under all 6 V2
+                          templates), 3 conditions (no_hook / hook_alpha_zero
+                          / global_alpha_one), full metrics + a hard
+                          determinism check between no_hook and
+                          hook_alpha_zero. 180 target generations total.
+  --phase validation    : the full alpha-sweep code path -- IMPLEMENTED here
+                          (so the framework is complete and testable) but
+                          NOT to be invoked for a full run without separate,
+                          explicit authorization. This script does not
+                          gate that itself beyond requiring the caller to
+                          pass --phase validation explicitly; the operational
+                          decision not to run it belongs to the human
+                          protocol, not a hard-coded lock in this file.
+
+No result from --phase timing-pilot is a defence-efficacy finding -- it
+exists to (a) prove the hook adds no observable behavior change at alpha=0
+(the ONLY way to trust any alpha>0 result later) and (b) get real,
+isolated throughput numbers for GPU-hour planning.
+
+Reuses, never reimplements: 35_common_direction_coverage_audit.py's
+direction_at_layer, 37_defence_directions_and_hooks.py's build_c_G/
+build_all_condition_directions/make_prefill_last_token_hook/
+assert_single_intervention, 02_build_templated_data.py's build_condition
+(dynamically loaded, for exact template-rendering parity, including
+encoding_obfuscation's base64 and payload_splitting's word-boundary split),
+03_generate_and_label.py's WILDGUARD_PROMPT/_parse_wildguard, and
+pipeline's generate_completions/add_hooks.
+
+Usage:
+  python scripts/40_defence_generation_driver.py --phase timing-pilot \
+      --model_idx 1 --output_path output
+"""
+import argparse
+import copy
+import hashlib
+import importlib.util
+import json
+import os
+import random
+import subprocess
+import sys
+import time
+from datetime import datetime, timezone
+
+import torch
+
+SCRIPT_DIR = os.path.dirname(__file__)
+sys.path.insert(0, SCRIPT_DIR)
+from importlib import import_module
+exp3_coverage = import_module('35_common_direction_coverage_audit')
+hooks_mod = import_module('37_defence_directions_and_hooks')
+from _taxonomy_v2_loader import load_taxonomy_v2, DEFAULT_TEMPLATES_PATH
+
+SPLITS_PATH = os.path.join(SCRIPT_DIR, '..', 'data', 'splits.json')
+POOL_PATH = os.path.join(SCRIPT_DIR, '..', 'data', 'sampled_prompts.json')
+TEMPLATES_PATH = os.path.join(SCRIPT_DIR, '..', 'templates', 'templates_en.json')
+BENIGN_VAL_PATH = os.path.join(SCRIPT_DIR, '..', 'data', 'benign_validation_80.json')
+BENIGN_TEST_PATH = os.path.join(SCRIPT_DIR, '..', 'data', 'benign_test_100.json')  # existence-checked only, never read here
+
+MODEL_PATHS = {
+    0: ('Qwen2.5-7B-Instruct', '/home/h24/baga0553/models/Qwen2.5-7B-Instruct'),
+    1: ('Meta-Llama-3.1-8B-Instruct', '/home/h24/baga0553/models/Llama-3.1-8B-Instruct'),
+    2: ('gemma-2-9b-it', '/home/h24/baga0553/models/gemma-2-9b-it'),
+}
+MAX_NEW_TOKENS = 200
+DO_SAMPLE = False
+DTYPE = 'bfloat16'
+JUDGE_PROMPT_VERSION = 'wildguard_prompt_v1_from_03_generate_and_label'
+JUDGE_MODEL_VERSION = 'allenai/wildguard'
+
+TIMING_PILOT_SEED_HARMFUL = 20260901
+TIMING_PILOT_SEED_BENIGN = 20260902
+N_TIMING_PILOT_HARMFUL = 5
+N_TIMING_PILOT_BENIGN = 5
+TIMING_PILOT_CONDITIONS = ['no_hook', 'hook_alpha_zero', 'global_alpha_one']
+
+
+def _import_by_path(name, path):
+    spec = importlib.util.spec_from_file_location(name, path)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def sha256_hex(obj):
+    s = json.dumps(obj, sort_keys=True, ensure_ascii=False) if isinstance(obj, (dict, list)) else str(obj)
+    return hashlib.sha256(s.encode('utf-8')).hexdigest()
+
+
+def sha256_of_file(path):
+    with open(path, 'rb') as f:
+        return hashlib.sha256(f.read()).hexdigest()
+
+
+def git_commit_hash():
+    try:
+        return subprocess.run(['git', 'rev-parse', 'HEAD'], cwd=SCRIPT_DIR,
+                               capture_output=True, text=True, check=True).stdout.strip()
+    except Exception:
+        return 'unknown'
+
+
+def compute_direction_config_hash(model_alias):
+    taxonomy = load_taxonomy_v2()
+    payload = {
+        'taxonomy_config_sha256': sha256_of_file(DEFAULT_TEMPLATES_PATH),
+        'fixed_layer': exp3_coverage.FIXED_LAYERS[model_alias],
+        'estimator': exp3_coverage.PRIMARY_ESTIMATOR, 'raw_or_pc': exp3_coverage.PRIMARY_RAW_PC,
+        'gdef': exp3_coverage.PRIMARY_GDEF,
+        'frozen_grouping': hooks_mod.FROZEN_ADAPTIVE_GROUPING.get(model_alias),
+        'CO_mechs': taxonomy['CO_mechs'], 'MG_mechs': taxonomy['MG_mechs'],
+    }
+    return sha256_hex(payload), payload
+
+
+def compute_generation_config_hash(model_path):
+    payload = {'model_path': model_path, 'max_new_tokens': MAX_NEW_TOKENS, 'do_sample': DO_SAMPLE, 'dtype': DTYPE}
+    return sha256_hex(payload), payload
+
+
+def record_key(model, split, instruction_id, benign_or_harmful, template, method, alpha,
+                direction_config_hash, generation_config_hash):
+    payload = {
+        'model': model, 'split': split, 'instruction_id': instruction_id,
+        'benign_or_harmful': benign_or_harmful, 'template': template, 'method': method,
+        'alpha': alpha, 'direction_config_hash': direction_config_hash,
+        'generation_config_hash': generation_config_hash,
+    }
+    return sha256_hex(payload)
+
+
+def judge_cache_key(request_text, response_text):
+    payload = f"{request_text}\x1f{response_text}\x1f{JUDGE_PROMPT_VERSION}\x1f{JUDGE_MODEL_VERSION}"
+    return hashlib.sha256(payload.encode('utf-8')).hexdigest()
+
+
+def load_jsonl(path):
+    if not os.path.exists(path):
+        return []
+    with open(path, encoding='utf-8') as f:
+        return [json.loads(line) for line in f if line.strip()]
+
+
+def append_jsonl(path, rows):
+    with open(path, 'a', encoding='utf-8') as f:
+        for r in rows:
+            f.write(json.dumps(r, ensure_ascii=False) + '\n')
+
+
+# ── prompt construction (timing-pilot) ────────────────────────────────────
+
+def build_timing_pilot_prompts(active_mechanisms):
+    script02 = _import_by_path('script02', os.path.join(SCRIPT_DIR, '02_build_templated_data.py'))
+
+    with open(SPLITS_PATH) as f:
+        validation_ids = sorted(json.load(f)['validation_ids'])
+    rng_h = random.Random(TIMING_PILOT_SEED_HARMFUL)
+    harmful_ids = sorted(rng_h.sample(validation_ids, N_TIMING_PILOT_HARMFUL))
+
+    with open(BENIGN_VAL_PATH, encoding='utf-8') as f:
+        benign_pool = json.load(f)
+    rng_b = random.Random(TIMING_PILOT_SEED_BENIGN)
+    benign_sample = sorted(rng_b.sample(benign_pool, N_TIMING_PILOT_BENIGN), key=lambda x: x['benign_id'])
+
+    with open(POOL_PATH, encoding='utf-8') as f:
+        harmful_pool = {p['id']: p for p in json.load(f)}
+    with open(TEMPLATES_PATH, encoding='utf-8') as f:
+        templates = json.load(f)['templates']
+
+    prompts = []
+    for hid in harmful_ids:
+        instruction_en = harmful_pool[hid]['instruction_en']
+        for mech in active_mechanisms:
+            rendered = script02.build_condition(mech, templates[mech]['text'], mech, instruction_en)
+            prompts.append({'instruction_id': hid, 'benign_or_harmful': 'harmful', 'template': mech,
+                             'instruction': rendered, 'instruction_en': instruction_en})
+    for b in benign_sample:
+        instruction_en = b['instruction']
+        for mech in active_mechanisms:
+            rendered = script02.build_condition(mech, templates[mech]['text'], mech, instruction_en)
+            prompts.append({'instruction_id': b['benign_id'], 'benign_or_harmful': 'benign', 'template': mech,
+                             'instruction': rendered, 'instruction_en': instruction_en})
+
+    manifest = {
+        'harmful_ids': harmful_ids, 'benign_ids': [b['benign_id'] for b in benign_sample],
+        'harmful_ids_hash': sha256_hex(harmful_ids),
+        'benign_ids_hash': sha256_hex([b['benign_id'] for b in benign_sample]),
+        'seed_harmful': TIMING_PILOT_SEED_HARMFUL, 'seed_benign': TIMING_PILOT_SEED_BENIGN,
+        'n_prompts': len(prompts),
+    }
+    assert len(prompts) == (N_TIMING_PILOT_HARMFUL + N_TIMING_PILOT_BENIGN) * len(active_mechanisms), \
+        f"expected {(N_TIMING_PILOT_HARMFUL + N_TIMING_PILOT_BENIGN) * len(active_mechanisms)} prompts, got {len(prompts)}"
+    return prompts, manifest
+
+
+# ── generation runner for one condition ───────────────────────────────────
+
+def run_condition(model_base, layer_module, prompts, condition, c_G, max_new_tokens=MAX_NEW_TOKENS):
+    """condition in TIMING_PILOT_CONDITIONS. Returns (per_record_list, metrics_dict, hook_state_or_None)."""
+    eos_id = model_base.tokenizer.eos_token_id
+    tok = model_base.tokenize_instructions_fn(instructions=[p['instruction'] for p in prompts], system=None)
+    prompt_token_counts = tok.attention_mask.sum(dim=1).tolist()
+
+    fwd_hooks, state, audit_log = [], None, []
+    if condition == 'no_hook':
+        alpha = None
+    elif condition == 'hook_alpha_zero':
+        alpha = 0.0
+        per_row_c = (alpha * c_G).unsqueeze(0).repeat(len(prompts), 1)
+        hook_fn, state = hooks_mod.make_prefill_last_token_hook(per_row_c, audit_log=audit_log)
+        fwd_hooks = [(layer_module, hook_fn)]
+    elif condition == 'global_alpha_one':
+        alpha = 1.0
+        per_row_c = (alpha * c_G).unsqueeze(0).repeat(len(prompts), 1)
+        hook_fn, state = hooks_mod.make_prefill_last_token_hook(per_row_c, audit_log=audit_log)
+        fwd_hooks = [(layer_module, hook_fn)]
+    else:
+        raise ValueError(condition)
+
+    torch.cuda.reset_peak_memory_stats()
+    t0 = time.time()
+    completions = model_base.generate_completions(
+        prompts, fwd_pre_hooks=[], fwd_hooks=fwd_hooks,
+        batch_size=len(prompts), max_new_tokens=max_new_tokens,
+    )
+    wall = time.time() - t0
+    peak_mem = torch.cuda.max_memory_allocated()
+
+    for c, item in zip(completions, prompts):
+        for k in ('instruction_id', 'benign_or_harmful', 'template'):
+            c[k] = item[k]
+
+    per_record = []
+    gen_lengths, eos_count = [], 0
+    for c, prompt_tok_count in zip(completions, prompt_token_counts):
+        token_ids = [int(x) for x in c['generation_tokens'].split()]
+        if eos_id in token_ids:
+            length = token_ids.index(eos_id) + 1
+            stop_reason = 'eos'
+            eos_count += 1
+        else:
+            length = len(token_ids)
+            stop_reason = 'max_tokens'
+        gen_lengths.append(length)
+        per_record.append({
+            'instruction_id': c['instruction_id'], 'benign_or_harmful': c['benign_or_harmful'],
+            'template': c['template'], 'condition': condition, 'alpha': alpha,
+            'response': c['response'], 'generation_tokens': c['generation_tokens'],
+            'generated_token_ids_truncated': token_ids[:length], 'generation_length': length,
+            'stop_reason': stop_reason, 'prompt_token_count': prompt_tok_count,
+            'instruction_en': c['instruction_en'],
+        })
+
+    lens_sorted = sorted(gen_lengths)
+    n = len(lens_sorted)
+    p90 = lens_sorted[min(n - 1, int(round(0.9 * (n - 1))))] if n else 0
+    total_gen_tokens = sum(gen_lengths)
+    metrics = {
+        'condition': condition, 'alpha': alpha, 'n_prompts': len(prompts),
+        'total_wall_seconds': wall, 'rows_per_hour': len(prompts) / wall * 3600 if wall > 0 else None,
+        'total_prompt_tokens': sum(prompt_token_counts), 'total_generated_tokens': total_gen_tokens,
+        'generated_tokens_per_second': total_gen_tokens / wall if wall > 0 else None,
+        'mean_generation_tokens': total_gen_tokens / n if n else None,
+        'median_generation_tokens': lens_sorted[n // 2] if n else None,
+        'p90_generation_tokens': p90,
+        'eos_rate': eos_count / n if n else None,
+        'per_batch_wall_seconds': [wall],
+        'peak_gpu_memory_bytes': peak_mem,
+        'batch_size': len(prompts), 'max_new_tokens': max_new_tokens,
+        'model_dtype': DTYPE,
+        'intervention_count': (state['intervention_count'] if state is not None else None),
+        'warning_count': len(audit_log), 'invalid_record_count': 0,
+    }
+    if state is not None and state['intervention_count'] != 1:
+        metrics['invalid_record_count'] = len(prompts)
+        metrics['INVALID'] = True
+    return per_record, metrics, state, audit_log
+
+
+def compare_determinism(records_a, records_b, label_a='no_hook', label_b='hook_alpha_zero'):
+    """Per-record exact comparison of token ids / decoded response / generation_tokens /
+    stop reason. Returns (all_match: bool, mismatches: list)."""
+    by_key_a = {(r['instruction_id'], r['template']): r for r in records_a}
+    by_key_b = {(r['instruction_id'], r['template']): r for r in records_b}
+    assert set(by_key_a.keys()) == set(by_key_b.keys()), "record sets differ between conditions"
+    mismatches = []
+    for key in by_key_a:
+        a, b = by_key_a[key], by_key_b[key]
+        diffs = {}
+        if a['generation_tokens'] != b['generation_tokens']:
+            diffs['generation_tokens'] = {label_a: a['generation_tokens'], label_b: b['generation_tokens']}
+        if a['response'] != b['response']:
+            diffs['response'] = {label_a: a['response'], label_b: b['response']}
+        if a['stop_reason'] != b['stop_reason']:
+            diffs['stop_reason'] = {label_a: a['stop_reason'], label_b: b['stop_reason']}
+        if diffs:
+            mismatches.append({'instruction_id': key[0], 'template': key[1], 'diffs': diffs})
+    return len(mismatches) == 0, mismatches
+
+
+# ── judge ──────────────────────────────────────────────────────────────
+
+def run_judge(records, guard_model, guard_tok, script03, cache=None):
+    cache = cache if cache is not None else {}
+    to_judge, cache_hits = [], []
+    for r in records:
+        key = judge_cache_key(r['instruction_en'], r['response'])
+        r['judge_cache_key'] = key
+        if key in cache:
+            cache_hits.append(r)
+        else:
+            to_judge.append(r)
+
+    t0 = time.time()
+    if to_judge:
+        texts = [script03.WILDGUARD_PROMPT.format(prompt=r['instruction_en'], response=r['response']) for r in to_judge]
+        enc = guard_tok(texts, return_tensors='pt', padding=True, truncation=True,
+                        max_length=2048, add_special_tokens=False).to(guard_model.device)
+        with torch.no_grad():
+            out = guard_model.generate(**enc, max_new_tokens=32, pad_token_id=guard_tok.eos_token_id)
+        for i, r in enumerate(to_judge):
+            new_ids = out[i][enc.input_ids.shape[-1]:]
+            raw = guard_tok.decode(new_ids, skip_special_tokens=True)
+            parsed, parse_success, parse_error_reason = parse_wildguard_strict(raw, script03)
+            judgement = {
+                'judge_cache_key': r['judge_cache_key'], 'raw_judge_output': raw,
+                'request_harmful': parsed.get('request_harmful'), 'refusal': parsed.get('refusal'),
+                'response_harmful': parsed.get('response_harmful'),
+                'parse_success': parse_success, 'parse_error_reason': parse_error_reason,
+            }
+            cache[r['judge_cache_key']] = judgement
+    wall = time.time() - t0
+
+    judgements = []
+    for r in records:
+        j = dict(cache[r['judge_cache_key']])
+        j.update({'instruction_id': r['instruction_id'], 'template': r['template'],
+                   'condition': r['condition'], 'alpha': r['alpha']})
+        judgements.append(j)
+
+    n_parse_failures = sum(1 for j in judgements if not j['parse_success'])
+    metrics = {
+        'n_judged_new': len(to_judge), 'n_cache_hits': len(cache_hits),
+        'total_wall_seconds': wall, 'rows_per_hour': len(to_judge) / wall * 3600 if wall > 0 and to_judge else None,
+        'n_parse_failures': n_parse_failures,
+    }
+    return judgements, metrics, cache
+
+
+def parse_wildguard_strict(text, script03):
+    """Wraps 03_generate_and_label.py's _parse_wildguard but distinguishes a
+    genuine parse failure from a valid 'no' answer -- the original silently
+    defaults missing/malformed lines to 0, which this driver is required
+    to never do (must exclude + report separately instead)."""
+    lines = text.strip().split('\n')
+    expected_keys = ['request_harmful', 'refusal', 'response_harmful']
+    out = {}
+    for i, key in enumerate(expected_keys):
+        if i >= len(lines) or ': ' not in lines[i]:
+            return {}, False, f"missing or malformed line {i} for {key!r}: {lines[i] if i < len(lines) else '<absent>'}"
+        val = lines[i].split(': ')[-1].strip().lower()
+        if val not in ('yes', 'no'):
+            return {}, False, f"unrecognized value {val!r} for {key!r}"
+        out[key] = 1 if val == 'yes' else 0
+    return out, True, None
+
+
+# ── metrics comparison helpers ─────────────────────────────────────────
+
+def compare_metrics(m_a, m_b, label_a, label_b):
+    fields = ['rows_per_hour', 'total_wall_seconds', 'generated_tokens_per_second',
+              'mean_generation_tokens', 'median_generation_tokens', 'p90_generation_tokens', 'eos_rate']
+    return {f: {label_a: m_a.get(f), label_b: m_b.get(f),
+                'delta': (m_b.get(f) - m_a.get(f)) if isinstance(m_a.get(f), (int, float)) and isinstance(m_b.get(f), (int, float)) else None}
+            for f in fields}
+
+
+# ── main: timing-pilot phase ───────────────────────────────────────────
+
+def run_timing_pilot(args):
+    model_alias, model_path = MODEL_PATHS[args.model_idx]
+    taxonomy = load_taxonomy_v2()
+    active_mechanisms = taxonomy['active_mechanisms']
+    fixed_layer = exp3_coverage.FIXED_LAYERS[model_alias]
+
+    direction_config_hash, direction_config_payload = compute_direction_config_hash(model_alias)
+    generation_config_hash, generation_config_payload = compute_generation_config_hash(model_path)
+
+    print(f"=== Timing pilot: {model_alias} ===")
+    print(f"direction_config_hash={direction_config_hash[:16]}...  generation_config_hash={generation_config_hash[:16]}...")
+
+    prompts, prompt_manifest = build_timing_pilot_prompts(active_mechanisms)
+    print(f"Built {len(prompts)} timing-pilot prompts: {prompt_manifest}")
+
+    path = os.path.join(args.output_path, model_alias, 'paired_diffs_en_full572_corrected.pt')
+    diffs_data = torch.load(path, map_location='cpu')
+    diffs_data['diffs'] = {m: v.float() for m, v in diffs_data['diffs'].items()}
+    id_index = {m: {pid: i for i, pid in enumerate(diffs_data['instruction_ids'][m])}
+                for m in active_mechanisms + ['placebo']}
+    with open(SPLITS_PATH) as f:
+        direction_ids = sorted(json.load(f)['direction_ids'])
+    dtilde = {m: exp3_coverage.direction_at_layer(diffs_data, id_index, m, direction_ids, fixed_layer,
+                                                   'mean', 'placebo_calibrated') for m in active_mechanisms}
+    dtilde['placebo'] = exp3_coverage.direction_at_layer(diffs_data, id_index, 'placebo', direction_ids,
+                                                          fixed_layer, 'mean', 'raw')
+    conds = hooks_mod.build_all_condition_directions(dtilde, model_alias)
+    c_G = conds['global']['*']
+
+    print("Loading model...")
+    t0 = time.time()
+    from pipeline.model_utils.model_factory import construct_model_base
+    model_base = construct_model_base(model_path, lang='en')
+    model_load_time = time.time() - t0
+    layer_module = model_base.model_block_modules[fixed_layer]
+    print(f"Model loaded in {model_load_time:.1f}s. Hooking layer {fixed_layer} ({type(layer_module).__name__}).")
+
+    gpu_name = 'unknown'
+    try:
+        out = subprocess.run(['nvidia-smi', '--query-gpu=name', '--format=csv,noheader'],
+                              capture_output=True, text=True, timeout=15)
+        gpu_name = out.stdout.strip().split('\n')[0] if out.stdout.strip() else 'unknown'
+    except Exception:
+        pass
+
+    all_records, all_metrics, all_states = {}, {}, {}
+    for condition in TIMING_PILOT_CONDITIONS:
+        print(f"\n--- condition: {condition} ---")
+        per_record, metrics, state, audit_log = run_condition(model_base, layer_module, prompts, condition, c_G)
+        all_records[condition] = per_record
+        all_metrics[condition] = metrics
+        all_states[condition] = state
+        print(f"  {metrics}")
+        if state is not None:
+            print(f"  hook_state={state}  audit_log={audit_log}")
+
+    print("\n--- determinism check: no_hook vs hook_alpha_zero ---")
+    det_ok, mismatches = compare_determinism(all_records['no_hook'], all_records['hook_alpha_zero'])
+    print(f"Determinism check passed: {det_ok}")
+    if not det_ok:
+        print(f"MISMATCHES ({len(mismatches)}):")
+        for m in mismatches[:10]:
+            print(f"  {m}")
+        print("\n*** STOPPING per protocol: alpha=0 hook path changed generation. "
+              "Not proceeding to WildGuard judging or global_alpha_one comparison analysis. ***")
+
+    print("\nFreeing target model GPU memory...")
+    model_base.del_model()
+    del model_base
+    import gc
+    gc.collect()
+    torch.cuda.empty_cache()
+
+    script03 = _import_by_path('script03', os.path.join(SCRIPT_DIR, '03_generate_and_label.py'))
+    print("\nLoading WildGuard...")
+    from transformers import AutoModelForCausalLM, AutoTokenizer
+    t0 = time.time()
+    guard_tok = AutoTokenizer.from_pretrained('allenai/wildguard')
+    guard_tok.padding_side = 'left'
+    guard_model = AutoModelForCausalLM.from_pretrained('allenai/wildguard', torch_dtype=torch.bfloat16,
+                                                        device_map='auto').eval()
+    wg_load_time = time.time() - t0
+
+    cache = {}
+    all_judgements, all_judge_metrics = {}, {}
+    for condition in TIMING_PILOT_CONDITIONS:
+        for r in all_records[condition]:
+            r.setdefault('condition', condition)
+        judgements, jmetrics, cache = run_judge(all_records[condition], guard_model, guard_tok, script03, cache=cache)
+        all_judgements[condition] = judgements
+        all_judge_metrics[condition] = jmetrics
+        print(f"[{condition}] judge metrics: {jmetrics}")
+
+    comparisons = {
+        'no_hook_vs_hook_alpha_zero (plumbing overhead)':
+            compare_metrics(all_metrics['no_hook'], all_metrics['hook_alpha_zero'], 'no_hook', 'hook_alpha_zero'),
+        'hook_alpha_zero_vs_global_alpha_one (intervention effect)':
+            compare_metrics(all_metrics['hook_alpha_zero'], all_metrics['global_alpha_one'], 'hook_alpha_zero', 'global_alpha_one'),
+    }
+
+    result = {
+        'metadata': {
+            'git_commit': git_commit_hash(), 'model_alias': model_alias, 'model_path': model_path,
+            'fixed_layer': fixed_layer, 'hook_semantics': 'additive h - alpha*c_G at last prefill token, single-fire',
+            'direction_config_hash': direction_config_hash, 'direction_config_payload': direction_config_payload,
+            'generation_config_hash': generation_config_hash, 'generation_config_payload': generation_config_payload,
+            'judge_prompt_version': JUDGE_PROMPT_VERSION, 'judge_model_version': JUDGE_MODEL_VERSION,
+            'prompt_manifest': prompt_manifest, 'gpu_name': gpu_name, 'model_load_time_s': model_load_time,
+            'wildguard_load_time_s': wg_load_time,
+            'start_timestamp_utc': args.start_timestamp, 'end_timestamp_utc': datetime.now(timezone.utc).isoformat(),
+        },
+        'determinism_check': {'passed': det_ok, 'n_mismatches': len(mismatches), 'mismatches': mismatches[:50]},
+        'generation_metrics': all_metrics,
+        'judge_metrics': all_judge_metrics,
+        'comparisons': comparisons,
+    }
+
+    out_dir = os.path.join(args.output_path, 'canonical_v2')
+    os.makedirs(out_dir, exist_ok=True)
+    with open(os.path.join(out_dir, 'experiment3_timing_pilot_60.json'), 'w') as f:
+        json.dump(result, f, indent=2)
+
+    gen_path = os.path.join(out_dir, 'experiment3_timing_pilot_generations.jsonl')
+    if os.path.exists(gen_path):
+        os.remove(gen_path)
+    for condition in TIMING_PILOT_CONDITIONS:
+        append_jsonl(gen_path, all_records[condition])
+
+    judge_path = os.path.join(out_dir, 'experiment3_timing_pilot_judgements.jsonl')
+    if os.path.exists(judge_path):
+        os.remove(judge_path)
+    for condition in TIMING_PILOT_CONDITIONS:
+        append_jsonl(judge_path, all_judgements[condition])
+
+    print(f"\nSaved: experiment3_timing_pilot_60.json / _generations.jsonl / _judgements.jsonl in {out_dir}")
+    print("\n=== SUMMARY ===")
+    print(json.dumps({'determinism_passed': det_ok, 'generation_metrics_summary':
+                       {c: {k: v for k, v in m.items() if k in
+                            ('rows_per_hour', 'generated_tokens_per_second', 'mean_generation_tokens', 'intervention_count')}
+                        for c, m in all_metrics.items()}}, indent=2))
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--phase', choices=['timing-pilot', 'validation'], required=True)
+    parser.add_argument('--model_idx', type=int, default=1)
+    parser.add_argument('--method', choices=['no_defence', 'placebo', 'global', 'fixed_wei', 'adaptive'], default=None)
+    parser.add_argument('--alpha', type=float, default=None)
+    parser.add_argument('--max_records', type=int, default=None)
+    parser.add_argument('--seed', type=int, default=None)
+    parser.add_argument('--output_path', type=str, default=os.path.join(SCRIPT_DIR, '..', 'output'))
+    parser.add_argument('--resume', action='store_true')
+    args = parser.parse_args()
+    args.start_timestamp = datetime.now(timezone.utc).isoformat()
+
+    if args.phase == 'timing-pilot':
+        run_timing_pilot(args)
+    else:
+        raise NotImplementedError(
+            "Phase 'validation' (full alpha-sweep) is intentionally not wired up to run from "
+            "this CLI entry point yet -- framework functions (run_condition, record_key, "
+            "run_judge, resume via load_jsonl) are implemented and reusable, but the full "
+            "72x6x4x4 orchestration loop requires separate explicit authorization before its "
+            "first invocation, per protocol."
+        )
+
+
+if __name__ == '__main__':
+    main()

@@ -302,6 +302,49 @@ existing results are unaffected by this defect and required no re-run**.
   than a hand-rolled generation loop. No output from this pilot is a
   reportable defence-efficacy result — it is a timing/correctness check
   only, run before committing to the full validation-sweep GPU budget.
+- `scripts/40_defence_generation_driver.py` — the actual driver framework,
+  superseding the ad-hoc `39_defence_pilot.py` (which stays as-is, not
+  reused further). Implements `--phase timing-pilot` (the only phase
+  authorized to run so far) and the full `--phase validation` code path
+  (implemented for completeness/testability but its CLI entry point raises
+  `NotImplementedError` on purpose — running a full 72x6x4x4 sweep needs
+  separate explicit authorization, not just this script existing).
+  - `record_key(...)` — deterministic sha256 over
+    `{model, split, instruction_id, benign_or_harmful, template, method,
+    alpha, direction_config_hash, generation_config_hash}`; `--resume`
+    checks this key (via `load_jsonl`/`append_jsonl` on the output
+    `.jsonl`), never instruction ID alone.
+  - `judge_cache_key(...)` — sha256 over
+    `request + response + judge_prompt_version + judge_model_version`
+    (never instruction ID alone), so identical (instruction, response)
+    pairs across different conditions/methods can share one WildGuard call
+    without silently caching on the wrong key.
+  - `run_condition(...)` reuses `pipeline`'s `generate_completions`/
+    `add_hooks` (never a hand-rolled generation loop) and
+    `37_defence_directions_and_hooks.py`'s hook; `hook_alpha_zero`
+    genuinely registers and fires the hook with `alpha=0` rather than
+    skipping hook registration as an "equivalent" optimization, so the
+    measured overhead is real.
+  - `compare_determinism(...)` — hard per-record equality check
+    (`generation_tokens`, decoded `response`, `stop_reason`) between
+    `no_hook` and `hook_alpha_zero`; `run_timing_pilot` prints and stops
+    short of WildGuard judging/comparison analysis if it fails.
+  - `parse_wildguard_strict(...)` — unlike `03_generate_and_label.py`'s
+    `_parse_wildguard` (which silently defaults a missing/malformed line to
+    0), this returns `(parsed_fields, parse_success, parse_error_reason)`
+    and the caller excludes failed rows from all metrics rather than
+    counting them as a valid "no".
+  - Timing-pilot prompt set: 5 harmful `validation_ids` (seed 20260901) +
+    5 benign ids from `data/benign_validation_80.json` (seed 20260902),
+    each rendered under all 6 V2 templates via `02_build_templated_data.py`'s
+    real `build_condition` (not a re-derived copy) = 60 prompts, 180 target
+    generations across the 3 conditions. `test_ids`/`benign_test_100.json`
+    are never read by this script.
+  - Outputs (once run): `output/canonical_v2/experiment3_timing_pilot_60.json`
+    (metadata + determinism check + per-condition generation/judge metrics
+    + the two required comparisons), `..._generations.jsonl` (180 x 3 = the
+    full per-record generation log), `..._judgements.jsonl`.
+  - `slurm/defence_timing_pilot_60.sh` submits this phase only.
 
 ## Conventions
 
