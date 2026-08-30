@@ -340,11 +340,38 @@ existing results are unaffected by this defect and required no re-run**.
     real `build_condition` (not a re-derived copy) = 60 prompts, 180 target
     generations across the 3 conditions. `test_ids`/`benign_test_100.json`
     are never read by this script.
-  - Outputs (once run): `output/canonical_v2/experiment3_timing_pilot_60.json`
+  - Outputs (filenames include `model_alias` -- a shared name would let a
+    later model's run silently overwrite an earlier model's already-passed
+    results, an actual bug caught and fixed before the cross-model audit):
+    `output/canonical_v2/experiment3_timing_pilot_60_{model_alias}.json`
     (metadata + determinism check + per-condition generation/judge metrics
-    + the two required comparisons), `..._generations.jsonl` (180 x 3 = the
-    full per-record generation log), `..._judgements.jsonl`.
-  - `slurm/defence_timing_pilot_60.sh` submits this phase only.
+    + the two required comparisons; the summary files ARE committed --
+    `..._generations_{model_alias}.jsonl`/`..._judgements_{model_alias}.jsonl`
+    (the full 180-row-per-model raw generation/judge logs) are NOT committed,
+    per explicit instruction, only produced locally on the cluster run).
+  - `slurm/defence_timing_pilot_60.sh` submits this phase only; `MODEL_IDX`
+    (via `--export`) selects which model, doubling as the cross-model hook
+    audit since the phase's own checks (layer correctness via
+    `FIXED_LAYERS`, single-fire-per-batch, determinism, GPU memory) are
+    model-generic.
+  - `CONDITION_BATCH_SIZE_OVERRIDE = {'gemma-2-9b-it': 15}` in
+    `40_defence_generation_driver.py` -- Gemma2's HF forward computes
+    float32 logits over the FULL padded sequence length for every row
+    during prefill (not just the last position), so `batch_size=60` OOMs
+    (~17GB just for logits; confirmed on job 4979, "Tried to allocate 16.82
+    GiB"). `run_condition` was fixed to genuinely chunk into sub-batches
+    with a **fresh hook (fresh `has_intervened` state) per chunk** --
+    reusing one hook object across `generate_completions()` calls would
+    have silently skipped the intervention on every chunk after the first.
+    `intervention_count_distribution` (one entry per batch, each asserted
+    `==1` immediately, not deferred to an aggregate check) replaced the
+    original single-scalar `intervention_count` field.
+  - **Cross-model hook audit: PASSED for all 3 models** (jobs 4977=Qwen,
+    4978=Llama, 4980=Gemma) -- correct fixed layer per model (16/19/25),
+    `intervention_count_distribution` all-1s, alpha=0 determinism check
+    passed with 0 mismatches, 0 warnings, 0 WildGuard parse failures, no
+    OOM. Real GPU: NVIDIA L40S (46GB). This clears the gate for `--phase
+    validation` implementation/execution.
 
 ## Conventions
 
