@@ -373,6 +373,73 @@ existing results are unaffected by this defect and required no re-run**.
     OOM. Real GPU: NVIDIA L40S (46GB). This clears the gate for `--phase
     validation` implementation/execution.
 
+## Exp3 validation-phase implementation (code complete, not yet run)
+
+`40_defence_generation_driver.py --phase validation` is now implemented
+(previously raised `NotImplementedError`). Gate for running it for real:
+Step 1 (cross-model timing-pilot hook audit) and Step 2 (versioning) both
+passed -- see the timing-pilot section above.
+
+- `build_validation_harmful_prompts`/`build_validation_benign_prompts` --
+  72 `validation_ids` x 6 templates = 432, and 80 `benign_validation_80.json`
+  rows x 6 templates = 480, asserted exactly. `test_ids`/`benign_test_100.json`
+  are never read anywhere in this phase.
+- `direction_vector_for(conds, method, template)` -- routes `placebo`/`global`
+  to their single shared vector, `fixed_wei`/`adaptive` to the per-template
+  vector (Adaptive's boundary members get their own `c_m`; subgroup members
+  share their reduced-group `c_G`, per `FROZEN_ADAPTIVE_GROUPING`); raises on
+  `no_defence` (handled by separate functions, has no direction).
+- **Resume is integrity-checked, not line-count-checked**: `record_is_valid`
+  requires every field in `REQUIRED_GENERATION_FIELDS` present and
+  non-null/non-empty (a record truncated by a killed job -- e.g. missing
+  `generation_tokens` because the process died mid-write -- is treated as
+  absent and regenerated, never silently counted as done).
+  `load_valid_existing_keys` reports both the valid-key set and how many
+  existing rows were invalid.
+- `run_validation_intervention_method` -- one (model, method) job. Computes
+  the full to-do list (4 alphas x 912 prompts minus already-valid records)
+  BEFORE loading the model (so a fully-resumed job doesn't pay model-load
+  cost). Uses `CONDITION_BATCH_SIZE_OVERRIDE` (same Gemma fix as the
+  timing-pilot) and creates a **fresh hook per sub-batch** (never one hook
+  reused across `generate_completions()` calls), asserting
+  `intervention_count==1` immediately after each sub-batch -- an
+  `AssertionError` propagates and stops the job rather than being caught
+  and logged. Each sub-batch's records are appended to the `.jsonl`
+  immediately (crash-safe incremental writes).
+- `run_no_defence_benign` -- fresh generation (no hook at all) for the 480
+  benign validation prompts per model.
+- `run_no_defence_harmful_rejudge` -- generates NOTHING; reads the already-
+  repaired `completions_en_full572_corrected.json`, filters to
+  `validation_ids` x the 6 active mechanisms (432 rows/model, asserted),
+  and re-judges them with the strict judge only. This is the "reuse
+  completions but re-judge with the new pipeline" requirement -- it is a
+  WildGuard-only job, no target model / no `pipeline` import needed for
+  this specific path.
+- `compute_template_asr`/`compute_template_frr`/`compute_macro_asr`/
+  `compute_macro_frr` -- pure functions; both explicitly exclude
+  `parse_success=False` rows and (for ASR) `request_harmful=0` rows from
+  the denominator, reporting `valid_denominator`/`n_excluded` alongside the
+  rate so a low denominator is visible, never silently averaged over.
+- `select_alpha` -- the frozen rule: minimize macro-ASR among alphas whose
+  macro-FRR does not exceed `no_defence_macro_frr + 5 percentage points`;
+  ties broken by smallest alpha; if no non-zero alpha is eligible, freezes
+  `alpha=0.0` with an explicit reason string (never silently picks
+  something arbitrary).
+- 21 GPU-free tests across `scripts/audits/audit_validation_phase_dry_run.py`
+  (prompt counts, direction routing, integrity-checked resume x4, ASR/FRR
+  computation, macro aggregation, alpha selection incl. tie-break and the
+  no-eligible-alpha fallback) and the earlier chunking-dry-run script all
+  pass.
+- `slurm/defence_validation.sh` -- one job per `(MODEL_IDX, METHOD)` (or
+  `(MODEL_IDX, no_defence, NO_DEFENCE_TARGET)`), independently resumable,
+  matching the "at least model x method" job-splitting requirement.
+- **Not yet run**: no validation generation job has been submitted. Full
+  expected scope once run: 43,776 intervention records (3 models x 4
+  methods x (72x6x4 harmful + 80x6x4 benign)) + 1,440 no-defence-benign
+  generations + 1,296 no-defence-harmful re-judgements (reused, not
+  regenerated). Test phase remains explicitly unauthorized until validation
+  completes and its frozen-config audit is reviewed.
+
 ## Conventions
 
 - **Model alias** is always the HuggingFace-style directory name: `Qwen2.5-7B-Instruct`, `Meta-Llama-3.1-8B-Instruct`, `gemma-2-9b-it` — matches `MODEL_ALIASES` arrays in every `slurm/*.sh`.
