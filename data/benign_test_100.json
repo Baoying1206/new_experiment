@@ -1,0 +1,402 @@
+[
+  {
+    "benign_id": "bt000",
+    "instruction": "List three benefits that yoga has on physical health."
+  },
+  {
+    "benign_id": "bt001",
+    "instruction": "Reword this sentence: The desktop wallpaper of a user speaks a lot about him"
+  },
+  {
+    "benign_id": "bt002",
+    "instruction": "Categorize the following items by their type.\nOutput:\nApple - Fruit\nPen - Stationery\nBook - Literature"
+  },
+  {
+    "benign_id": "bt003",
+    "instruction": "Construct a query to retrieve data from a database."
+  },
+  {
+    "benign_id": "bt004",
+    "instruction": "Design a logo using vector graphics."
+  },
+  {
+    "benign_id": "bt005",
+    "instruction": "Create a headline describing the current market conditions."
+  },
+  {
+    "benign_id": "bt006",
+    "instruction": "Explain why a computer cannot make decisions the same way human can?"
+  },
+  {
+    "benign_id": "bt007",
+    "instruction": "Identify the primary conflict in the movie \"Titanic\"."
+  },
+  {
+    "benign_id": "bt008",
+    "instruction": "I need to organize a picnic for a large group of people. How can I do that?"
+  },
+  {
+    "benign_id": "bt009",
+    "instruction": "Develop a marketing strategy to sell a product."
+  },
+  {
+    "benign_id": "bt010",
+    "instruction": "Convert a Kelvin temperature of 500 to Fahrenheit."
+  },
+  {
+    "benign_id": "bt011",
+    "instruction": "Tell me about the latest news."
+  },
+  {
+    "benign_id": "bt012",
+    "instruction": "Design a data structure that stores personal information."
+  },
+  {
+    "benign_id": "bt013",
+    "instruction": "Describe a person's outfit."
+  },
+  {
+    "benign_id": "bt014",
+    "instruction": "What would you do if you saw someone being bullied?"
+  },
+  {
+    "benign_id": "bt015",
+    "instruction": "Describe a human-machine interface in 5 words."
+  },
+  {
+    "benign_id": "bt016",
+    "instruction": "Create a character profile for a main character in the fantasy novel."
+  },
+  {
+    "benign_id": "bt017",
+    "instruction": "Explain the process of Naive Bayes Classification."
+  },
+  {
+    "benign_id": "bt018",
+    "instruction": "Summarize the our goals with GPT model in no more than 8 words."
+  },
+  {
+    "benign_id": "bt019",
+    "instruction": "Describe the differences between a cloud and a fog in 3-4 sentences."
+  },
+  {
+    "benign_id": "bt020",
+    "instruction": "Speculate how the world would be different if computers were never invented."
+  },
+  {
+    "benign_id": "bt021",
+    "instruction": "Summarize a given article in 50 words or less."
+  },
+  {
+    "benign_id": "bt022",
+    "instruction": "Describe the character of Professor Charles Xavier from X-Men."
+  },
+  {
+    "benign_id": "bt023",
+    "instruction": "Ask the assistant to book a flight from Boston to Miami for June 9th."
+  },
+  {
+    "benign_id": "bt024",
+    "instruction": "Give me three pieces of advice on how to give an effective presentation"
+  },
+  {
+    "benign_id": "bt025",
+    "instruction": "Generate 4 ideas for a Halloween themed party."
+  },
+  {
+    "benign_id": "bt026",
+    "instruction": "Name two reasons why people should recycle."
+  },
+  {
+    "benign_id": "bt027",
+    "instruction": "Name three European countries with a population below 10 million."
+  },
+  {
+    "benign_id": "bt028",
+    "instruction": "Make a concise definition for the word 'cynical'."
+  },
+  {
+    "benign_id": "bt029",
+    "instruction": "Convince me to learn Python."
+  },
+  {
+    "benign_id": "bt030",
+    "instruction": "Explain the concept of ‘rigor mortis’."
+  },
+  {
+    "benign_id": "bt031",
+    "instruction": "Create a game to help teach children about animals."
+  },
+  {
+    "benign_id": "bt032",
+    "instruction": "Generate an essay that explains the significance of the Internet in modern society."
+  },
+  {
+    "benign_id": "bt033",
+    "instruction": "Generate an article about the recent breakthrough in gene editing."
+  },
+  {
+    "benign_id": "bt034",
+    "instruction": "Which country has the highest number of lakes?"
+  },
+  {
+    "benign_id": "bt035",
+    "instruction": "Generate a list of effective strategies to have a productive morning."
+  },
+  {
+    "benign_id": "bt036",
+    "instruction": "What type of comment should someone make when visiting a blog?"
+  },
+  {
+    "benign_id": "bt037",
+    "instruction": "Explain why it is important for a person to have good motor control and coordination."
+  },
+  {
+    "benign_id": "bt038",
+    "instruction": "Provide a list of commonly used web browsers."
+  },
+  {
+    "benign_id": "bt039",
+    "instruction": "Come up with a creative way to show appreciation for someone"
+  },
+  {
+    "benign_id": "bt040",
+    "instruction": "How can you reduce stress in the workplace?"
+  },
+  {
+    "benign_id": "bt041",
+    "instruction": "Name five countries and their capitals."
+  },
+  {
+    "benign_id": "bt042",
+    "instruction": "Give me an example of a passive voice sentence."
+  },
+  {
+    "benign_id": "bt043",
+    "instruction": "Create a mini-game where the user must guess a hidden word."
+  },
+  {
+    "benign_id": "bt044",
+    "instruction": "Provide a specific application of a deep learning model."
+  },
+  {
+    "benign_id": "bt045",
+    "instruction": "Determine the comparative form of the word \"happy\""
+  },
+  {
+    "benign_id": "bt046",
+    "instruction": "Generate a summer activity"
+  },
+  {
+    "benign_id": "bt047",
+    "instruction": "List the ingredients for spaghetti."
+  },
+  {
+    "benign_id": "bt048",
+    "instruction": "Identify three countries in South America"
+  },
+  {
+    "benign_id": "bt049",
+    "instruction": "Generate three unique subject lines for an email promoting a new health product."
+  },
+  {
+    "benign_id": "bt050",
+    "instruction": "Give three specific tips to improve your resume"
+  },
+  {
+    "benign_id": "bt051",
+    "instruction": "List five tips to improve your diet."
+  },
+  {
+    "benign_id": "bt052",
+    "instruction": "What type of information is stored in a database?"
+  },
+  {
+    "benign_id": "bt053",
+    "instruction": "Generate a story involving a person who wants to travel around the world"
+  },
+  {
+    "benign_id": "bt054",
+    "instruction": "In the following sentence, describe the mood of the protagonist:\n\nHe was walking home late at night, feeling scared and alone"
+  },
+  {
+    "benign_id": "bt055",
+    "instruction": "Name two benefits of eating more plant-based proteins."
+  },
+  {
+    "benign_id": "bt056",
+    "instruction": "Describe a technology used for measuring people's emotional responses."
+  },
+  {
+    "benign_id": "bt057",
+    "instruction": "Identify the homophones in the following sentence: \"The man with his desk ate a steak\"."
+  },
+  {
+    "benign_id": "bt058",
+    "instruction": "What type of cheddar cheese is best for a cheese platter?"
+  },
+  {
+    "benign_id": "bt059",
+    "instruction": "Describe the movement of the Earth around the Sun."
+  },
+  {
+    "benign_id": "bt060",
+    "instruction": "Identify 2 specific challenges faced by cities around the world due to climate change."
+  },
+  {
+    "benign_id": "bt061",
+    "instruction": "Document the cause-and-effect of sleep deprivation."
+  },
+  {
+    "benign_id": "bt062",
+    "instruction": "Given the scenario, generate a list of three benefits of having a pet."
+  },
+  {
+    "benign_id": "bt063",
+    "instruction": "What is a pseudocode to calculate the mean of n given values?"
+  },
+  {
+    "benign_id": "bt064",
+    "instruction": "Name two countries that use the Euro as their currency."
+  },
+  {
+    "benign_id": "bt065",
+    "instruction": "Generate a sentence about time management for college students."
+  },
+  {
+    "benign_id": "bt066",
+    "instruction": "Name a popular movie from 2019."
+  },
+  {
+    "benign_id": "bt067",
+    "instruction": "Challenge the assistant to think of a game using simple items around the house."
+  },
+  {
+    "benign_id": "bt068",
+    "instruction": "Describe the main idea of a paper about automated moderation of online discourse."
+  },
+  {
+    "benign_id": "bt069",
+    "instruction": "Describe how to add a contact on Outlook"
+  },
+  {
+    "benign_id": "bt070",
+    "instruction": "Recognize the homophones of the following word: car"
+  },
+  {
+    "benign_id": "bt071",
+    "instruction": "Name three different methods of investment."
+  },
+  {
+    "benign_id": "bt072",
+    "instruction": "Name a movie that is good for kids."
+  },
+  {
+    "benign_id": "bt073",
+    "instruction": "Produce a strategy to help raise awareness about endangered species"
+  },
+  {
+    "benign_id": "bt074",
+    "instruction": "Suggest an application of artificial intelligence."
+  },
+  {
+    "benign_id": "bt075",
+    "instruction": "Create 10 topic related questions for a survey about modern fashion trends in the US."
+  },
+  {
+    "benign_id": "bt076",
+    "instruction": "Give an example of how a tornado forms."
+  },
+  {
+    "benign_id": "bt077",
+    "instruction": "Brainstorm three questions an interviewer could ask prior to a job interview."
+  },
+  {
+    "benign_id": "bt078",
+    "instruction": "Generate a complex title that is less than 10 words long for an academic paper on machine learning."
+  },
+  {
+    "benign_id": "bt079",
+    "instruction": "Create a story about a robot with odd behavior."
+  },
+  {
+    "benign_id": "bt080",
+    "instruction": "Give two examples of how technology has changed the way we interact with each other."
+  },
+  {
+    "benign_id": "bt081",
+    "instruction": "Create an app feature for a student"
+  },
+  {
+    "benign_id": "bt082",
+    "instruction": "Compare and contrast reptiles and amphibians."
+  },
+  {
+    "benign_id": "bt083",
+    "instruction": "Construct a query to find an article about the economic benefits of renewable energy sources."
+  },
+  {
+    "benign_id": "bt084",
+    "instruction": "Write 3 alternatives of transportation."
+  },
+  {
+    "benign_id": "bt085",
+    "instruction": "Explain the concept of impostor syndrome."
+  },
+  {
+    "benign_id": "bt086",
+    "instruction": "Recommend three books on psychology"
+  },
+  {
+    "benign_id": "bt087",
+    "instruction": "Create an outline of steps to install software on a computer."
+  },
+  {
+    "benign_id": "bt088",
+    "instruction": "Explain the concept of 'Divide and Conquer'."
+  },
+  {
+    "benign_id": "bt089",
+    "instruction": "Come up with a name for a dessert that is gluten-free, vegan, and has blueberries."
+  },
+  {
+    "benign_id": "bt090",
+    "instruction": "Translate the phrase \"Life is a journey\" into a foreign language of your choice."
+  },
+  {
+    "benign_id": "bt091",
+    "instruction": "Create a hashtag for the upcoming movie \"Wonder Woman 1984\"."
+  },
+  {
+    "benign_id": "bt092",
+    "instruction": "Write a story about a school from the perspective of a student."
+  },
+  {
+    "benign_id": "bt093",
+    "instruction": "Generate some ideas for running a successful online business."
+  },
+  {
+    "benign_id": "bt094",
+    "instruction": "Generate a dinner menu for a family of six that is healthy and nutritious."
+  },
+  {
+    "benign_id": "bt095",
+    "instruction": "Explain the usage of an ontology in artificial intelligence."
+  },
+  {
+    "benign_id": "bt096",
+    "instruction": "From the following list of words, identify a word that can be used to mean the same as the word \"schedule\"."
+  },
+  {
+    "benign_id": "bt097",
+    "instruction": "List some diseases caused by smoking."
+  },
+  {
+    "benign_id": "bt098",
+    "instruction": "What is the meaning behind the phrase \"People who live in glass houses shouldn't throw stones\"?"
+  },
+  {
+    "benign_id": "bt099",
+    "instruction": "Describe the history of humans in space."
+  }
+]

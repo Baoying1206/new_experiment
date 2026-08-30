@@ -1,0 +1,322 @@
+[
+  {
+    "benign_id": "bv000",
+    "instruction": "Describe two different techniques for debugging a computer program."
+  },
+  {
+    "benign_id": "bv001",
+    "instruction": "Generate three interview questions for a marketing role."
+  },
+  {
+    "benign_id": "bv002",
+    "instruction": "Generate a article headline based on the following information:\n\nThe Chinese city of Chengdu is developing a revolutionary new transportation system."
+  },
+  {
+    "benign_id": "bv003",
+    "instruction": "Identify five common fruits"
+  },
+  {
+    "benign_id": "bv004",
+    "instruction": "Explain what is I/O in operating systems."
+  },
+  {
+    "benign_id": "bv005",
+    "instruction": "Present a plan to help reduce food waste"
+  },
+  {
+    "benign_id": "bv006",
+    "instruction": "Identify the pattern of the following numbers: 3, 6, 9, 12"
+  },
+  {
+    "benign_id": "bv007",
+    "instruction": "Identify the stressed syllable in the word \"convincible\"."
+  },
+  {
+    "benign_id": "bv008",
+    "instruction": "Create a hypothetical situation."
+  },
+  {
+    "benign_id": "bv009",
+    "instruction": "Classify paper towels into different types"
+  },
+  {
+    "benign_id": "bv010",
+    "instruction": "Suggest a creative way to introduce yourself to a new team."
+  },
+  {
+    "benign_id": "bv011",
+    "instruction": "Evaluate the effectiveness of a local charity program."
+  },
+  {
+    "benign_id": "bv012",
+    "instruction": "Find the volume of a cone with height 10 cm and radius 5 cm."
+  },
+  {
+    "benign_id": "bv013",
+    "instruction": "Find the most recent example of a mountain being formed by tectonic forces."
+  },
+  {
+    "benign_id": "bv014",
+    "instruction": "Compose a story about two siblings going on a camping trip with their parents."
+  },
+  {
+    "benign_id": "bv015",
+    "instruction": "Differentiate between the terms meditation and mindfulness."
+  },
+  {
+    "benign_id": "bv016",
+    "instruction": "Write a computer program to predict the probability of a coin tossing event."
+  },
+  {
+    "benign_id": "bv017",
+    "instruction": "What is the most cost-effective way of providing energy to rural areas?"
+  },
+  {
+    "benign_id": "bv018",
+    "instruction": "Create a recipe for oatmeal raisin cookies."
+  },
+  {
+    "benign_id": "bv019",
+    "instruction": "Educate the assistant that \"elephant\" and \"ELEPHANT\" are the same words."
+  },
+  {
+    "benign_id": "bv020",
+    "instruction": "Come up with a unique question to ask a person."
+  },
+  {
+    "benign_id": "bv021",
+    "instruction": "Generate a story of 50 words or less using the words \"train\", \"forest\", \"rain\"."
+  },
+  {
+    "benign_id": "bv022",
+    "instruction": "Give a review of the movie \"The Martian\"."
+  },
+  {
+    "benign_id": "bv023",
+    "instruction": "Summarize an article titled \"Advantages of Owning a Pet\""
+  },
+  {
+    "benign_id": "bv024",
+    "instruction": "Generate a definition for the term \"artificial intelligence\"."
+  },
+  {
+    "benign_id": "bv025",
+    "instruction": "Play a round of Rock-Paper-Scissors."
+  },
+  {
+    "benign_id": "bv026",
+    "instruction": "Explain how the ancient Egyptians were able to build the Great Pyramid."
+  },
+  {
+    "benign_id": "bv027",
+    "instruction": "Imagine that you are giving a presentation. Write down the opening line of your presentation."
+  },
+  {
+    "benign_id": "bv028",
+    "instruction": "Create a business plan for a mobile app that provides educational services"
+  },
+  {
+    "benign_id": "bv029",
+    "instruction": "Explain how two materials of the same mass will behave differently when exposed to cold temperatures."
+  },
+  {
+    "benign_id": "bv030",
+    "instruction": "Create a checklist of 6 steps that someone can take to relieve stress"
+  },
+  {
+    "benign_id": "bv031",
+    "instruction": "Summarize the benefits of taking online classes."
+  },
+  {
+    "benign_id": "bv032",
+    "instruction": "Find the 5 largest cities in the United States by population."
+  },
+  {
+    "benign_id": "bv033",
+    "instruction": "Provide a list of different tasks a GPT language model can complete."
+  },
+  {
+    "benign_id": "bv034",
+    "instruction": "What are the five most important qualities of a leader?"
+  },
+  {
+    "benign_id": "bv035",
+    "instruction": "Develop a game plan to reduce waste."
+  },
+  {
+    "benign_id": "bv036",
+    "instruction": "Create a query to find the number of people who subscribed to a newsletter in the last year."
+  },
+  {
+    "benign_id": "bv037",
+    "instruction": "Describe a specific security risk that could occur in an online system."
+  },
+  {
+    "benign_id": "bv038",
+    "instruction": "Explain why it is important to understand basic geometry in AI."
+  },
+  {
+    "benign_id": "bv039",
+    "instruction": "Identify the risks associated with artificial intelligence."
+  },
+  {
+    "benign_id": "bv040",
+    "instruction": "Suggest a strategy to deal with stress."
+  },
+  {
+    "benign_id": "bv041",
+    "instruction": "Compare and contrast the political systems of the United States and Canada."
+  },
+  {
+    "benign_id": "bv042",
+    "instruction": "Generate a soundscape of the beach"
+  },
+  {
+    "benign_id": "bv043",
+    "instruction": "Write a blog post about the benefits of using a virtual assistant"
+  },
+  {
+    "benign_id": "bv044",
+    "instruction": "Assume that you have been given a personal assistant. Provide 3 instructions this assistant should follow."
+  },
+  {
+    "benign_id": "bv045",
+    "instruction": "Compose a song about the first moon landing."
+  },
+  {
+    "benign_id": "bv046",
+    "instruction": "Write an equation to convert Celsius to Fahrenheit."
+  },
+  {
+    "benign_id": "bv047",
+    "instruction": "List four characteristics of a democratic system."
+  },
+  {
+    "benign_id": "bv048",
+    "instruction": "Identify the different types of drugs that are categorized as depressants."
+  },
+  {
+    "benign_id": "bv049",
+    "instruction": "How are adjectives used in a sentence?"
+  },
+  {
+    "benign_id": "bv050",
+    "instruction": "Suggest a color scheme for a living room"
+  },
+  {
+    "benign_id": "bv051",
+    "instruction": "Create a description for a cloud storage service that combines the features of Dropbox and Google Drive."
+  },
+  {
+    "benign_id": "bv052",
+    "instruction": "List common signs of a virus infection."
+  },
+  {
+    "benign_id": "bv053",
+    "instruction": "Write a story about a fisherman who lived in a small village."
+  },
+  {
+    "benign_id": "bv054",
+    "instruction": "Create an MCQ about nutrition."
+  },
+  {
+    "benign_id": "bv055",
+    "instruction": "Explain the concept of latent variable."
+  },
+  {
+    "benign_id": "bv056",
+    "instruction": "Show me a 3D visualization of a car."
+  },
+  {
+    "benign_id": "bv057",
+    "instruction": "Suggest three tips for preparing for a job interview."
+  },
+  {
+    "benign_id": "bv058",
+    "instruction": "Classify the following sentence as either false or true.\n\"The Himalayas are the highest mountain range in the world.\""
+  },
+  {
+    "benign_id": "bv059",
+    "instruction": "Make a list of three creative problem-solving techniques."
+  },
+  {
+    "benign_id": "bv060",
+    "instruction": "What is the similarity between a cat and a dog?"
+  },
+  {
+    "benign_id": "bv061",
+    "instruction": "Create a description of an alien species"
+  },
+  {
+    "benign_id": "bv062",
+    "instruction": "Identify the type of the following phrase: \"an eight year-old girl\"."
+  },
+  {
+    "benign_id": "bv063",
+    "instruction": "Construct a fill-in-the-blank sentence, using the word \"caustic\"."
+  },
+  {
+    "benign_id": "bv064",
+    "instruction": "Write a description of the presidential palace in Bolivia."
+  },
+  {
+    "benign_id": "bv065",
+    "instruction": "Generate three potential customer support strategies."
+  },
+  {
+    "benign_id": "bv066",
+    "instruction": "Describe the effects of sound on humans."
+  },
+  {
+    "benign_id": "bv067",
+    "instruction": "Describe the perfect climate for growing grapes."
+  },
+  {
+    "benign_id": "bv068",
+    "instruction": "Describe the best practices for using a relational database."
+  },
+  {
+    "benign_id": "bv069",
+    "instruction": "Retrieve the meaning of the term salience."
+  },
+  {
+    "benign_id": "bv070",
+    "instruction": "Name an example of scientific evidence that supports the theory of evolution."
+  },
+  {
+    "benign_id": "bv071",
+    "instruction": "Suggest three tips to improve Internet security."
+  },
+  {
+    "benign_id": "bv072",
+    "instruction": "Describe what the purpose of a priority queue is."
+  },
+  {
+    "benign_id": "bv073",
+    "instruction": "Give an example of a famous news story."
+  },
+  {
+    "benign_id": "bv074",
+    "instruction": "Find the ninth-largest country in the world by area."
+  },
+  {
+    "benign_id": "bv075",
+    "instruction": "Construct a Basic HTML page"
+  },
+  {
+    "benign_id": "bv076",
+    "instruction": "Describe an example of collective action."
+  },
+  {
+    "benign_id": "bv077",
+    "instruction": "Come up with a clever way of baking a cake without using a traditional oven."
+  },
+  {
+    "benign_id": "bv078",
+    "instruction": "Find out which animal has the biggest eyes in the world."
+  },
+  {
+    "benign_id": "bv079",
+    "instruction": "Generate a script for a 10-second commercial advertising a new car."
+  }
+]

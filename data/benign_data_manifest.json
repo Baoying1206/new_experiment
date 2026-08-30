@@ -1,0 +1,32 @@
+{
+  "source_related_work_dir": "/Users/souther/Downloads/new_experiment/scripts/../../related_work/Multilingual-Refusal",
+  "source_files": {
+    "harmless_val": "/Users/souther/Downloads/new_experiment/scripts/../../related_work/Multilingual-Refusal/dataset/splits/harmless_val.json",
+    "harmless_test": "/Users/souther/Downloads/new_experiment/scripts/../../related_work/Multilingual-Refusal/dataset/splits/harmless_test.json"
+  },
+  "source_pool_sizes": {
+    "harmless_val": 6264,
+    "harmless_test": 6266
+  },
+  "n_validation_benign": 80,
+  "n_test_benign": 100,
+  "seed_validation": 20260830,
+  "seed_test": 20260831,
+  "disjointness_checks": {
+    "val_vs_test_overlap": 0,
+    "val_vs_harmful572_overlap": 0,
+    "test_vs_harmful572_overlap": 0
+  },
+  "output_files": {
+    "benign_validation_80.json": {
+      "path": "/Users/souther/Downloads/new_experiment/scripts/../data/benign_validation_80.json",
+      "sha256": "be56d9c89e9eabe63e63dd6c4aefb3e9bb9b24ab93ff9dd04ce8880b1ae4e9bf",
+      "n": 80
+    },
+    "benign_test_100.json": {
+      "path": "/Users/souther/Downloads/new_experiment/scripts/../data/benign_test_100.json",
+      "sha256": "6afb90e2379dc7cd1a15e1d0772dfa8c68ea135d3c3e94d3f4390a625c3da638",
+      "n": 100
+    }
+  }
+}

@@ -171,6 +171,73 @@ dual-position direction extraction should write to a new
 not yet created, since no extraction has run yet (blocked on the
 token-position audit, per `EXPERIMENT_REDUCTION_PLAN.md` §12.6).
 
+## Exp3 defence-protocol infrastructure (benign data + hook, no GPU run yet)
+
+- `scripts/36_build_benign_data.py` — CPU-only. Samples the disjoint benign
+  validation/test sets for the defence evaluation from the SAME
+  `related_work/Multilingual-Refusal/dataset/splits/` pool already confirmed
+  in `output/audits/english_axis_data_followup.json`, but from
+  `harmless_val.json`/`harmless_test.json` (not `harmless_train.json`, which
+  remains reserved for the refusal_direction/harmfulness_direction axis
+  construction elsewhere in the project) — a third, independent slice of the
+  same already-audited pool, so no new overlap risk with `direction_ids`/
+  `validation_ids`/`test_ids` is introduced.
+  - Source pools: `harmless_val.json` (6264 rows), `harmless_test.json` (6266 rows) —
+    confirmed pairwise disjoint from each other and from the 572-instruction
+    harmful pool by normalized-instruction-text comparison (same convention
+    as `audit_source_overlap.py`), not by ID (PolyRefuse-derived files have
+    no native ID field).
+  - `data/benign_validation_80.json` — 80 rows, seeded (seed=20260830) sample
+    of `harmless_val.json`.
+  - `data/benign_test_100.json` — 100 rows, seeded (seed=20260831) sample of
+    `harmless_test.json`.
+  - `data/benign_data_manifest.json` — records both source file paths, both
+    pool sizes, both seeds, both sample sizes, the normalization method used
+    for the disjointness checks (`.strip().lower()`), the three pairwise
+    overlap counts (all 0), and the SHA-256 of each output file's exact JSON
+    content (re-verify by re-running the script and diffing the hash, not by
+    eyeballing the file).
+- `scripts/37_defence_directions_and_hooks.py` — GPU-free (torch only, no
+  `pipeline` import), unit-tested via a mock `nn.Module` in
+  `scripts/audits/audit_defence_hooks_dry_run.py`. Provides:
+  - `build_c_G` / `build_c_placebo` / `build_c_template_specific` implementing
+    the frozen `g_G = normalize(mean(normalize(dtilde_m)))`, `s_G = median(||dtilde_m||)`,
+    `c_G = s_G * g_G` recipe (Placebo is the one exception — it uses its own
+    raw paired-diff direction unscaled, described here only as a
+    **content-neutral control wrapper direction**, not as a direction already
+    proven free of jailbreak-relevant signal; that is an empirical question
+    the defence evaluation itself is meant to help answer, not an assumption
+    baked into its construction).
+  - `FROZEN_ADAPTIVE_GROUPING` — the per-model template-specific/subgroup
+    membership decided from `output/canonical_v2/experiment3_common_direction_bootstrap.json`'s
+    real (non-synthetic) results: a mechanism is `template_specific` iff (a)
+    its existing split-half reliability check passes (all 18 mechanism x
+    model combinations already do, per `experiment1_taxonomy_geometry.json`'s
+    `reliability_at_fixed_layer`) and (b) its leave-one-template-out
+    prototype-affinity `A_k`'s 2000-rep source-level bootstrap 95% CI upper
+    bound is `< 0` (seed 20260830). Every group's frozen membership was
+    verified against those real CI values before being hardcoded here;
+    module-level asserts additionally check each model's grouping still
+    exactly partitions all 6 active mechanisms with no overlap/gap.
+  - `make_prefill_last_token_hook` — additive `h' = h - alpha*c_G` at the
+    last prefill token position only, single-fire per `generate()` call via
+    a `has_intervened` flag (NOT a `seq_len>1` hard assertion — that check is
+    a non-fatal audit-log warning only, since a future input construction
+    could legitimately violate that assumption without it being a real bug).
+    **Contract for the not-yet-written generation driver**: after each
+    `generate()` call, it must call `assert_single_intervention(state)`; if
+    a batch's `intervention_count != 1`, that batch's output must be marked
+    invalid and excluded, never silently saved as if the intervention had
+    applied normally.
+  - `assert_left_padded` — cheap pre-generation check that
+    `attention_mask[:, -1]` is all 1s (confirms `tokenizer.padding_side='left'`
+    is actually in effect for the batch about to be generated).
+- **Not yet written**: the actual generation driver (wiring the hook into
+  `pipeline`'s existing `add_hooks`/`generate_completions`, confirmed to
+  already left-pad and already accept `fwd_hooks=[...]` — see
+  `pipeline/model_utils/model_base.py`) and the unified WildGuard re-judge
+  script. No GPU job has been run for Exp3's defence protocol yet.
+
 ## Conventions
 
 - **Model alias** is always the HuggingFace-style directory name: `Qwen2.5-7B-Instruct`, `Meta-Llama-3.1-8B-Instruct`, `gemma-2-9b-it` — matches `MODEL_ALIASES` arrays in every `slurm/*.sh`.
