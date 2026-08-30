@@ -141,6 +141,13 @@ def main(args):
         batch_size=batch_size, max_new_tokens=MAX_NEW_TOKENS,
     )
     t_gen_hooked = time.time() - t0
+    # generate_completions() does NOT preserve 'id'/'condition' from the input
+    # dataset (confirmed by reading its source -- it only returns instruction/
+    # response/instruction_en/generation_tokens); re-attach them exactly as
+    # 03_generate_and_label.py does, or later prints/joins will KeyError.
+    for c, item in zip(completions_hooked, dataset):
+        for k in ('id', 'condition'):
+            c[k] = item[k]
     print(f"With-hook generation time: {t_gen_hooked:.1f}s for {len(completions_hooked)} rows "
           f"({len(completions_hooked)/t_gen_hooked*3600:.0f} rows/hour)")
     print(f"Hook state: {state}")
@@ -162,6 +169,9 @@ def main(args):
         batch_size=batch_size, max_new_tokens=MAX_NEW_TOKENS,
     )
     t_gen_nodefence = time.time() - t0
+    for c, item in zip(completions_nodefence, dataset):
+        for k in ('id', 'condition'):
+            c[k] = item[k]
     print(f"No-defence generation time: {t_gen_nodefence:.1f}s for {len(completions_nodefence)} rows "
           f"({len(completions_nodefence)/t_gen_nodefence*3600:.0f} rows/hour)")
 
