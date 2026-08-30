@@ -238,6 +238,54 @@ token-position audit, per `EXPERIMENT_REDUCTION_PLAN.md` §12.6).
   `pipeline/model_utils/model_base.py`) and the unified WildGuard re-judge
   script. No GPU job has been run for Exp3's defence protocol yet.
 
+### Known metadata defect in `completions_en_full572_corrected.json`, and its repair
+
+`scripts/audits/audit_corrected_completions.py`'s real run against all 3
+models' `completions_en_full572_corrected.json` (before repair) found
+exactly one failing check, identically in all 3 files: every
+`condition=='persona_roleplay'` record's `mechanism` field still read
+`'mismatched_generalization'` (572 rows/model) instead of
+`'competing_objectives'` — a leftover from before the taxonomy correction
+that generated this file's content was never updated. **The template text,
+generated `response`, and `generation_tokens` for `persona_roleplay` are
+correct and unaffected** — only this one per-record metadata annotation was
+stale. All other checks (record count, id/condition completeness, no
+duplicates, split coverage, no missing responses, no stale
+`instruction_hierarchy`/`fictional_framing` conditions, cross-model
+agreement) passed on the first run.
+
+This field has never been read by any geometry script in this project —
+`18_extract_paired_diffs.py`, `33_canonical_taxonomy_geometry.py`,
+`34_llama_co_divergence_diagnostic.py`, and
+`35_common_direction_coverage_audit.py` all resolve CO/MG membership
+dynamically via `_taxonomy_v2_loader.py` reading `templates/templates_en.json`,
+never from a completion record's `mechanism` field — so **Exp1/Exp2/Exp3's
+existing results are unaffected by this defect and required no re-run**.
+
+- `scripts/38_repair_corrected_mechanism_metadata.py` — the deterministic
+  fix. Default is dry run; only writes with `--apply`, via a temp-file +
+  `os.replace` atomic swap. Refuses to run (raises, writes nothing) unless
+  pre-flight checks confirm the defect is exactly this known shape (572 or
+  0 stale `persona_roleplay` rows, all stale values exactly
+  `'mismatched_generalization'`, zero mismatches on any other
+  active-mechanism condition, 572 unique ids each with 8 conditions, no
+  duplicate `(id, condition)` pairs) — a differently-shaped defect will not
+  be silently patched by this script. After repair, independently verifies
+  that removing the `mechanism` key from every record leaves before/after
+  records identical, proving only that one field changed. Tested against
+  synthetic fixtures in `scripts/audits/audit_repair_mechanism_metadata_dry_run.py`
+  (dry run writes nothing; apply changes exactly 572/model; a second apply
+  is idempotent — 0 rows changed; an injected non-`persona_roleplay`
+  mismatch causes refusal even under `--apply`; independently re-verified
+  field-level equivalence; the real `audit_corrected_completions.py`
+  reports `OVERALL_PASS: True` on the repaired synthetic fixture).
+- `output/canonical_v2/corrected_completions_metadata_repair.json` — the
+  real repair run's report (per model: input path, sha256 before/after,
+  total/changed row counts, taxonomy config sha256, git commit, timestamp).
+- `output/canonical_v2/experiment3_corrected_completions_audit.json` — the
+  post-repair re-run of the audit; must show `OVERALL_PASS: true` before
+  any defence-generation driver is implemented.
+
 ## Conventions
 
 - **Model alias** is always the HuggingFace-style directory name: `Qwen2.5-7B-Instruct`, `Meta-Llama-3.1-8B-Instruct`, `gemma-2-9b-it` — matches `MODEL_ALIASES` arrays in every `slurm/*.sh`.
