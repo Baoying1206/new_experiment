@@ -28,10 +28,9 @@ Alpha grid: `{0.25, 0.5, 1.0, 1.5}` (frozen, unchanged by this revision).
 
 ## 2. Revision: 3-condition main-text design
 
-**Revised:** 2026-08-31, at git commit `821befc` (the commit immediately
-preceding this protocol file's own commit — see `git log
-EXPERIMENT3_PROTOCOL.md` for the exact commit that introduced this
-revision).
+**Revised:** 2026-08-31, at git commit `ecb4e7c` (introduces this file and
+the accompanying `--analysis_scope`/`protocol_version` code changes;
+codebase state immediately prior was `821befc`).
 
 **New core RQ3:**
 > Does separating geometrically divergent jailbreak templates from fixed
@@ -172,4 +171,4 @@ revision) are to be subtracted from the above totals, never regenerated.
 
 | Date | Git commit (this file) | Change |
 |---|---|---|
-| 2026-08-31 | (see `git log --follow EXPERIMENT3_PROTOCOL.md`) | Initial protocol file; records the 5→3-condition main-text scope reduction, decided before any complete validation ASR/FRR summary had been viewed. |
+| 2026-08-31 | `ecb4e7c` | Initial protocol file; records the 5→3-condition main-text scope reduction, decided before any complete validation ASR/FRR summary had been viewed. |

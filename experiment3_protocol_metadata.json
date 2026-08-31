@@ -1,7 +1,8 @@
 {
   "protocol_version": "exp3_reduced_v1",
   "revised_utc": "2026-08-31T05:33:45Z",
-  "revised_at_git_commit": "821befc",
+  "revised_at_git_commit": "ecb4e7c",
+  "codebase_state_prior_to_revision_commit": "821befc",
   "primary_conditions": [
     "no_defence",
     "fixed_wei",
