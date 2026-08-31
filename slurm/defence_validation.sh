@@ -10,13 +10,19 @@
 # (for direction construction) + the frozen Adaptive grouping -- never
 # test_ids or benign_test_100.
 #
-# Submit one job per combination:
+# Submit one job per combination. STAGE defaults to "generate"; run again
+# with STAGE=judge AFTER generation finishes for that (model, method) --
+# generation and judging are two separate jobs (judge needs the finished
+# .jsonl to read), except no_defence/harmful_rejudge which always does both
+# in one step (STAGE is ignored for it):
 #   sbatch --export=MODEL_IDX=0,METHOD=placebo   slurm/defence_validation.sh
+#   sbatch --export=MODEL_IDX=0,METHOD=placebo,STAGE=judge slurm/defence_validation.sh
 #   sbatch --export=MODEL_IDX=0,METHOD=global    slurm/defence_validation.sh
 #   sbatch --export=MODEL_IDX=0,METHOD=fixed_wei slurm/defence_validation.sh
 #   sbatch --export=MODEL_IDX=0,METHOD=adaptive  slurm/defence_validation.sh
-#   ... repeat for MODEL_IDX=1,2
+#   ... repeat for MODEL_IDX=1,2, and STAGE=judge after each generate finishes
 #   sbatch --export=MODEL_IDX=0,METHOD=no_defence,NO_DEFENCE_TARGET=benign          slurm/defence_validation.sh
+#   sbatch --export=MODEL_IDX=0,METHOD=no_defence,NO_DEFENCE_TARGET=benign,STAGE=judge slurm/defence_validation.sh
 #   sbatch --export=MODEL_IDX=0,METHOD=no_defence,NO_DEFENCE_TARGET=harmful_rejudge slurm/defence_validation.sh
 #   ... repeat for MODEL_IDX=1,2
 #
@@ -33,6 +39,7 @@ export PYTHONPATH=/home/h24/baga0553/thesis_experiment/Multilingual-Refusal:/hom
 
 MODEL_IDX=${MODEL_IDX:?must set MODEL_IDX=0|1|2}
 METHOD=${METHOD:?must set METHOD=placebo|global|fixed_wei|adaptive|no_defence}
+STAGE=${STAGE:-generate}
 
 EXTRA_ARGS=""
 if [ "$METHOD" = "no_defence" ]; then
@@ -41,12 +48,13 @@ if [ "$METHOD" = "no_defence" ]; then
 fi
 
 echo "Start: $(date)"
-echo "MODEL_IDX=$MODEL_IDX METHOD=$METHOD ${NO_DEFENCE_TARGET:+NO_DEFENCE_TARGET=$NO_DEFENCE_TARGET}"
+echo "MODEL_IDX=$MODEL_IDX METHOD=$METHOD STAGE=$STAGE ${NO_DEFENCE_TARGET:+NO_DEFENCE_TARGET=$NO_DEFENCE_TARGET}"
 
 "$VENV_PY" scripts/40_defence_generation_driver.py \
     --phase validation \
     --model_idx "$MODEL_IDX" \
     --method "$METHOD" \
+    --stage "$STAGE" \
     $EXTRA_ARGS \
     --output_path output
 
