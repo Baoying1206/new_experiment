@@ -103,5 +103,30 @@ assert test_drv.frozen_alpha_for(FAKE_FROZEN_ALPHA, 'FakeModel', 'fixed_wei') ==
 assert test_drv.frozen_alpha_for(FAKE_FROZEN_ALPHA, 'FakeModel', 'adaptive') == 1.5
 print("Test 8 PASSED: frozen_alpha_for reads the correct per-method alpha, never a sweep.")
 
+# 4. Regression for the real Llama OOM (jobs 5016/5017): test-phase intervention
+# batch_size must be capped at TEST_INTERVENTION_BATCH_SIZE (20) even for models
+# with no CONDITION_BATCH_SIZE_OVERRIDE entry (default 60), while Gemma's
+# already-smaller override (15) must still win via min().
+effective_batch_qwen = min(test_drv.drv.CONDITION_BATCH_SIZE_OVERRIDE.get('Qwen2.5-7B-Instruct', 60),
+                            test_drv.TEST_INTERVENTION_BATCH_SIZE)
+effective_batch_llama = min(test_drv.drv.CONDITION_BATCH_SIZE_OVERRIDE.get('Meta-Llama-3.1-8B-Instruct', 60),
+                             test_drv.TEST_INTERVENTION_BATCH_SIZE)
+effective_batch_gemma = min(test_drv.drv.CONDITION_BATCH_SIZE_OVERRIDE.get('gemma-2-9b-it', 60),
+                             test_drv.TEST_INTERVENTION_BATCH_SIZE)
+assert effective_batch_qwen == 20, effective_batch_qwen
+assert effective_batch_llama == 20, effective_batch_llama
+assert effective_batch_gemma == 15, effective_batch_gemma  # Gemma's own smaller override still wins
+print(f"Test 9 PASSED: effective test-phase intervention batch_size is capped at "
+      f"min(CONDITION_BATCH_SIZE_OVERRIDE, {test_drv.TEST_INTERVENTION_BATCH_SIZE}) -- "
+      f"Qwen/Llama={effective_batch_qwen}, Gemma={effective_batch_gemma} (its own smaller override wins).")
+
+# 5. Sorting by rendered-instruction length groups similar-length prompts together
+fake_prompts = [{'instruction': 'x' * n, 'instruction_id': f'p{i}'} for i, n in enumerate([300, 10, 150, 5, 800])]
+sorted_prompts = sorted(fake_prompts, key=lambda p: len(p['instruction']))
+assert [len(p['instruction']) for p in sorted_prompts] == [5, 10, 150, 300, 800]
+print("Test 10 PASSED: sorting todo by len(instruction) correctly orders prompts short-to-long, "
+      "so an outlier-length instruction lands in a chunk with others near its own length "
+      "instead of inflating an otherwise-short batch.")
+
 print()
 print("ALL TEST-DRIVER LOGIC TESTS PASSED.")

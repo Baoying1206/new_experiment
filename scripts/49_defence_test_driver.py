@@ -49,6 +49,20 @@ from _taxonomy_v2_loader import load_taxonomy_v2
 MODEL_PATHS = drv.MODEL_PATHS
 TEST_METHODS = ('fixed_wei', 'adaptive')  # no_defence handled by its own dedicated functions, as in validation
 
+# test_ids (200) has a much longer length tail than validation_ids (72):
+# max instruction_en length is 842 chars (p208) vs validation's max of 310.
+# HF's decoder .generate() computes float32 logits over the FULL padded
+# sequence for every row during prefill (the same mechanism that OOM'd
+# Gemma at validation batch_size=60, see CONDITION_BATCH_SIZE_OVERRIDE in
+# 40_defence_generation_driver.py) -- confirmed on real data (job
+# 5016/5017): a batch of 60 that happened to include p208 (rendered via
+# encoding_obfuscation/payload_splitting, ballooning further) tried to
+# allocate 23.57 GiB and OOM'd, for BOTH Llama fixed_wei and adaptive, at
+# the exact same batch boundary. benign_test_100's max length (125 chars)
+# shows no comparable risk, so this only applies to harmful+benign mixed
+# intervention-method batches, not run_test_no_defence_benign.
+TEST_INTERVENTION_BATCH_SIZE = 20
+
 
 class FrozenConfigViolationError(RuntimeError):
     pass
@@ -205,7 +219,15 @@ def run_test_intervention_method(args):
     eos_id = model_base.tokenizer.eos_token_id
     print(f"Model loaded. Hooking layer {fixed_layer} ({type(layer_module).__name__}).")
 
-    batch_size = drv.CONDITION_BATCH_SIZE_OVERRIDE.get(model_alias, 60)
+    # Sort by rendered-prompt length so similar-length prompts land in the same
+    # chunk (minimizes padding waste for the common short case) and any
+    # outlier-length instruction is isolated into a small batch with others
+    # near its own length, rather than inflating a batch of otherwise-short
+    # prompts to its length. See TEST_INTERVENTION_BATCH_SIZE's docstring for
+    # why a smaller fixed batch_size is ALSO needed (sorting alone doesn't cap
+    # worst-case memory when the longest prompts are batched together).
+    todo = sorted(todo, key=lambda p: len(p['instruction']))
+    batch_size = min(drv.CONDITION_BATCH_SIZE_OVERRIDE.get(model_alias, 60), TEST_INTERVENTION_BATCH_SIZE)
     n_written = 0
     for start in range(0, len(todo), batch_size):
         chunk_prompts = todo[start:start + batch_size]
