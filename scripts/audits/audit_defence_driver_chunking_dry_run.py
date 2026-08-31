@@ -76,7 +76,7 @@ def make_prompts(n):
     mechs = ['prefix_injection', 'refusal_suppression', 'persona_roleplay',
              'encoding_obfuscation', 'payload_splitting', 'distractors_negated']
     return [{'instruction_id': f'p{i}', 'benign_or_harmful': 'harmful', 'template': mechs[i % 6],
-             'instruction': f'fake prompt {i}'} for i in range(n)]
+             'instruction': f'fake prompt {i}', 'instruction_en': f'fake plain instruction {i}'} for i in range(n)]
 
 
 def main():
@@ -92,6 +92,19 @@ def main():
     assert metrics['intervention_count_distribution'] == [1]
     assert metrics['intervention_count_all_batches_equal_one'] is True
     print("Test A PASSED: single-batch chunking -- 1 batch, intervention_count_distribution=[1].")
+
+    # Regression check: instruction_en must come from OUR prompt dict, never from
+    # MockModelBase's returned completion (which simulates pipeline's real bug --
+    # generate_completions() always returns instructions_en=[x['instruction'] for x
+    # in dataset], i.e. a duplicate of the wrapped/rendered prompt text, not our
+    # own true-plain-original 'instruction_en' field).
+    for i, (rec, p) in enumerate(zip(per_record, prompts)):
+        assert rec['instruction_en'] == p['instruction_en'], (
+            f"record {i}: instruction_en={rec['instruction_en']!r} should equal the prompt's own "
+            f"{p['instruction_en']!r}, not whatever the mock model_base returned"
+        )
+    print("Test A2 PASSED: instruction_en is taken from the prompt dict, not trusted from the "
+          "(mock) model_base's returned completion.")
 
     per_record_b, metrics_b, states_b, audit_log_b = drv.run_condition(
         model_base, layer_module, prompts, 'global_alpha_one', c_G, batch_size=3)

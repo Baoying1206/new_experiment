@@ -222,7 +222,10 @@ def run_condition(model_base, layer_module, prompts, condition, c_G, max_new_tok
     peak_mem = torch.cuda.max_memory_allocated()
 
     for c, item in zip(all_completions, prompts):
-        for k in ('instruction_id', 'benign_or_harmful', 'template'):
+        # instruction_en included here too -- NOT trustworthy from pipeline's own
+        # c['instruction_en'] (see the note in _build_generation_record): it's a
+        # duplicate of the wrapped/rendered prompt, not the true plain original.
+        for k in ('instruction_id', 'benign_or_harmful', 'template', 'instruction_en'):
             c[k] = item[k]
 
     per_record = []
@@ -646,7 +649,14 @@ def _build_generation_record(c, item, eos_id, model_alias, split, method, alpha,
         'direction_config_hash': direction_config_hash, 'generation_config_hash': generation_config_hash,
         'response': c['response'], 'generation_tokens': c['generation_tokens'],
         'generation_length': length, 'stop_reason': stop_reason,
-        'prompt_token_count': prompt_tok_count, 'instruction_en': c['instruction_en'],
+        # NOT c['instruction_en'] -- pipeline's generate_completions() sets
+        # instructions_en = [x['instruction'] for x in dataset] UNCONDITIONALLY
+        # (see pipeline/model_utils/model_base.py), never reading our own
+        # 'instruction_en' field. Since our own item['instruction'] is the
+        # rendered/template-wrapped text (correctly used for the actual model
+        # input), c['instruction_en'] comes back as a duplicate of the WRAPPED
+        # prompt, not the true plain original -- must be read from `item`.
+        'prompt_token_count': prompt_tok_count, 'instruction_en': item['instruction_en'],
     }
 
 
