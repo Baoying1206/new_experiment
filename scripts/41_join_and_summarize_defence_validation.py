@@ -7,10 +7,19 @@ run_judge), producing a fully-expanded 3,648-row joined table and a
 per-alpha/per-template summary. Pure CPU/Python -- no GPU, does not call
 run_judge or generate anything new.
 
-The canonical judge_cache_key function is imported from
-40_defence_generation_driver.py (NEVER reimplemented) -- every generation
-record's key is recomputed fresh via that same function; the file never
-trusts row order or any key stored on the generation side (there isn't one).
+The canonical judge_cache_key function is imported from _defence_metrics.py
+(NEVER reimplemented) -- every generation record's key is recomputed fresh
+via that same function; the file never trusts row order or any key stored
+on the generation side (there isn't one). This script deliberately imports
+ONLY _defence_metrics (torch-free) rather than 40_defence_generation_driver.py
+directly -- importing script 40 pulls in torch (its own, plus
+35_common_direction_coverage_audit.py's and 37_defence_directions_and_hooks.py's,
+both imported eagerly at module level by script 40), which is unavailable
+outside the GPU venv and unnecessary for this purely CPU/JSON join step.
+direction_config_hash/generation_config_hash are read off the generation
+records themselves (already embedded per-record at generation time) rather
+than recomputed, both for this reason and because it doubles as an extra
+consistency check (all 3,648 records must agree on one value each).
 
 Alpha is NOT selected here. This script produces exactly one (model,
 method)'s validation summary; alpha freezing requires the No-defence
@@ -29,15 +38,14 @@ import os
 import sys
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
-from importlib import import_module
 
 SCRIPT_DIR = os.path.dirname(__file__)
 sys.path.insert(0, SCRIPT_DIR)
-drv = import_module('40_defence_generation_driver')  # canonical judge_cache_key, load_jsonl, metric fns
+import _defence_metrics as dm  # torch-free: canonical judge_cache_key, load_jsonl, metric fns
 from _taxonomy_v2_loader import load_taxonomy_v2, DEFAULT_TEMPLATES_PATH
 
-MODELS = drv.MODEL_PATHS
-ALPHAS = drv.VALIDATION_ALPHAS
+MODELS = dm.MODEL_PATHS
+ALPHAS = dm.VALIDATION_ALPHAS
 N_HARMFUL_IDS, N_BENIGN_IDS, N_TEMPLATES = 72, 80, 6
 EXPECTED_HARMFUL = len(ALPHAS) * N_HARMFUL_IDS * N_TEMPLATES   # 1728
 EXPECTED_BENIGN = len(ALPHAS) * N_BENIGN_IDS * N_TEMPLATES     # 1920
@@ -65,7 +73,7 @@ def check_no_key_collisions(gen_rows):
     key_to_content = {}
     collisions = []
     for r in gen_rows:
-        key = drv.judge_cache_key(r['instruction_en'], r['response'])
+        key = dm.judge_cache_key(r['instruction_en'], r['response'])
         content = (r['instruction_en'], r['response'])
         if key in key_to_content and key_to_content[key] != content:
             collisions.append({'judge_cache_key': key, 'content_a': key_to_content[key], 'content_b': content})
@@ -126,10 +134,10 @@ def preflight_judgement_checks(judge_rows):
 
 def join_generation_and_judgement(gen_rows, judge_lookup):
     """judge_lookup: judge_cache_key -> judgement dict. Every generation
-    record's key is recomputed via drv.judge_cache_key -- never assumed."""
+    record's key is recomputed via dm.judge_cache_key -- never assumed."""
     joined, missing_keys = [], []
     for r in gen_rows:
-        key = drv.judge_cache_key(r['instruction_en'], r['response'])
+        key = dm.judge_cache_key(r['instruction_en'], r['response'])
         if key not in judge_lookup:
             missing_keys.append(key)
             continue
@@ -140,7 +148,7 @@ def join_generation_and_judgement(gen_rows, judge_lookup):
             'request_harmful': j.get('request_harmful'), 'refusal': j.get('refusal'),
             'response_harmful': j.get('response_harmful'), 'parse_success': j.get('parse_success'),
             'parse_error_reason': j.get('parse_error_reason'),
-            'judge_model_version': drv.JUDGE_MODEL_VERSION, 'judge_prompt_version': drv.JUDGE_PROMPT_VERSION,
+            'judge_model_version': dm.JUDGE_MODEL_VERSION, 'judge_prompt_version': dm.JUDGE_PROMPT_VERSION,
         })
         joined.append(joined_row)
     return joined, missing_keys
@@ -149,7 +157,7 @@ def join_generation_and_judgement(gen_rows, judge_lookup):
 def build_join_audit(gen_path, judge_path, gen_rows, judge_rows, joined_rows, missing_keys,
                       gen_checks, judge_checks, n_parse_failure, model_alias, method,
                       taxonomy, direction_config_hash, generation_config_hash, git_commit):
-    unique_gen_keys = {drv.judge_cache_key(r['instruction_en'], r['response']) for r in gen_rows}
+    unique_gen_keys = {dm.judge_cache_key(r['instruction_en'], r['response']) for r in gen_rows}
     judge_key_set = {j['judge_cache_key'] for j in judge_rows}
     orphan_keys = sorted(judge_key_set - unique_gen_keys)
 
@@ -192,7 +200,7 @@ def build_join_audit(gen_path, judge_path, gen_rows, judge_rows, joined_rows, mi
         'generation_input_path': gen_path, 'generation_input_sha256': sha256_of_file(gen_path),
         'judgement_input_path': judge_path, 'judgement_input_sha256': sha256_of_file(judge_path),
         'judge_key_function': 'judge_cache_key (40_defence_generation_driver.py, imported not reimplemented)',
-        'judge_model_version': drv.JUDGE_MODEL_VERSION, 'judge_prompt_version': drv.JUDGE_PROMPT_VERSION,
+        'judge_model_version': dm.JUDGE_MODEL_VERSION, 'judge_prompt_version': dm.JUDGE_PROMPT_VERSION,
         'generation_rows': len(gen_rows), 'unique_judgement_rows': len(judge_rows),
         'expanded_joined_rows': len(joined_rows),
         'cache_hits': n_cache_hits, 'cache_hit_rate': cache_hit_rate,
@@ -234,8 +242,8 @@ def summarize_alpha_template(joined_rows):
         harmful_rows = [r for r in rows if r['benign_or_harmful'] == 'harmful']
         benign_rows = [r for r in rows if r['benign_or_harmful'] == 'benign']
 
-        asr_stats = drv.compute_template_asr(harmful_rows)
-        frr_stats = drv.compute_template_frr(benign_rows)
+        asr_stats = dm.compute_template_asr(harmful_rows)
+        frr_stats = dm.compute_template_frr(benign_rows)
         n_request_harmful_among_benign = sum(
             1 for r in benign_rows if r['parse_success'] and r['request_harmful'] == 1)
 
@@ -299,8 +307,8 @@ def summarize_pooled_per_alpha(joined_rows):
     for alpha, rows in by_alpha.items():
         harmful_rows = [r for r in rows if r['benign_or_harmful'] == 'harmful']
         benign_rows = [r for r in rows if r['benign_or_harmful'] == 'benign']
-        asr_stats = drv.compute_template_asr(harmful_rows)
-        frr_stats = drv.compute_template_frr(benign_rows)
+        asr_stats = dm.compute_template_asr(harmful_rows)
+        frr_stats = dm.compute_template_frr(benign_rows)
         out[alpha] = {
             'pooled_asr': asr_stats['asr'], 'pooled_compliance_rate': asr_stats['compliance_rate'],
             'pooled_response_harmful_rate': asr_stats['response_harmful_rate'],
@@ -310,20 +318,33 @@ def summarize_pooled_per_alpha(joined_rows):
     return out
 
 
+def extract_and_verify_config_hashes(gen_rows):
+    """direction_config_hash/generation_config_hash are read off the generation
+    records (already embedded per-record at generation time) rather than
+    recomputed -- this avoids needing exp3_coverage/hooks_mod (torch) here,
+    and doubles as a consistency check: every one of the 3,648 records for a
+    given (model, method) job must agree on exactly one value each."""
+    direction_hashes = {r.get('direction_config_hash') for r in gen_rows}
+    generation_hashes = {r.get('generation_config_hash') for r in gen_rows}
+    consistent = len(direction_hashes) == 1 and len(generation_hashes) == 1
+    return (direction_hashes.pop() if len(direction_hashes) == 1 else None,
+            generation_hashes.pop() if len(generation_hashes) == 1 else None,
+            consistent, sorted(str(h) for h in direction_hashes if len(direction_hashes) > 1),
+            sorted(str(h) for h in generation_hashes if len(generation_hashes) > 1))
+
+
 def main(args):
     model_alias, model_path = MODELS[args.model_idx]
     taxonomy = load_taxonomy_v2()
-    direction_config_hash, _ = drv.compute_direction_config_hash(model_alias)
-    generation_config_hash, _ = drv.compute_generation_config_hash(model_path)
-    git_commit = drv.git_commit_hash()
+    git_commit = dm.git_commit_hash()
 
     out_dir = os.path.join(args.output_path, 'canonical_v2')
     gen_path = os.path.join(out_dir, f'experiment3_validation_generations_{model_alias}_{args.method}.jsonl')
     judge_path = os.path.join(out_dir, f'experiment3_validation_judgements_{model_alias}_{args.method}.jsonl')
 
     print(f"=== Join & summarize: {model_alias} x {args.method} ===")
-    gen_rows = drv.load_jsonl(gen_path)
-    judge_rows = drv.load_jsonl(judge_path)
+    gen_rows = dm.load_jsonl(gen_path)
+    judge_rows = dm.load_jsonl(judge_path)
     print(f"Loaded {len(gen_rows)} generation rows from {gen_path}")
     print(f"Loaded {len(judge_rows)} judgement rows from {judge_path}")
 
@@ -331,7 +352,17 @@ def main(args):
     check_no_key_collisions(gen_rows)
     print("No judge_cache_key collisions detected.")
 
+    direction_config_hash, generation_config_hash, hashes_consistent, dup_dir, dup_gen = \
+        extract_and_verify_config_hashes(gen_rows)
+    print(f"direction_config_hash={direction_config_hash!r} generation_config_hash={generation_config_hash!r} "
+          f"consistent_across_all_records={hashes_consistent}")
+
     gen_checks = preflight_generation_checks(gen_rows)
+    gen_checks['config_hashes_consistent'] = {
+        'pass': hashes_consistent, 'direction_config_hash': direction_config_hash,
+        'generation_config_hash': generation_config_hash,
+        'distinct_direction_hashes_found': dup_dir, 'distinct_generation_hashes_found': dup_gen,
+    }
     judge_checks, n_parse_failure = preflight_judgement_checks(judge_rows)
     for name, c in {**gen_checks, **judge_checks}.items():
         print(f"  [{'PASS' if c.get('pass', True) else 'FAIL'}] {name}: {c}")

@@ -471,6 +471,62 @@ passed -- see the timing-pilot section above.
   generations + 1,296 no-defence-harmful re-judgements (reused, not
   regenerated). Test phase remains explicitly unauthorized until validation
   completes and its frozen-config audit is reviewed.
+- **Real run status (Llama x global)**: job 4982 generated all 3,648
+  records successfully. Job 4983 (judge stage) OOM'd -- see the WildGuard
+  batching fix above. Job 4984 (re-run after the fix) judged all 3,648
+  successfully, 0 parse failures; only 2,051 unique judgement rows were
+  written because ~44% of the 3,648 records were byte-identical-content
+  duplicates across the 4 alphas (the content-cache design working exactly
+  as authorized, not data loss -- see `41_join_and_summarize_defence_validation.py`
+  below for how the full 3,648-row table gets reconstructed from this).
+
+### `_defence_metrics.py` (torch-free) and the join/summarize script
+
+`scripts/_defence_metrics.py` -- pulled the pure functions (`judge_cache_key`,
+`record_key`, `load_jsonl`/`append_jsonl`, `sha256_hex`/`sha256_of_file`/
+`git_commit_hash`, `compute_template_asr`/`compute_template_frr`/
+`compute_macro_asr`/`compute_macro_frr`, `select_alpha`, plus the
+`MODEL_PATHS`/`JUDGE_MODEL_VERSION`/`JUDGE_PROMPT_VERSION`/`VALIDATION_ALPHAS`
+constants) out of `40_defence_generation_driver.py` into a standalone module
+with NO dependency on torch/pipeline. `40_defence_generation_driver.py` now
+imports these names from `_defence_metrics` (single source of truth,
+re-exported for backward compatibility with existing call sites in that
+file) instead of redefining them. Reason: importing script 40 for its pure
+functions alone still pulled in `torch` (its own top-level `import torch`,
+plus `35_common_direction_coverage_audit.py`'s and
+`37_defence_directions_and_hooks.py`'s, both imported eagerly by script 40
+at module level) -- unavailable when running with the cluster's bare system
+`python3` rather than the GPU venv, discovered when the join/summarize
+script below was first run on the cluster.
+
+`scripts/41_join_and_summarize_defence_validation.py` -- joins one (model,
+method)'s 3,648-row generation JSONL with its content-deduplicated
+judgement JSONL back into a full 3,648-row expanded table. Imports ONLY
+`_defence_metrics` (confirmed torch-free via an import-time `sys.meta_path`
+blocker that makes `import torch` raise, both directly and via
+`scripts/audits/audit_join_and_summarize_dry_run.py`). Recomputes
+`judge_cache_key` per generation record via the canonical imported function
+(never reimplemented); hard-stops (`JudgeKeyCollisionError`) if the same
+key ever maps to different `(instruction_en, response)` content.
+`direction_config_hash`/`generation_config_hash` are read off the
+generation records themselves (already embedded per-record at generation
+time) rather than recomputed -- doubles as a consistency check that all
+3,648 records agree on exactly one value each. Reports missing/orphan
+keys, duplicate keys, parse failures, and an `OVERALL_PASS` gate -- the
+summary must not be used if `False`. Per-`(alpha, template)` stats
+(ASR/compliance/`response_harmful_rate` from the harmful subset,
+`benign_FRR` from the benign subset, generation length/EOS/cache stats
+from the combined subset) plus per-alpha **macro** (mean of the 6
+per-template rates) are kept strictly separate from per-alpha **pooled**
+(all records merged first) -- both reported, never conflated. Does not
+select alpha (needs all 4 methods + the No-defence benign baseline for the
+same model first). 7 synthetic-data test scenarios in
+`scripts/audits/audit_join_and_summarize_dry_run.py`: shared-key join
+restores the full row count with correctly-copied labels (own
+alpha/instruction_id preserved per record), missing-key handling,
+duplicate-judgement-key detection, a forced real collision raises
+immediately, macro vs pooled differ on deliberately imbalanced synthetic
+data (proving no accidental mixing), parse failures excluded and counted.
 
 ## Conventions
 

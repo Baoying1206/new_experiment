@@ -14,7 +14,7 @@ from importlib import import_module
 SCRIPT_DIR = os.path.dirname(__file__)
 sys.path.insert(0, os.path.join(SCRIPT_DIR, '..'))
 join_mod = import_module('41_join_and_summarize_defence_validation')
-drv = import_module('40_defence_generation_driver')
+dm = join_mod.dm  # _defence_metrics, torch-free -- the same module object script 41 calls internally
 
 
 def make_gen_row(instruction_id, template, alpha, benign_or_harmful, instruction_en, response,
@@ -30,7 +30,7 @@ def make_gen_row(instruction_id, template, alpha, benign_or_harmful, instruction
 
 
 def make_judgement(instruction_en, response, request_harmful, refusal, response_harmful, parse_success=True):
-    key = drv.judge_cache_key(instruction_en, response)
+    key = dm.judge_cache_key(instruction_en, response)
     return {
         'judge_cache_key': key, 'raw_judge_output': 'fake',
         'request_harmful': request_harmful, 'refusal': refusal, 'response_harmful': response_harmful,
@@ -101,9 +101,9 @@ def main():
 
     # Directly exercise the collision branch's logic with two rows whose recomputed keys
     # are forced to collide by monkeypatching judge_cache_key for this call only.
-    orig_key_fn = drv.judge_cache_key
+    orig_key_fn = dm.judge_cache_key
     try:
-        drv.judge_cache_key = lambda instr, resp: 'FORCED_SAME_KEY'
+        dm.judge_cache_key = lambda instr, resp: 'FORCED_SAME_KEY'
         colliding_rows = [
             make_gen_row('pA', 'global', 0.25, 'harmful', 'instr1', 'response1'),
             make_gen_row('pB', 'global', 0.5, 'harmful', 'instr2', 'response2'),  # different content, same forced key
@@ -114,7 +114,7 @@ def main():
         except join_mod.JudgeKeyCollisionError as e:
             print(f"Test 4b PASSED: forced same-key/different-content correctly raises JudgeKeyCollisionError: {str(e)[:100]}")
     finally:
-        drv.judge_cache_key = orig_key_fn
+        dm.judge_cache_key = orig_key_fn
 
     # ---- Test 5: macro vs pooled differ on imbalanced synthetic data ----
     # Template A: 1 harmful record, ASR=1.0 (bypassed). Template B: 9 harmful records, ASR=0.0 (all refused).
