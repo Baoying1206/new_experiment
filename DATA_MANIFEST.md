@@ -432,6 +432,21 @@ passed -- see the timing-pilot section above.
   (previously only `r['condition']`) for consistency across all judgement
   files. Verified with `scripts/audits/audit_run_judge_schema_dry_run.py`
   against both schemas using a faked WildGuard tokenizer/model (no GPU).
+- **Second bug found and fixed, same real run** (job 4983, STAGE=judge on
+  the 3648 records job 4982 had generated): `run_judge` had no internal
+  batching at all -- it tried one single WildGuard forward pass over all
+  3648 new records and OOM'd ("Tried to allocate 36.68 GiB"). Fixed by
+  adding `WILDGUARD_JUDGE_BATCH_SIZE=16` (matches `03_generate_and_label.py`'s
+  own `wg_batch` default) and an internal chunking loop, plus an optional
+  `on_new_batch(list_of_merged_judgement_dicts)` callback so callers can
+  persist incrementally instead of only writing at the very end (crash-
+  safety at thousands-of-records scale) -- `run_validation_judge` and
+  `run_no_defence_harmful_rejudge` both now use this; `run_timing_pilot`
+  (max 60 records/condition) still writes once at the end, unaffected.
+  Verified with `scripts/audits/audit_run_judge_batching_dry_run.py`: 100
+  fake records batch into 7 WildGuard calls of size ≤16 (never one big
+  call), `on_new_batch` fires once per chunk with fully-merged persistable
+  dicts, and a fully-cached re-run makes zero new WildGuard calls.
 - `compute_template_asr`/`compute_template_frr`/`compute_macro_asr`/
   `compute_macro_frr` -- pure functions; both explicitly exclude
   `parse_success=False` rows and (for ASR) `request_harmful=0` rows from

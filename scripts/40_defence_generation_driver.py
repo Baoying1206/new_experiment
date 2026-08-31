@@ -335,7 +335,27 @@ def compare_determinism(records_a, records_b, label_a='no_hook', label_b='hook_a
 
 # ── judge ──────────────────────────────────────────────────────────────
 
-def run_judge(records, guard_model, guard_tok, script03, cache=None):
+WILDGUARD_JUDGE_BATCH_SIZE = 16  # matches 03_generate_and_label.py's own wg_batch default;
+                                  # NOT unbounded -- job 4983 OOM'd (36.68GiB) trying to judge
+                                  # all 3648 new records in a single WildGuard forward pass.
+
+
+JUDGEMENT_PASSTHROUGH_FIELDS = ('instruction_id', 'template', 'condition', 'method',
+                                 'benign_or_harmful', 'alpha', 'model', 'split', 'record_key')
+
+
+def _merge_judgement(r, cache):
+    j = dict(cache[r['judge_cache_key']])
+    j.update({f: r[f] for f in JUDGEMENT_PASSTHROUGH_FIELDS if f in r})
+    return j
+
+
+def run_judge(records, guard_model, guard_tok, script03, cache=None,
+               judge_batch_size=WILDGUARD_JUDGE_BATCH_SIZE, on_new_batch=None):
+    """on_new_batch(list_of_fully_merged_judgement_dicts), if given, is called
+    after each internal WildGuard batch completes -- lets the caller persist
+    incrementally (crash-safety at scale, e.g. thousands of records) instead
+    of only writing everything at the very end."""
     cache = cache if cache is not None else {}
     to_judge, cache_hits = [], []
     for r in records:
@@ -347,13 +367,15 @@ def run_judge(records, guard_model, guard_tok, script03, cache=None):
             to_judge.append(r)
 
     t0 = time.time()
-    if to_judge:
-        texts = [script03.WILDGUARD_PROMPT.format(prompt=r['instruction_en'], response=r['response']) for r in to_judge]
+    for start in range(0, len(to_judge), judge_batch_size):
+        chunk = to_judge[start:start + judge_batch_size]
+        texts = [script03.WILDGUARD_PROMPT.format(prompt=r['instruction_en'], response=r['response']) for r in chunk]
         enc = guard_tok(texts, return_tensors='pt', padding=True, truncation=True,
                         max_length=2048, add_special_tokens=False).to(guard_model.device)
         with torch.no_grad():
             out = guard_model.generate(**enc, max_new_tokens=32, pad_token_id=guard_tok.eos_token_id)
-        for i, r in enumerate(to_judge):
+        new_batch_merged = []
+        for i, r in enumerate(chunk):
             new_ids = out[i][enc.input_ids.shape[-1]:]
             raw = guard_tok.decode(new_ids, skip_special_tokens=True)
             parsed, parse_success, parse_error_reason = parse_wildguard_strict(raw, script03)
@@ -364,19 +386,16 @@ def run_judge(records, guard_model, guard_tok, script03, cache=None):
                 'parse_success': parse_success, 'parse_error_reason': parse_error_reason,
             }
             cache[r['judge_cache_key']] = judgement
+            new_batch_merged.append(_merge_judgement(r, cache))
+        if on_new_batch is not None and new_batch_merged:
+            on_new_batch(new_batch_merged)
     wall = time.time() - t0
 
     # Copy back whichever identifying fields the record actually has -- timing-pilot
     # records use 'condition' (no_hook/hook_alpha_zero/global_alpha_one); validation
-    # records use 'method'/'benign_or_harmful' instead. Using .get() with a fallback
-    # rather than hardcoding one schema keeps this usable by both callers.
-    JUDGEMENT_PASSTHROUGH_FIELDS = ('instruction_id', 'template', 'condition', 'method',
-                                     'benign_or_harmful', 'alpha', 'model', 'split', 'record_key')
-    judgements = []
-    for r in records:
-        j = dict(cache[r['judge_cache_key']])
-        j.update({f: r[f] for f in JUDGEMENT_PASSTHROUGH_FIELDS if f in r})
-        judgements.append(j)
+    # records use 'method'/'benign_or_harmful' instead. Using "if f in r" rather than
+    # hardcoding one schema keeps this usable by both callers.
+    judgements = [_merge_judgement(r, cache) for r in records]
 
     n_parse_failures = sum(1 for j in judgements if not j['parse_success'])
     metrics = {
@@ -877,10 +896,19 @@ def run_no_defence_harmful_rejudge(args):
                                                         device_map='auto').eval()
 
     cache = {j['judge_cache_key']: j for j in existing}
-    judgements, jmetrics, cache = run_judge(records, guard_model, guard_tok, script03, cache=cache)
-    new_judgements = [j for j in judgements if j['judge_cache_key'] not in existing_cache_keys]
-    append_jsonl(judge_path, new_judgements)
-    print(f"Judge metrics: {jmetrics}. Wrote {len(new_judgements)} new judgements to {judge_path}.")
+    written = {'n': 0}
+
+    def _persist(batch):
+        new = [j for j in batch if j['judge_cache_key'] not in existing_cache_keys]
+        if new:
+            append_jsonl(judge_path, new)
+            existing_cache_keys.update(j['judge_cache_key'] for j in new)
+            written['n'] += len(new)
+            print(f"  wrote {len(new)} judgements ({written['n']} so far)")
+
+    judgements, jmetrics, cache = run_judge(records, guard_model, guard_tok, script03,
+                                             cache=cache, on_new_batch=_persist)
+    print(f"Judge metrics: {jmetrics}. Wrote {written['n']} new judgements to {judge_path} (incremental).")
 
 
 def _validation_gen_and_judge_paths(args, model_alias):
@@ -929,10 +957,19 @@ def run_validation_judge(args):
     guard_model = AutoModelForCausalLM.from_pretrained('allenai/wildguard', torch_dtype=torch.bfloat16,
                                                         device_map='auto').eval()
 
-    judgements, jmetrics, cache = run_judge(records, guard_model, guard_tok, script03, cache=cache)
-    new_judgements = [j for j in judgements if j['judge_cache_key'] not in existing_cache_keys]
-    append_jsonl(judge_path, new_judgements)
-    print(f"Judge metrics: {jmetrics}. Wrote {len(new_judgements)} new judgements to {judge_path}.")
+    written = {'n': 0}
+
+    def _persist(batch):
+        new = [j for j in batch if j['judge_cache_key'] not in existing_cache_keys]
+        if new:
+            append_jsonl(judge_path, new)
+            existing_cache_keys.update(j['judge_cache_key'] for j in new)
+            written['n'] += len(new)
+            print(f"  wrote {len(new)} judgements ({written['n']} so far)")
+
+    judgements, jmetrics, cache = run_judge(records, guard_model, guard_tok, script03,
+                                             cache=cache, on_new_batch=_persist)
+    print(f"Judge metrics: {jmetrics}. Wrote {written['n']} new judgements to {judge_path} (incremental).")
 
 
 # ── alpha selection + ASR/FRR (pure functions, GPU-free) ────────────────
