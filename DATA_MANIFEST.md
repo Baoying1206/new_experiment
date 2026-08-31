@@ -583,6 +583,45 @@ The timing-pilot outputs (all 3 models) have the same defect but are not
 a reportable result (see the timing-pilot section above) -- no repair
 priority unless they're needed again later.
 
+### `run_judge` same-batch duplicate judge_cache_key bug (Llama x global rejudge)
+
+After the `instruction_en` repair above, rejudging Llama x global from
+scratch produced 2005 judgement rows for only 1921 unique `judge_cache_key`
+values -- 54 duplicated keys, 84 extra rows, `no_duplicate_judge_key` and
+`unique_judge_keys_match` both FAIL in the join audit. Confirmed (via
+`/tmp/check_dup_judge_keys.py`) all 54 duplicate groups had byte-identical
+judgement content, ruling out WildGuard non-determinism. Root cause:
+`run_judge`'s `to_judge` list (`40_defence_generation_driver.py`) was built
+by checking `key in cache` against the pre-call `cache` snapshot only --
+if the same `judge_cache_key` appeared twice in `records` and both landed
+in the same `WILDGUARD_JUDGE_BATCH_SIZE` chunk, both got judged and both
+written, since the caller's `existing_cache_keys` persist-filter only
+updates *between* `on_new_batch` calls, not within one. Fixed by
+self-deduplicating `to_judge` against a `seen_keys_this_call` set before
+batching (commit `821befc`); regression test: `audit_run_judge_batching_dry_run.py`
+Test 5. Cleanup script for already-affected files:
+`scripts/43_dedupe_validation_judgements.py` (CPU-only, verifies duplicate
+groups are content-identical before removing extras, refuses otherwise) --
+applied to Llama x global (2005 -> 1921 rows), after which
+`41_join_and_summarize_defence_validation.py` reports `OVERALL_PASS: True`.
+
+## Exp3 scope revision: `protocol_version: exp3_reduced_v1`
+
+Main-text RQ3 was narrowed from the original 5-condition design
+(No-defence/Placebo/Global/Fixed Wei/Adaptive) to 3 primary conditions
+(No-defence/Fixed Wei/Adaptive), with Global/Placebo kept as supplementary
+output (not deleted, not backfilled, not used for the main conclusion or
+alpha selection). Decided before any complete validation ASR/FRR summary
+had been viewed (only Llama x global's integrity/completeness check had
+been reviewed). Full rationale, disposition of already-completed Global
+data, and the unchanged parts of the design: see `EXPERIMENT3_PROTOCOL.md`
+and `experiment3_protocol_metadata.json` at the repo root.
+
+`record_key()` (`_defence_metrics.py`) now requires an explicit
+`protocol_version` argument (no default); `40_defence_generation_driver.py`
+now requires `--analysis_scope supplementary` to run `--method global` or
+`--method placebo` (refused otherwise, before any model/data loads).
+
 ## Conventions
 
 - **Model alias** is always the HuggingFace-style directory name: `Qwen2.5-7B-Instruct`, `Meta-Llama-3.1-8B-Instruct`, `gemma-2-9b-it` — matches `MODEL_ALIASES` arrays in every `slurm/*.sh`.

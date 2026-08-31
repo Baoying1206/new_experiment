@@ -1,0 +1,49 @@
+{
+  "protocol_version": "exp3_reduced_v1",
+  "revised_utc": "2026-08-31T05:33:45Z",
+  "revised_at_git_commit": "821befc",
+  "primary_conditions": [
+    "no_defence",
+    "fixed_wei",
+    "adaptive"
+  ],
+  "supplementary_conditions": [
+    "global",
+    "placebo"
+  ],
+  "excluded_condition": [
+    "template_specific"
+  ],
+  "scope_change_reason": "Computational and presentational scope reduction before complete validation aggregation and before any test evaluation.",
+  "scope_change_not_results_driven": {
+    "claim": "This revision was made before any complete validation ASR/FRR summary had been viewed for any (model, method) combination.",
+    "what_had_been_viewed": "Only Meta-Llama-3.1-8B-Instruct x global's join/summarize output (OVERALL_PASS=True, an integrity/completeness signal only) had been produced at the time of this decision.",
+    "what_had_not_been_viewed": "No ASR/FRR values for fixed_wei or adaptive, for any model, existed yet -- there was no cross-method comparison to have reacted to."
+  },
+  "already_completed_global_data_disposition": {
+    "model": "Meta-Llama-3.1-8B-Instruct",
+    "method": "global",
+    "status": "kept_as_supplementary",
+    "n_generation_records": 3648,
+    "n_unique_judgement_records": 1921,
+    "not_deleted": true,
+    "not_reclassified": true,
+    "not_backfilled_for_other_models": true,
+    "not_used_for_primary_rq3_conclusions": true,
+    "not_used_for_alpha_selection": true
+  },
+  "test_data_status": {
+    "test_ids_read": false,
+    "benign_test_100_read": false,
+    "note": "Unaffected by this revision; still not approved for any use."
+  },
+  "adaptive_grouping_status": "frozen_unchanged_by_this_revision",
+  "alpha_grid": [0.25, 0.5, 1.0, 1.5],
+  "alpha_selection_restricted_to": ["fixed_wei", "adaptive"],
+  "record_key_schema_change": {
+    "field_added": "protocol_version",
+    "required": true,
+    "has_default": false,
+    "effect": "Records generated under exp3_reduced_v1 get a structurally different record_key from any differently-protocol-versioned record even if every other field matches; pre-revision records (Global) are not retroactively rewritten."
+  }
+}

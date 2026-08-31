@@ -64,7 +64,7 @@ from _defence_metrics import (
     BENIGN_FRR_MAX_INCREASE_PP, sha256_hex, sha256_of_file, git_commit_hash,
     record_key, judge_cache_key, load_jsonl, append_jsonl,
     compute_template_asr, compute_template_frr, compute_macro_asr, compute_macro_frr,
-    select_alpha,
+    select_alpha, PROTOCOL_VERSION, PRIMARY_CONDITIONS, SUPPLEMENTARY_CONDITIONS,
 )
 
 SPLITS_PATH = os.path.join(SCRIPT_DIR, '..', 'data', 'splits.json')
@@ -647,18 +647,21 @@ def load_valid_existing_keys(gen_path):
 
 
 def _build_generation_record(c, item, eos_id, model_alias, split, method, alpha,
-                              direction_config_hash, generation_config_hash, prompt_tok_count):
+                              direction_config_hash, generation_config_hash, prompt_tok_count,
+                              analysis_scope):
     token_ids = [int(x) for x in c['generation_tokens'].split()]
     if eos_id in token_ids:
         length, stop_reason = token_ids.index(eos_id) + 1, 'eos'
     else:
         length, stop_reason = len(token_ids), 'max_tokens'
     key = record_key(model_alias, split, item['instruction_id'], item['benign_or_harmful'],
-                      item['template'], method, alpha, direction_config_hash, generation_config_hash)
+                      item['template'], method, alpha, PROTOCOL_VERSION,
+                      direction_config_hash, generation_config_hash)
     return {
         'record_key': key, 'model': model_alias, 'split': split,
         'instruction_id': item['instruction_id'], 'benign_or_harmful': item['benign_or_harmful'],
         'template': item['template'], 'method': method, 'alpha': alpha,
+        'protocol_version': PROTOCOL_VERSION, 'analysis_scope': analysis_scope,
         'direction_config_hash': direction_config_hash, 'generation_config_hash': generation_config_hash,
         'response': c['response'], 'generation_tokens': c['generation_tokens'],
         'generation_length': length, 'stop_reason': stop_reason,
@@ -706,7 +709,8 @@ def run_validation_intervention_method(args):
     for alpha in VALIDATION_ALPHAS:
         for p in all_prompts:
             key = record_key(model_alias, 'validation', p['instruction_id'], p['benign_or_harmful'],
-                              p['template'], method, alpha, direction_config_hash, generation_config_hash)
+                              p['template'], method, alpha, PROTOCOL_VERSION,
+                              direction_config_hash, generation_config_hash)
             if key not in valid_keys:
                 todo.append((p, alpha))
     print(f"{len(todo)} records remaining to generate.")
@@ -766,7 +770,7 @@ def run_validation_intervention_method(args):
                 c[k] = item[k]
             batch_records.append(_build_generation_record(
                 c, item, eos_id, model_alias, 'validation', method, alpha,
-                direction_config_hash, generation_config_hash, ptc))
+                direction_config_hash, generation_config_hash, ptc, args.analysis_scope))
         append_jsonl(gen_path, batch_records)
         n_written += len(batch_records)
         print(f"  batch {start}-{start+len(chunk)}: wrote {len(batch_records)} records "
@@ -801,7 +805,7 @@ def run_no_defence_benign(args):
 
     todo = [p for p in benign_prompts if record_key(
         model_alias, 'validation', p['instruction_id'], p['benign_or_harmful'], p['template'],
-        'no_defence', None, direction_config_hash, generation_config_hash) not in valid_keys]
+        'no_defence', None, PROTOCOL_VERSION, direction_config_hash, generation_config_hash) not in valid_keys]
     print(f"{len(todo)} remaining.")
     if not todo:
         print("Nothing to do.")
@@ -824,7 +828,7 @@ def run_no_defence_benign(args):
                 c[k] = item[k]
             batch_records.append(_build_generation_record(
                 c, item, eos_id, model_alias, 'validation', 'no_defence', None,
-                direction_config_hash, generation_config_hash, ptc))
+                direction_config_hash, generation_config_hash, ptc, 'primary'))
         append_jsonl(gen_path, batch_records)
         print(f"  wrote {len(batch_records)} records")
 
@@ -861,6 +865,7 @@ def run_no_defence_harmful_rejudge(args):
         r['instruction_id'], r['benign_or_harmful'], r['template'] = r['id'], 'harmful', r['condition']
         r['condition'] = r['method'] = 'no_defence'
         r['alpha'] = None
+        r['protocol_version'] = PROTOCOL_VERSION
 
     out_dir = os.path.join(args.output_path, 'canonical_v2')
     os.makedirs(out_dir, exist_ok=True)
@@ -958,6 +963,20 @@ def run_validation_judge(args):
 # them without pulling in torch.
 
 
+def check_analysis_scope(method, analysis_scope):
+    """Pure guard, extracted from main() so it's unit-testable without
+    invoking the full torch/GPU dispatch. Raises ValueError (never silently
+    passes) if a supplementary-only method (global/placebo) is requested
+    without explicitly opting in via --analysis_scope supplementary."""
+    if method in SUPPLEMENTARY_CONDITIONS and analysis_scope != 'supplementary':
+        raise ValueError(
+            f"--method {method!r} is a supplementary-only condition under "
+            f"protocol_version={PROTOCOL_VERSION!r} (primary conditions are {PRIMARY_CONDITIONS}). "
+            f"Pass --analysis_scope supplementary explicitly to run it. Refusing to submit -- "
+            "see EXPERIMENT3_PROTOCOL.md."
+        )
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--phase', choices=['timing-pilot', 'validation'], required=True)
@@ -979,6 +998,13 @@ def main():
                               "(a separate job/step, run only after generation is done). Ignored for "
                               "--no_defence_target harmful_rejudge, which always does both in one step "
                               "(it reads reused completions, not a generation jsonl).")
+    parser.add_argument('--analysis_scope', choices=['primary', 'supplementary'], default='primary',
+                         help=f"Under protocol_version={PROTOCOL_VERSION!r}, main-text RQ3 only covers "
+                              f"{PRIMARY_CONDITIONS} (see EXPERIMENT3_PROTOCOL.md). --method in "
+                              f"{SUPPLEMENTARY_CONDITIONS} must pass --analysis_scope supplementary "
+                              "explicitly, or the job refuses to run -- this prevents an accidental "
+                              "Global/Placebo submission from silently consuming GPU budget meant for "
+                              "the reduced main-text design.")
     args = parser.parse_args()
     args.start_timestamp = datetime.now(timezone.utc).isoformat()
 
@@ -987,6 +1013,10 @@ def main():
         return
 
     assert args.method is not None, "--phase validation requires --method"
+    try:
+        check_analysis_scope(args.method, args.analysis_scope)
+    except ValueError as e:
+        raise SystemExit(str(e))
     if args.method == 'no_defence':
         assert args.no_defence_target in ('benign', 'harmful_rejudge'), \
             "--method no_defence requires --no_defence_target benign|harmful_rejudge"

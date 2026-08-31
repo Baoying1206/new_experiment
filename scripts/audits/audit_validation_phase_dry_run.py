@@ -138,5 +138,44 @@ chosen_none, reason_none, _ = drv.select_alpha(macro_asr_by_alpha, macro_frr_non
 assert chosen_none == 0.0 and reason_none == 'no_nonzero_alpha_satisfies_benign_frr_constraint'
 print(f"Test 9c PASSED: no eligible alpha -> frozen alpha=0.0 with the correct reason string.")
 
+# --- exp3_reduced_v1 scope-cut regression tests ---
+
+# 10. record_key requires protocol_version -- omitting it (old 8-arg call, pre
+# scope-cut signature) must fail loudly, never silently drop the field.
+try:
+    drv.record_key('m', 'validation', 'p1', 'harmful', 'persona_roleplay', 'fixed_wei', 1.0,
+                    'dch', 'gch')  # missing protocol_version
+    raise SystemExit("FAILED: record_key must require protocol_version (old 8-positional-arg call should TypeError)")
+except TypeError:
+    print("Test 10 PASSED: record_key raises TypeError when called without protocol_version "
+          "(the pre-scope-cut call signature is no longer accepted silently).")
+
+# 11. record_key changes when ONLY protocol_version differs -- old-protocol
+# (e.g. already-generated Global) records must never collide with new-protocol
+# (Fixed Wei/Adaptive/No-defence) records even if every other field matches.
+key_old_protocol = drv.record_key('Meta-Llama-3.1-8B-Instruct', 'validation', 'p1', 'harmful',
+                                   'persona_roleplay', 'fixed_wei', 1.0, 'unprotocoled',
+                                   'dch', 'gch')
+key_new_protocol = drv.record_key('Meta-Llama-3.1-8B-Instruct', 'validation', 'p1', 'harmful',
+                                   'persona_roleplay', 'fixed_wei', 1.0, drv.PROTOCOL_VERSION,
+                                   'dch', 'gch')
+assert key_old_protocol != key_new_protocol, "record_key must be sensitive to protocol_version"
+print("Test 11 PASSED: record_key produces a different key when only protocol_version differs.")
+
+# 12. check_analysis_scope: global/placebo are gated, fixed_wei/adaptive/no_defence are not.
+for gated_method in ('global', 'placebo'):
+    try:
+        drv.check_analysis_scope(gated_method, 'primary')
+        raise SystemExit(f"FAILED: --method {gated_method} with --analysis_scope primary (default) "
+                          "must be refused under exp3_reduced_v1")
+    except ValueError as e:
+        assert 'supplementary' in str(e)
+    drv.check_analysis_scope(gated_method, 'supplementary')  # must NOT raise
+for primary_method in ('fixed_wei', 'adaptive', 'no_defence'):
+    drv.check_analysis_scope(primary_method, 'primary')  # must NOT raise
+print("Test 12 PASSED: check_analysis_scope refuses global/placebo under --analysis_scope primary "
+      "(the default) and only allows them with an explicit --analysis_scope supplementary; "
+      "fixed_wei/adaptive/no_defence are never gated.")
+
 print()
 print("ALL VALIDATION-PHASE LOGIC TESTS PASSED.")

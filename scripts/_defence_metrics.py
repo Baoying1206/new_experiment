@@ -34,6 +34,17 @@ JUDGE_MODEL_VERSION = 'allenai/wildguard'
 VALIDATION_ALPHAS = [0.25, 0.5, 1.0, 1.5]
 BENIGN_FRR_MAX_INCREASE_PP = 5.0  # percentage points, vs No-defence
 
+# Protocol revision: main-text RQ3 was narrowed to a 3-condition design
+# (no_defence, fixed_wei, adaptive) before any validation summary or test
+# evaluation had been viewed -- see EXPERIMENT3_PROTOCOL.md for the full
+# rationale and history. global/placebo remain runnable only under
+# --analysis_scope supplementary; template_specific stays disabled (was
+# never a runnable driver method to begin with).
+PROTOCOL_VERSION = 'exp3_reduced_v1'
+PRIMARY_CONDITIONS = ['no_defence', 'fixed_wei', 'adaptive']
+SUPPLEMENTARY_CONDITIONS = ['global', 'placebo']
+EXCLUDED_CONDITIONS = ['template_specific']
+
 
 def sha256_hex(obj):
     s = json.dumps(obj, sort_keys=True, ensure_ascii=False) if isinstance(obj, (dict, list)) else str(obj)
@@ -56,11 +67,17 @@ def git_commit_hash():
 
 
 def record_key(model, split, instruction_id, benign_or_harmful, template, method, alpha,
-                direction_config_hash, generation_config_hash):
+                protocol_version, direction_config_hash, generation_config_hash):
+    """protocol_version is a required field (no default) so that every caller
+    must consciously pass it -- records generated under a different protocol
+    revision (e.g. before the exp3_reduced_v1 scope cut) get a DIFFERENT key
+    even if every other field is identical, so they are never silently
+    treated as satisfying a newer protocol's resume/completeness check."""
     payload = {
         'model': model, 'split': split, 'instruction_id': instruction_id,
         'benign_or_harmful': benign_or_harmful, 'template': template, 'method': method,
-        'alpha': alpha, 'direction_config_hash': direction_config_hash,
+        'alpha': alpha, 'protocol_version': protocol_version,
+        'direction_config_hash': direction_config_hash,
         'generation_config_hash': generation_config_hash,
     }
     return sha256_hex(payload)
