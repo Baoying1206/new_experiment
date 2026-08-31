@@ -528,6 +528,61 @@ duplicate-judgement-key detection, a forced real collision raises
 immediately, macro vs pooled differ on deliberately imbalanced synthetic
 data (proving no accidental mixing), parse failures excluded and counted.
 
+### Critical bug found via real data: instruction_en was the wrapped prompt
+
+Running `41_join_and_summarize_defence_validation.py` on the real Llama x
+global data (job 4982/4984, `OVERALL_PASS: True` after the earlier fix)
+showed `encoding_obfuscation`'s `asr_denom=0` across all 4 alphas (288/288
+records) -- traced to `pipeline`'s `generate_completions()` setting
+`instructions_en = [x['instruction'] for x in dataset]` **unconditionally**
+(never reading our own `instruction_en` field). Since our prompt dicts set
+`item['instruction']` = the rendered/wrapped text (correct model input) and
+`item['instruction_en']` = the true plain original (intended for judging),
+every returned `c['instruction_en']` was simply a duplicate of the wrapped
+prompt. WildGuard was judging against the wrapped prompt for every record,
+not just `encoding_obfuscation` -- that template is just where the effect
+is total and unmistakable (base64 gibberish has no legible harmful content,
+so `request_harmful` reads 0 every time); the other 5 templates likely have
+a subtler, not-yet-quantified distortion since the harmful content usually
+stays legible even wrapped.
+
+Fixed in `40_defence_generation_driver.py` (commit `d4ed608`): both
+`_build_generation_record` and `run_condition`'s per-completion
+re-attachment loop now read `item['instruction_en']`, never
+`c['instruction_en']`. `run_no_defence_harmful_rejudge` was unaffected --
+it reads `completions_en_full572_corrected.json`, which
+`03_generate_and_label.py` already re-attached `instruction_en` correctly
+for. Regression test: `audit_defence_driver_chunking_dry_run.py` Test A2.
+
+**Responses themselves are valid** (the target model received the correct
+wrapped `instruction`) -- only the judging reference text was wrong, so
+repair (not regeneration) is possible: `scripts/42_repair_validation_instruction_en.py`
+re-derives the true plain text per record from `(instruction_id,
+benign_or_harmful)` alone (harmful -> `data/sampled_prompts.json`, benign
+-> `data/benign_validation_80.json`), dry-run by default, atomic write
+under `--apply`, refuses to run if any instruction_id can't be resolved,
+verifies all non-`instruction_en` fields stay byte-identical. Because
+`judge_cache_key` depends on `instruction_en`, repairing it changes every
+record's key -- **the existing judgement file for a repaired (model,
+method) becomes entirely stale and must be re-judged from scratch**
+(the script prints this as an explicit next step, does not do it itself).
+4 tests in `scripts/audits/audit_instruction_en_repair_dry_run.py` (using
+real `sampled_prompts.json`/`benign_validation_80.json` ids against a
+temp output dir): dry run writes nothing, apply fixes exactly the wrong
+rows, non-`instruction_en` fields stay identical, a second apply is
+idempotent.
+
+**Recovery sequence for the real Llama x global data** (not yet run):
+```
+python3 scripts/42_repair_validation_instruction_en.py --model_alias Meta-Llama-3.1-8B-Instruct --method global --output_path output          # dry run
+python3 scripts/42_repair_validation_instruction_en.py --model_alias Meta-Llama-3.1-8B-Instruct --method global --output_path output --apply   # apply
+mv output/canonical_v2/experiment3_validation_judgements_Meta-Llama-3.1-8B-Instruct_global.jsonl{,.stale_pre_instruction_en_fix}
+# re-run STAGE=judge for this (model, method), then re-run 41_join_and_summarize_defence_validation.py
+```
+The timing-pilot outputs (all 3 models) have the same defect but are not
+a reportable result (see the timing-pilot section above) -- no repair
+priority unless they're needed again later.
+
 ## Conventions
 
 - **Model alias** is always the HuggingFace-style directory name: `Qwen2.5-7B-Instruct`, `Meta-Llama-3.1-8B-Instruct`, `gemma-2-9b-it` — matches `MODEL_ALIASES` arrays in every `slurm/*.sh`.
