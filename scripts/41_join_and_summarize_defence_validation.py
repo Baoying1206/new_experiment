@@ -182,7 +182,12 @@ def build_join_audit(gen_path, judge_path, gen_rows, judge_rows, joined_rows, mi
     }
 
     all_checks = {**gen_checks, **judge_checks, **join_checks}
-    overall_pass = all(v.get('pass', False) for v in all_checks.values())
+    # Only entries that actually carry a 'pass' key represent a real invariant --
+    # a purely informational entry (e.g. parse_success_count, which just reports
+    # a count with no violatable condition) must never silently drag overall_pass
+    # to False just because it has no 'pass' key at all.
+    pass_bearing = {k: v for k, v in all_checks.items() if 'pass' in v}
+    overall_pass = all(v['pass'] for v in pass_bearing.values())
 
     warnings = []
     if n_parse_failure > 0:
@@ -364,8 +369,6 @@ def main(args):
         'distinct_direction_hashes_found': dup_dir, 'distinct_generation_hashes_found': dup_gen,
     }
     judge_checks, n_parse_failure = preflight_judgement_checks(judge_rows)
-    for name, c in {**gen_checks, **judge_checks}.items():
-        print(f"  [{'PASS' if c.get('pass', True) else 'FAIL'}] {name}: {c}")
 
     judge_lookup = {j['judge_cache_key']: j for j in judge_rows}
     joined_rows, missing_keys = join_generation_and_judgement(gen_rows, judge_lookup)
@@ -373,6 +376,17 @@ def main(args):
     audit = build_join_audit(gen_path, judge_path, gen_rows, judge_rows, joined_rows, missing_keys,
                               gen_checks, judge_checks, n_parse_failure, model_alias, args.method,
                               taxonomy, direction_config_hash, generation_config_hash, git_commit)
+
+    # Print EVERY check (generation + judgement + join) here, after the join has run --
+    # entries with no 'pass' key are informational (e.g. parse_success_count) and are
+    # labeled INFO, never silently treated as PASS or made to affect OVERALL_PASS.
+    for name, c in audit['checks'].items():
+        if 'pass' in c:
+            label = 'PASS' if c['pass'] else 'FAIL'
+        else:
+            label = 'INFO'
+        print(f"  [{label}] {name}: {c}")
+
     print(f"\nJoin audit: generation_rows={audit['generation_rows']} "
           f"unique_judgement_rows={audit['unique_judgement_rows']} "
           f"expanded_joined_rows={audit['expanded_joined_rows']} "

@@ -158,6 +158,52 @@ def main():
     assert stats['asr'] == 1.0  # the one valid row was request_harmful=1,refusal=0,response_harmful=1
     print(f"Test 6 PASSED: parse failure correctly excluded from ASR denominator and separately counted: {stats}")
 
+    # ---- Test 7: a fully-clean, fully-consistent dataset must get OVERALL_PASS=True ----
+    # Regression test for a real bug found on the cluster: preflight_judgement_checks'
+    # 'parse_success_count' entry is purely informational (no 'pass' key by design), but
+    # overall_pass was computed as all(v.get('pass', False) ...) -- defaulting a MISSING
+    # key to False silently dragged overall_pass to False even when every real check
+    # passed. This test would have caught that: a clean, consistent, zero-defect dataset
+    # must produce overall_pass=True.
+    clean_gen = [
+        make_gen_row('c1', 'templateA', 0.5, 'harmful', 'ic1', 'rc1',
+                      record_key='k1'),
+        make_gen_row('c2', 'templateA', 0.5, 'benign', 'ic2', 'rc2',
+                      record_key='k2'),
+    ]
+    for r in clean_gen:
+        r['direction_config_hash'] = 'DCH'
+        r['generation_config_hash'] = 'GCH'
+    clean_judge = [
+        make_judgement('ic1', 'rc1', 1, 0, 1),
+        make_judgement('ic2', 'rc2', 0, 1, 0),
+    ]
+    clean_lookup = {j['judge_cache_key']: j for j in clean_judge}
+    clean_joined, clean_missing = join_mod.join_generation_and_judgement(clean_gen, clean_lookup)
+    # A minimal but ALL-PASSING stand-in for gen_checks -- deliberately NOT
+    # preflight_generation_checks() (that function hardcodes production-scale
+    # counts like 3,648/1,728/1,920, which a 2-row fixture would legitimately
+    # fail for an unrelated reason, defeating the point of isolating THIS bug).
+    gen_checks = {
+        'total_count': {'value': 2, 'expected': 2, 'pass': True},
+        'no_duplicate_record_key': {'pass': True, 'n_duplicates': 0, 'sample': []},
+    }
+    judge_checks, n_pf = join_mod.preflight_judgement_checks(clean_judge)
+    direction_hash, generation_hash, consistent, _, _ = join_mod.extract_and_verify_config_hashes(clean_gen)
+    gen_checks['config_hashes_consistent'] = {'pass': consistent}
+    assert consistent, "clean synthetic fixture must have consistent config hashes"
+    audit = join_mod.build_join_audit(
+        'fake_gen_path', 'fake_judge_path', clean_gen, clean_judge, clean_joined, clean_missing,
+        gen_checks, judge_checks, n_pf, 'FakeModel', 'global',
+        {'taxonomy_version': 'wei_canonical_v2', 'CO_mechs': [], 'MG_mechs': []},
+        direction_hash, generation_hash, 'fakecommit')
+    assert audit['overall_pass'] is True, (
+        f"a fully clean/consistent dataset must get overall_pass=True, got {audit['overall_pass']}: "
+        f"{ {k: v for k, v in audit['checks'].items() if not v.get('pass', True) and 'pass' in v} }"
+    )
+    print("Test 7 PASSED: a fully-clean synthetic dataset gets OVERALL_PASS=True "
+          "(informational-only checks like parse_success_count no longer drag it to False).")
+
     print()
     print("ALL JOIN/SUMMARIZE TESTS PASSED.")
 
