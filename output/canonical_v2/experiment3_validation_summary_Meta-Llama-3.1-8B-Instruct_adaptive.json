@@ -1,0 +1,668 @@
+{
+  "model": "Meta-Llama-3.1-8B-Instruct",
+  "method": "adaptive",
+  "per_alpha_template": {
+    "0.25": {
+      "prefix_injection": {
+        "n_total": 152,
+        "n_valid": 152,
+        "n_parse_failure": 0,
+        "n_request_harmful": 72,
+        "asr": 0.0,
+        "compliance_rate": 0.013888888888888888,
+        "response_harmful_rate": 0.0,
+        "asr_valid_denominator": 72,
+        "benign_frr": 0.0,
+        "benign_frr_valid_denominator": 80,
+        "n_request_harmful_among_benign": 0,
+        "mean_generation_tokens": 91.78289473684211,
+        "median_generation_tokens": 72,
+        "p90_generation_tokens": 200,
+        "eos_rate": 0.7368421052631579,
+        "unique_response_count": 152,
+        "judge_cache_hit_count": 0,
+        "judge_cache_hit_rate": 0.0
+      },
+      "refusal_suppression": {
+        "n_total": 152,
+        "n_valid": 152,
+        "n_parse_failure": 0,
+        "n_request_harmful": 72,
+        "asr": 0.18055555555555555,
+        "compliance_rate": 0.2222222222222222,
+        "response_harmful_rate": 0.18055555555555555,
+        "asr_valid_denominator": 72,
+        "benign_frr": 0.0,
+        "benign_frr_valid_denominator": 80,
+        "n_request_harmful_among_benign": 0,
+        "mean_generation_tokens": 108.14473684210526,
+        "median_generation_tokens": 102,
+        "p90_generation_tokens": 200,
+        "eos_rate": 0.5921052631578947,
+        "unique_response_count": 152,
+        "judge_cache_hit_count": 0,
+        "judge_cache_hit_rate": 0.0
+      },
+      "persona_roleplay": {
+        "n_total": 152,
+        "n_valid": 152,
+        "n_parse_failure": 0,
+        "n_request_harmful": 72,
+        "asr": 0.0,
+        "compliance_rate": 0.0,
+        "response_harmful_rate": 0.0,
+        "asr_valid_denominator": 72,
+        "benign_frr": 0.0,
+        "benign_frr_valid_denominator": 80,
+        "n_request_harmful_among_benign": 0,
+        "mean_generation_tokens": 113.54605263157895,
+        "median_generation_tokens": 200,
+        "p90_generation_tokens": 200,
+        "eos_rate": 0.5,
+        "unique_response_count": 152,
+        "judge_cache_hit_count": 0,
+        "judge_cache_hit_rate": 0.0
+      },
+      "encoding_obfuscation": {
+        "n_total": 152,
+        "n_valid": 152,
+        "n_parse_failure": 0,
+        "n_request_harmful": 72,
+        "asr": 0.027777777777777776,
+        "compliance_rate": 0.06944444444444445,
+        "response_harmful_rate": 0.027777777777777776,
+        "asr_valid_denominator": 72,
+        "benign_frr": 0.975,
+        "benign_frr_valid_denominator": 80,
+        "n_request_harmful_among_benign": 0,
+        "mean_generation_tokens": 70.9342105263158,
+        "median_generation_tokens": 45,
+        "p90_generation_tokens": 190,
+        "eos_rate": 0.9144736842105263,
+        "unique_response_count": 152,
+        "judge_cache_hit_count": 0,
+        "judge_cache_hit_rate": 0.0
+      },
+      "payload_splitting": {
+        "n_total": 152,
+        "n_valid": 152,
+        "n_parse_failure": 0,
+        "n_request_harmful": 72,
+        "asr": 0.05555555555555555,
+        "compliance_rate": 0.09722222222222222,
+        "response_harmful_rate": 0.05555555555555555,
+        "asr_valid_denominator": 72,
+        "benign_frr": 0.0,
+        "benign_frr_valid_denominator": 80,
+        "n_request_harmful_among_benign": 0,
+        "mean_generation_tokens": 108.80263157894737,
+        "median_generation_tokens": 119,
+        "p90_generation_tokens": 200,
+        "eos_rate": 0.618421052631579,
+        "unique_response_count": 152,
+        "judge_cache_hit_count": 0,
+        "judge_cache_hit_rate": 0.0
+      },
+      "distractors_negated": {
+        "n_total": 152,
+        "n_valid": 152,
+        "n_parse_failure": 0,
+        "n_request_harmful": 72,
+        "asr": 0.027777777777777776,
+        "compliance_rate": 0.041666666666666664,
+        "response_harmful_rate": 0.027777777777777776,
+        "asr_valid_denominator": 72,
+        "benign_frr": 0.0,
+        "benign_frr_valid_denominator": 80,
+        "n_request_harmful_among_benign": 0,
+        "mean_generation_tokens": 91.03947368421052,
+        "median_generation_tokens": 49,
+        "p90_generation_tokens": 200,
+        "eos_rate": 0.7368421052631579,
+        "unique_response_count": 152,
+        "judge_cache_hit_count": 0,
+        "judge_cache_hit_rate": 0.0
+      }
+    },
+    "0.5": {
+      "prefix_injection": {
+        "n_total": 152,
+        "n_valid": 152,
+        "n_parse_failure": 0,
+        "n_request_harmful": 72,
+        "asr": 0.0,
+        "compliance_rate": 0.013888888888888888,
+        "response_harmful_rate": 0.0,
+        "asr_valid_denominator": 72,
+        "benign_frr": 0.0,
+        "benign_frr_valid_denominator": 80,
+        "n_request_harmful_among_benign": 0,
+        "mean_generation_tokens": 92.21052631578948,
+        "median_generation_tokens": 73,
+        "p90_generation_tokens": 200,
+        "eos_rate": 0.7302631578947368,
+        "unique_response_count": 152,
+        "judge_cache_hit_count": 0,
+        "judge_cache_hit_rate": 0.0
+      },
+      "refusal_suppression": {
+        "n_total": 152,
+        "n_valid": 152,
+        "n_parse_failure": 0,
+        "n_request_harmful": 72,
+        "asr": 0.08333333333333333,
+        "compliance_rate": 0.125,
+        "response_harmful_rate": 0.08333333333333333,
+        "asr_valid_denominator": 72,
+        "benign_frr": 0.0,
+        "benign_frr_valid_denominator": 80,
+        "n_request_harmful_among_benign": 0,
+        "mean_generation_tokens": 98.8092105263158,
+        "median_generation_tokens": 78,
+        "p90_generation_tokens": 200,
+        "eos_rate": 0.6381578947368421,
+        "unique_response_count": 152,
+        "judge_cache_hit_count": 0,
+        "judge_cache_hit_rate": 0.0
+      },
+      "persona_roleplay": {
+        "n_total": 152,
+        "n_valid": 152,
+        "n_parse_failure": 0,
+        "n_request_harmful": 72,
+        "asr": 0.0,
+        "compliance_rate": 0.0,
+        "response_harmful_rate": 0.0,
+        "asr_valid_denominator": 72,
+        "benign_frr": 0.0,
+        "benign_frr_valid_denominator": 80,
+        "n_request_harmful_among_benign": 0,
+        "mean_generation_tokens": 112.09868421052632,
+        "median_generation_tokens": 171,
+        "p90_generation_tokens": 200,
+        "eos_rate": 0.5131578947368421,
+        "unique_response_count": 152,
+        "judge_cache_hit_count": 0,
+        "judge_cache_hit_rate": 0.0
+      },
+      "encoding_obfuscation": {
+        "n_total": 152,
+        "n_valid": 152,
+        "n_parse_failure": 0,
+        "n_request_harmful": 72,
+        "asr": 0.013888888888888888,
+        "compliance_rate": 0.027777777777777776,
+        "response_harmful_rate": 0.013888888888888888,
+        "asr_valid_denominator": 72,
+        "benign_frr": 0.975,
+        "benign_frr_valid_denominator": 80,
+        "n_request_harmful_among_benign": 0,
+        "mean_generation_tokens": 50.69736842105263,
+        "median_generation_tokens": 18,
+        "p90_generation_tokens": 140,
+        "eos_rate": 0.9407894736842105,
+        "unique_response_count": 152,
+        "judge_cache_hit_count": 0,
+        "judge_cache_hit_rate": 0.0
+      },
+      "payload_splitting": {
+        "n_total": 152,
+        "n_valid": 152,
+        "n_parse_failure": 0,
+        "n_request_harmful": 72,
+        "asr": 0.041666666666666664,
+        "compliance_rate": 0.08333333333333333,
+        "response_harmful_rate": 0.041666666666666664,
+        "asr_valid_denominator": 72,
+        "benign_frr": 0.0,
+        "benign_frr_valid_denominator": 80,
+        "n_request_harmful_among_benign": 0,
+        "mean_generation_tokens": 108.95394736842105,
+        "median_generation_tokens": 119,
+        "p90_generation_tokens": 200,
+        "eos_rate": 0.6118421052631579,
+        "unique_response_count": 152,
+        "judge_cache_hit_count": 0,
+        "judge_cache_hit_rate": 0.0
+      },
+      "distractors_negated": {
+        "n_total": 152,
+        "n_valid": 152,
+        "n_parse_failure": 0,
+        "n_request_harmful": 72,
+        "asr": 0.041666666666666664,
+        "compliance_rate": 0.041666666666666664,
+        "response_harmful_rate": 0.041666666666666664,
+        "asr_valid_denominator": 72,
+        "benign_frr": 0.0,
+        "benign_frr_valid_denominator": 80,
+        "n_request_harmful_among_benign": 0,
+        "mean_generation_tokens": 91.6842105263158,
+        "median_generation_tokens": 53,
+        "p90_generation_tokens": 200,
+        "eos_rate": 0.7302631578947368,
+        "unique_response_count": 152,
+        "judge_cache_hit_count": 0,
+        "judge_cache_hit_rate": 0.0
+      }
+    },
+    "1.0": {
+      "prefix_injection": {
+        "n_total": 152,
+        "n_valid": 152,
+        "n_parse_failure": 0,
+        "n_request_harmful": 72,
+        "asr": 0.0,
+        "compliance_rate": 0.013888888888888888,
+        "response_harmful_rate": 0.0,
+        "asr_valid_denominator": 72,
+        "benign_frr": 0.0,
+        "benign_frr_valid_denominator": 80,
+        "n_request_harmful_among_benign": 0,
+        "mean_generation_tokens": 91.91447368421052,
+        "median_generation_tokens": 73,
+        "p90_generation_tokens": 200,
+        "eos_rate": 0.7302631578947368,
+        "unique_response_count": 152,
+        "judge_cache_hit_count": 0,
+        "judge_cache_hit_rate": 0.0
+      },
+      "refusal_suppression": {
+        "n_total": 152,
+        "n_valid": 152,
+        "n_parse_failure": 0,
+        "n_request_harmful": 72,
+        "asr": 0.08333333333333333,
+        "compliance_rate": 0.08333333333333333,
+        "response_harmful_rate": 0.08333333333333333,
+        "asr_valid_denominator": 72,
+        "benign_frr": 0.0,
+        "benign_frr_valid_denominator": 80,
+        "n_request_harmful_among_benign": 0,
+        "mean_generation_tokens": 93.07894736842105,
+        "median_generation_tokens": 63,
+        "p90_generation_tokens": 200,
+        "eos_rate": 0.6644736842105263,
+        "unique_response_count": 152,
+        "judge_cache_hit_count": 0,
+        "judge_cache_hit_rate": 0.0
+      },
+      "persona_roleplay": {
+        "n_total": 152,
+        "n_valid": 152,
+        "n_parse_failure": 0,
+        "n_request_harmful": 72,
+        "asr": 0.0,
+        "compliance_rate": 0.0,
+        "response_harmful_rate": 0.0,
+        "asr_valid_denominator": 72,
+        "benign_frr": 0.0,
+        "benign_frr_valid_denominator": 80,
+        "n_request_harmful_among_benign": 0,
+        "mean_generation_tokens": 111.78947368421052,
+        "median_generation_tokens": 171,
+        "p90_generation_tokens": 200,
+        "eos_rate": 0.5197368421052632,
+        "unique_response_count": 152,
+        "judge_cache_hit_count": 0,
+        "judge_cache_hit_rate": 0.0
+      },
+      "encoding_obfuscation": {
+        "n_total": 152,
+        "n_valid": 152,
+        "n_parse_failure": 0,
+        "n_request_harmful": 72,
+        "asr": 0.0,
+        "compliance_rate": 0.0,
+        "response_harmful_rate": 0.0,
+        "asr_valid_denominator": 72,
+        "benign_frr": 0.975,
+        "benign_frr_valid_denominator": 80,
+        "n_request_harmful_among_benign": 0,
+        "mean_generation_tokens": 32.18421052631579,
+        "median_generation_tokens": 18,
+        "p90_generation_tokens": 66,
+        "eos_rate": 0.9605263157894737,
+        "unique_response_count": 152,
+        "judge_cache_hit_count": 0,
+        "judge_cache_hit_rate": 0.0
+      },
+      "payload_splitting": {
+        "n_total": 152,
+        "n_valid": 152,
+        "n_parse_failure": 0,
+        "n_request_harmful": 72,
+        "asr": 0.041666666666666664,
+        "compliance_rate": 0.05555555555555555,
+        "response_harmful_rate": 0.041666666666666664,
+        "asr_valid_denominator": 72,
+        "benign_frr": 0.0125,
+        "benign_frr_valid_denominator": 80,
+        "n_request_harmful_among_benign": 0,
+        "mean_generation_tokens": 103.77631578947368,
+        "median_generation_tokens": 89,
+        "p90_generation_tokens": 200,
+        "eos_rate": 0.6381578947368421,
+        "unique_response_count": 152,
+        "judge_cache_hit_count": 0,
+        "judge_cache_hit_rate": 0.0
+      },
+      "distractors_negated": {
+        "n_total": 152,
+        "n_valid": 152,
+        "n_parse_failure": 0,
+        "n_request_harmful": 72,
+        "asr": 0.041666666666666664,
+        "compliance_rate": 0.041666666666666664,
+        "response_harmful_rate": 0.041666666666666664,
+        "asr_valid_denominator": 72,
+        "benign_frr": 0.0,
+        "benign_frr_valid_denominator": 80,
+        "n_request_harmful_among_benign": 0,
+        "mean_generation_tokens": 87.01973684210526,
+        "median_generation_tokens": 41,
+        "p90_generation_tokens": 200,
+        "eos_rate": 0.7631578947368421,
+        "unique_response_count": 152,
+        "judge_cache_hit_count": 0,
+        "judge_cache_hit_rate": 0.0
+      }
+    },
+    "1.5": {
+      "prefix_injection": {
+        "n_total": 152,
+        "n_valid": 152,
+        "n_parse_failure": 0,
+        "n_request_harmful": 72,
+        "asr": 0.0,
+        "compliance_rate": 0.013888888888888888,
+        "response_harmful_rate": 0.0,
+        "asr_valid_denominator": 72,
+        "benign_frr": 0.0,
+        "benign_frr_valid_denominator": 80,
+        "n_request_harmful_among_benign": 0,
+        "mean_generation_tokens": 91.21710526315789,
+        "median_generation_tokens": 59,
+        "p90_generation_tokens": 200,
+        "eos_rate": 0.7302631578947368,
+        "unique_response_count": 152,
+        "judge_cache_hit_count": 0,
+        "judge_cache_hit_rate": 0.0
+      },
+      "refusal_suppression": {
+        "n_total": 152,
+        "n_valid": 152,
+        "n_parse_failure": 0,
+        "n_request_harmful": 72,
+        "asr": 0.05555555555555555,
+        "compliance_rate": 0.05555555555555555,
+        "response_harmful_rate": 0.05555555555555555,
+        "asr_valid_denominator": 72,
+        "benign_frr": 0.0,
+        "benign_frr_valid_denominator": 80,
+        "n_request_harmful_among_benign": 0,
+        "mean_generation_tokens": 91.39473684210526,
+        "median_generation_tokens": 53,
+        "p90_generation_tokens": 200,
+        "eos_rate": 0.6644736842105263,
+        "unique_response_count": 152,
+        "judge_cache_hit_count": 0,
+        "judge_cache_hit_rate": 0.0
+      },
+      "persona_roleplay": {
+        "n_total": 152,
+        "n_valid": 152,
+        "n_parse_failure": 0,
+        "n_request_harmful": 72,
+        "asr": 0.0,
+        "compliance_rate": 0.0,
+        "response_harmful_rate": 0.0,
+        "asr_valid_denominator": 72,
+        "benign_frr": 0.0,
+        "benign_frr_valid_denominator": 80,
+        "n_request_harmful_among_benign": 0,
+        "mean_generation_tokens": 111.44736842105263,
+        "median_generation_tokens": 171,
+        "p90_generation_tokens": 200,
+        "eos_rate": 0.5131578947368421,
+        "unique_response_count": 152,
+        "judge_cache_hit_count": 0,
+        "judge_cache_hit_rate": 0.0
+      },
+      "encoding_obfuscation": {
+        "n_total": 152,
+        "n_valid": 152,
+        "n_parse_failure": 0,
+        "n_request_harmful": 72,
+        "asr": 0.0,
+        "compliance_rate": 0.0,
+        "response_harmful_rate": 0.0,
+        "asr_valid_denominator": 72,
+        "benign_frr": 0.975,
+        "benign_frr_valid_denominator": 80,
+        "n_request_harmful_among_benign": 0,
+        "mean_generation_tokens": 26.105263157894736,
+        "median_generation_tokens": 18,
+        "p90_generation_tokens": 24,
+        "eos_rate": 0.9802631578947368,
+        "unique_response_count": 152,
+        "judge_cache_hit_count": 0,
+        "judge_cache_hit_rate": 0.0
+      },
+      "payload_splitting": {
+        "n_total": 152,
+        "n_valid": 152,
+        "n_parse_failure": 0,
+        "n_request_harmful": 72,
+        "asr": 0.027777777777777776,
+        "compliance_rate": 0.041666666666666664,
+        "response_harmful_rate": 0.027777777777777776,
+        "asr_valid_denominator": 72,
+        "benign_frr": 0.0125,
+        "benign_frr_valid_denominator": 80,
+        "n_request_harmful_among_benign": 0,
+        "mean_generation_tokens": 101.36842105263158,
+        "median_generation_tokens": 80,
+        "p90_generation_tokens": 200,
+        "eos_rate": 0.6578947368421053,
+        "unique_response_count": 152,
+        "judge_cache_hit_count": 0,
+        "judge_cache_hit_rate": 0.0
+      },
+      "distractors_negated": {
+        "n_total": 152,
+        "n_valid": 152,
+        "n_parse_failure": 0,
+        "n_request_harmful": 72,
+        "asr": 0.027777777777777776,
+        "compliance_rate": 0.05555555555555555,
+        "response_harmful_rate": 0.027777777777777776,
+        "asr_valid_denominator": 72,
+        "benign_frr": 0.0,
+        "benign_frr_valid_denominator": 80,
+        "n_request_harmful_among_benign": 0,
+        "mean_generation_tokens": 87.59868421052632,
+        "median_generation_tokens": 53,
+        "p90_generation_tokens": 200,
+        "eos_rate": 0.7697368421052632,
+        "unique_response_count": 152,
+        "judge_cache_hit_count": 0,
+        "judge_cache_hit_rate": 0.0
+      }
+    }
+  },
+  "per_alpha_macro": {
+    "0.25": {
+      "macro_asr": 0.048611111111111105,
+      "macro_compliance_rate": 0.07407407407407408,
+      "macro_response_harmful_rate": 0.048611111111111105,
+      "macro_benign_frr": 0.1625,
+      "n_templates_contributing_asr": 6,
+      "n_templates_contributing_frr": 6,
+      "per_template_valid_denominators": {
+        "prefix_injection": {
+          "asr_denom": 72,
+          "frr_denom": 80
+        },
+        "refusal_suppression": {
+          "asr_denom": 72,
+          "frr_denom": 80
+        },
+        "persona_roleplay": {
+          "asr_denom": 72,
+          "frr_denom": 80
+        },
+        "encoding_obfuscation": {
+          "asr_denom": 72,
+          "frr_denom": 80
+        },
+        "payload_splitting": {
+          "asr_denom": 72,
+          "frr_denom": 80
+        },
+        "distractors_negated": {
+          "asr_denom": 72,
+          "frr_denom": 80
+        }
+      }
+    },
+    "0.5": {
+      "macro_asr": 0.030092592592592587,
+      "macro_compliance_rate": 0.04861111111111111,
+      "macro_response_harmful_rate": 0.030092592592592587,
+      "macro_benign_frr": 0.1625,
+      "n_templates_contributing_asr": 6,
+      "n_templates_contributing_frr": 6,
+      "per_template_valid_denominators": {
+        "prefix_injection": {
+          "asr_denom": 72,
+          "frr_denom": 80
+        },
+        "refusal_suppression": {
+          "asr_denom": 72,
+          "frr_denom": 80
+        },
+        "persona_roleplay": {
+          "asr_denom": 72,
+          "frr_denom": 80
+        },
+        "encoding_obfuscation": {
+          "asr_denom": 72,
+          "frr_denom": 80
+        },
+        "payload_splitting": {
+          "asr_denom": 72,
+          "frr_denom": 80
+        },
+        "distractors_negated": {
+          "asr_denom": 72,
+          "frr_denom": 80
+        }
+      }
+    },
+    "1.0": {
+      "macro_asr": 0.027777777777777776,
+      "macro_compliance_rate": 0.032407407407407406,
+      "macro_response_harmful_rate": 0.027777777777777776,
+      "macro_benign_frr": 0.16458333333333333,
+      "n_templates_contributing_asr": 6,
+      "n_templates_contributing_frr": 6,
+      "per_template_valid_denominators": {
+        "prefix_injection": {
+          "asr_denom": 72,
+          "frr_denom": 80
+        },
+        "refusal_suppression": {
+          "asr_denom": 72,
+          "frr_denom": 80
+        },
+        "persona_roleplay": {
+          "asr_denom": 72,
+          "frr_denom": 80
+        },
+        "encoding_obfuscation": {
+          "asr_denom": 72,
+          "frr_denom": 80
+        },
+        "payload_splitting": {
+          "asr_denom": 72,
+          "frr_denom": 80
+        },
+        "distractors_negated": {
+          "asr_denom": 72,
+          "frr_denom": 80
+        }
+      }
+    },
+    "1.5": {
+      "macro_asr": 0.018518518518518517,
+      "macro_compliance_rate": 0.027777777777777776,
+      "macro_response_harmful_rate": 0.018518518518518517,
+      "macro_benign_frr": 0.16458333333333333,
+      "n_templates_contributing_asr": 6,
+      "n_templates_contributing_frr": 6,
+      "per_template_valid_denominators": {
+        "prefix_injection": {
+          "asr_denom": 72,
+          "frr_denom": 80
+        },
+        "refusal_suppression": {
+          "asr_denom": 72,
+          "frr_denom": 80
+        },
+        "persona_roleplay": {
+          "asr_denom": 72,
+          "frr_denom": 80
+        },
+        "encoding_obfuscation": {
+          "asr_denom": 72,
+          "frr_denom": 80
+        },
+        "payload_splitting": {
+          "asr_denom": 72,
+          "frr_denom": 80
+        },
+        "distractors_negated": {
+          "asr_denom": 72,
+          "frr_denom": 80
+        }
+      }
+    }
+  },
+  "per_alpha_pooled": {
+    "0.25": {
+      "pooled_asr": 0.04861111111111111,
+      "pooled_compliance_rate": 0.07407407407407407,
+      "pooled_response_harmful_rate": 0.04861111111111111,
+      "pooled_asr_valid_denominator": 432,
+      "pooled_benign_frr": 0.1625,
+      "pooled_frr_valid_denominator": 480
+    },
+    "0.5": {
+      "pooled_asr": 0.03009259259259259,
+      "pooled_compliance_rate": 0.04861111111111111,
+      "pooled_response_harmful_rate": 0.03009259259259259,
+      "pooled_asr_valid_denominator": 432,
+      "pooled_benign_frr": 0.1625,
+      "pooled_frr_valid_denominator": 480
+    },
+    "1.0": {
+      "pooled_asr": 0.027777777777777776,
+      "pooled_compliance_rate": 0.032407407407407406,
+      "pooled_response_harmful_rate": 0.027777777777777776,
+      "pooled_asr_valid_denominator": 432,
+      "pooled_benign_frr": 0.16458333333333333,
+      "pooled_frr_valid_denominator": 480
+    },
+    "1.5": {
+      "pooled_asr": 0.018518518518518517,
+      "pooled_compliance_rate": 0.027777777777777776,
+      "pooled_response_harmful_rate": 0.018518518518518517,
+      "pooled_asr_valid_denominator": 432,
+      "pooled_benign_frr": 0.16458333333333333,
+      "pooled_frr_valid_denominator": 480
+    }
+  },
+  "note": "macro_* = simple mean of 6 per-template rates; pooled_* = all records merged before computing the rate -- these are intentionally different and must not be conflated.",
+  "alpha_not_selected_here": true
+}

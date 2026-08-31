@@ -1,0 +1,106 @@
+{
+  "archived_utc": "2026-08-31T09:47:23.394072+00:00",
+  "git_commit": "b78e9a4b3796cf507008f977c24ecade1adab71e",
+  "files": [
+    {
+      "filename": "experiment3_validation_report.json",
+      "sha256": "188ca90ec9071d50abb1126eb7f5a40934c13784abed0ec97a95b3219535b994",
+      "size_bytes": 167602
+    },
+    {
+      "filename": "experiment3_defence_frozen_config.json",
+      "sha256": "7c090ba47ac25cb07428fa9984ed6221c891632e94448ede5f6a5d7b59790fb9",
+      "size_bytes": 3276
+    },
+    {
+      "filename": "experiment3_no_defence_baseline_Qwen2.5-7B-Instruct.json",
+      "sha256": "cae81adee6469a77963ea854814a9ca68e5c718e79b5e2c1e0397f1c7e737e42",
+      "size_bytes": 5053
+    },
+    {
+      "filename": "experiment3_alpha_freeze_Qwen2.5-7B-Instruct.json",
+      "sha256": "90a3da2fc23c3e2ba26e04c612625f2c9304ec368fc2d76a7a762bae27538810",
+      "size_bytes": 2285
+    },
+    {
+      "filename": "experiment3_validation_join_audit_Qwen2.5-7B-Instruct_fixed_wei.json",
+      "sha256": "1465da5cecd30d38229575e4e431c6ba6a2b2d120d74f5b949bdc2cfe000fcf6",
+      "size_bytes": 3457
+    },
+    {
+      "filename": "experiment3_validation_summary_Qwen2.5-7B-Instruct_fixed_wei.json",
+      "sha256": "51e1a392c59a18eb421d936ab4fb0450e025e790510f76bf296ab614ce274935",
+      "size_bytes": 22481
+    },
+    {
+      "filename": "experiment3_validation_join_audit_Qwen2.5-7B-Instruct_adaptive.json",
+      "sha256": "01bce284a5c5d0cfa092d67ffb89c5a97ea87cc345a441ea6f25ecc7c2df10e0",
+      "size_bytes": 3454
+    },
+    {
+      "filename": "experiment3_validation_summary_Qwen2.5-7B-Instruct_adaptive.json",
+      "sha256": "aa004694fe5f334d86f6bfbd865ba29709c879358eb8bcbb59328ee3f83739bb",
+      "size_bytes": 22504
+    },
+    {
+      "filename": "experiment3_no_defence_baseline_Meta-Llama-3.1-8B-Instruct.json",
+      "sha256": "9725c54a7793eb195fe15659c298521134f3976736550245d00d7fa1667ac83b",
+      "size_bytes": 5047
+    },
+    {
+      "filename": "experiment3_alpha_freeze_Meta-Llama-3.1-8B-Instruct.json",
+      "sha256": "3c2f877c91aa302ee62da400f08fde4ec041fe1128219348651ddcd482e4fe39",
+      "size_bytes": 2356
+    },
+    {
+      "filename": "experiment3_validation_join_audit_Meta-Llama-3.1-8B-Instruct_fixed_wei.json",
+      "sha256": "bbded3c6b1b3ca6094b716d6bde4228e4ff5cb0ff01d77821e7132fd2a687482",
+      "size_bytes": 3478
+    },
+    {
+      "filename": "experiment3_validation_summary_Meta-Llama-3.1-8B-Instruct_fixed_wei.json",
+      "sha256": "65f11a9e50c6b68916a8a275fa6b60dd16421fe9a7afcccd78a0d6425a134724",
+      "size_bytes": 22325
+    },
+    {
+      "filename": "experiment3_validation_join_audit_Meta-Llama-3.1-8B-Instruct_adaptive.json",
+      "sha256": "016631fd859b71ec668e6361cdb576fbeb8b03de65cb41438a3ec68bd055965a",
+      "size_bytes": 3475
+    },
+    {
+      "filename": "experiment3_validation_summary_Meta-Llama-3.1-8B-Instruct_adaptive.json",
+      "sha256": "e81a20df8fc06955f4666168819a688eeba94764e65c2777a1c6e86c94d87599",
+      "size_bytes": 22260
+    },
+    {
+      "filename": "experiment3_no_defence_baseline_gemma-2-9b-it.json",
+      "sha256": "2ca3d2a72ebb60d269bbf63521e93013b9b3e84bee17925e39096a7facea781c",
+      "size_bytes": 4884
+    },
+    {
+      "filename": "experiment3_alpha_freeze_gemma-2-9b-it.json",
+      "sha256": "39fbbfd0c8c3a6e064f45ed84cb85a05302d0fc7611837f3b22094b9f6c80d16",
+      "size_bytes": 2337
+    },
+    {
+      "filename": "experiment3_validation_join_audit_gemma-2-9b-it_fixed_wei.json",
+      "sha256": "27ca724e6179a072f32386b516a448e82fde91c02a88e1925fda6cd601460d83",
+      "size_bytes": 3440
+    },
+    {
+      "filename": "experiment3_validation_summary_gemma-2-9b-it_fixed_wei.json",
+      "sha256": "558273ccae4f14947e861729a5d902a353a8844aee248da60a5913fc438289ae",
+      "size_bytes": 21947
+    },
+    {
+      "filename": "experiment3_validation_join_audit_gemma-2-9b-it_adaptive.json",
+      "sha256": "e211c53fcf23c17d8721a43b6210601b3386131682c2f499f026fb4b10f553d5",
+      "size_bytes": 3437
+    },
+    {
+      "filename": "experiment3_validation_summary_gemma-2-9b-it_adaptive.json",
+      "sha256": "923730077d921c42db2d65fd72fb0d3c92d60c609c36263cf75c1c7960b0f8de",
+      "size_bytes": 21891
+    }
+  ]
+}

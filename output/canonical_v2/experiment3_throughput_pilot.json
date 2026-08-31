@@ -1,0 +1,23 @@
+{
+  "model_alias": "Meta-Llama-3.1-8B-Instruct",
+  "fixed_layer": 19,
+  "alpha": 1.0,
+  "n_pilot": 4,
+  "template_mech": "persona_roleplay",
+  "max_new_tokens": 200,
+  "model_load_time_s": 5.525667190551758,
+  "target_gen_with_hook_time_s": 0.6874864101409912,
+  "target_gen_with_hook_rows_per_hour": 20945.868583855812,
+  "target_gen_no_defence_time_s": 0.2265768051147461,
+  "target_gen_no_defence_rows_per_hour": 63554.60786335722,
+  "wildguard_load_time_s": 3.4303534030914307,
+  "wildguard_judge_with_hook_time_s": 0.576373815536499,
+  "wildguard_judge_no_defence_time_s": 0.5784385204315186,
+  "hook_state": {
+    "has_intervened": true,
+    "intervention_count": 1,
+    "prefill_seq_len_seen": 81
+  },
+  "hook_audit_log": [],
+  "hook_check_passed": true
+}

@@ -1,0 +1,522 @@
+{
+  "metadata": {
+    "model": "Meta-Llama-3.1-8B-Instruct",
+    "taxonomy_version": "wei_canonical_v2",
+    "config_path": "/a/slurm-login-internal-home/h24/baga0553/new_experiment/templates/templates_en.json",
+    "CO_mechs": [
+      "prefix_injection",
+      "refusal_suppression",
+      "persona_roleplay"
+    ],
+    "MG_mechs": [
+      "encoding_obfuscation",
+      "payload_splitting",
+      "distractors_negated"
+    ],
+    "active_mechanisms": [
+      "prefix_injection",
+      "refusal_suppression",
+      "persona_roleplay",
+      "encoding_obfuscation",
+      "payload_splitting",
+      "distractors_negated"
+    ],
+    "target_mechanism": "refusal_suppression",
+    "input_file": "output/Meta-Llama-3.1-8B-Instruct/paired_diffs_en_full572_corrected.pt",
+    "git_commit": "2c42141882a64bcf07f37c6ba4c5178c10a68eb7",
+    "n_layers": 32,
+    "fixed_layer_0based": 19,
+    "primary_estimator": "mean",
+    "primary_raw_or_pc": "placebo_calibrated",
+    "trim_frac": 0.1,
+    "early_layers": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "late_layers": [
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31
+    ],
+    "h1_split_half_reps": 500,
+    "h1_split_half_seed": 20260828,
+    "h3_n_splits": 500,
+    "h3_seed": 20260829,
+    "h3_interval_name": "repeated_split_stability_interval",
+    "h4_n_bootstrap": 2000,
+    "h4_seed": 20260829,
+    "h4_interval_name": "source_level_bootstrap_ci",
+    "dangle_n_bootstrap": 2000,
+    "dangle_seed": 20260829,
+    "reliability_low_thresholds_swept": [
+      0.6,
+      0.7,
+      0.8
+    ],
+    "torch_version": "2.3.0+cu121",
+    "note": "verdicts use 'supports X' / 'does not support X' language only -- not 'confirmed', 'proved', or claims about a causal mechanism."
+  },
+  "h1_reliability": {
+    "prefix_injection": {
+      "raw": {
+        "per_estimator": {
+          "mean": {
+            "direction_norm": 4.846827030181885,
+            "mean_cosine_to_mean_direction": 0.7592607736587524,
+            "min_cosine_to_mean_direction": 0.43981850147247314,
+            "mean_direction_energy_fraction": 0.6060674233685672
+          },
+          "median": {
+            "direction_norm": 4.799607276916504,
+            "mean_cosine_to_mean_direction": 0.7589146494865417,
+            "min_cosine_to_mean_direction": 0.4182881712913513,
+            "mean_direction_energy_fraction": 0.6009259127046702
+          },
+          "trimmed_mean": {
+            "direction_norm": 4.821043491363525,
+            "mean_cosine_to_mean_direction": 0.759747326374054,
+            "min_cosine_to_mean_direction": 0.42894622683525085,
+            "mean_direction_energy_fraction": 0.6044773374340839
+          }
+        }
+      },
+      "placebo_calibrated": {
+        "per_estimator": {
+          "mean": {
+            "direction_norm": 5.531630516052246,
+            "mean_cosine_to_mean_direction": 0.7872862815856934,
+            "min_cosine_to_mean_direction": 0.4576416611671448,
+            "mean_direction_energy_fraction": 0.6435767916343358
+          },
+          "median": {
+            "direction_norm": 5.549582004547119,
+            "mean_cosine_to_mean_direction": 0.7866727709770203,
+            "min_cosine_to_mean_direction": 0.4578774571418762,
+            "mean_direction_energy_fraction": 0.6369274810084498
+          },
+          "trimmed_mean": {
+            "direction_norm": 5.527751445770264,
+            "mean_cosine_to_mean_direction": 0.7878110408782959,
+            "min_cosine_to_mean_direction": 0.462678998708725,
+            "mean_direction_energy_fraction": 0.6417450640436355
+          }
+        }
+      },
+      "split_half_cosine_mean": 0.996084451675415,
+      "split_half_cosine_median": 0.9965425729751587,
+      "split_half_cosine_ci95": [
+        0.9912365674972534,
+        0.9980375170707703
+      ],
+      "split_half_n_reps": 500,
+      "split_half_seed": 20260828
+    },
+    "refusal_suppression": {
+      "raw": {
+        "per_estimator": {
+          "mean": {
+            "direction_norm": 5.958407402038574,
+            "mean_cosine_to_mean_direction": 0.7813037633895874,
+            "min_cosine_to_mean_direction": 0.26956260204315186,
+            "mean_direction_energy_fraction": 0.6183025744492111
+          },
+          "median": {
+            "direction_norm": 6.009877681732178,
+            "mean_cosine_to_mean_direction": 0.7803120613098145,
+            "min_cosine_to_mean_direction": 0.2506049871444702,
+            "mean_direction_energy_fraction": 0.6153750595374562
+          },
+          "trimmed_mean": {
+            "direction_norm": 5.990306854248047,
+            "mean_cosine_to_mean_direction": 0.7814134955406189,
+            "min_cosine_to_mean_direction": 0.25939226150512695,
+            "mean_direction_energy_fraction": 0.6176992688271636
+          }
+        }
+      },
+      "placebo_calibrated": {
+        "per_estimator": {
+          "mean": {
+            "direction_norm": 5.581336498260498,
+            "mean_cosine_to_mean_direction": 0.7885205149650574,
+            "min_cosine_to_mean_direction": 0.2833504378795624,
+            "mean_direction_energy_fraction": 0.6168852635468197
+          },
+          "median": {
+            "direction_norm": 5.518126487731934,
+            "mean_cosine_to_mean_direction": 0.7885850667953491,
+            "min_cosine_to_mean_direction": 0.2531975507736206,
+            "mean_direction_energy_fraction": 0.6104117687204506
+          },
+          "trimmed_mean": {
+            "direction_norm": 5.548888683319092,
+            "mean_cosine_to_mean_direction": 0.7892791032791138,
+            "min_cosine_to_mean_direction": 0.2663523256778717,
+            "mean_direction_energy_fraction": 0.6145064424675332
+          }
+        }
+      },
+      "split_half_cosine_mean": 0.9956080317497253,
+      "split_half_cosine_median": 0.9958651065826416,
+      "split_half_cosine_ci95": [
+        0.9921953678131104,
+        0.9975062608718872
+      ],
+      "split_half_n_reps": 500,
+      "split_half_seed": 20260828
+    },
+    "persona_roleplay": {
+      "raw": {
+        "per_estimator": {
+          "mean": {
+            "direction_norm": 3.6443941593170166,
+            "mean_cosine_to_mean_direction": 0.723849356174469,
+            "min_cosine_to_mean_direction": 0.3154546022415161,
+            "mean_direction_energy_fraction": 0.51965087365645
+          },
+          "median": {
+            "direction_norm": 3.6646668910980225,
+            "mean_cosine_to_mean_direction": 0.7228816747665405,
+            "min_cosine_to_mean_direction": 0.2915568947792053,
+            "mean_direction_energy_fraction": 0.5171324134770936
+          },
+          "trimmed_mean": {
+            "direction_norm": 3.651412010192871,
+            "mean_cosine_to_mean_direction": 0.7239530682563782,
+            "min_cosine_to_mean_direction": 0.29932403564453125,
+            "mean_direction_energy_fraction": 0.5190865731577524
+          }
+        }
+      },
+      "placebo_calibrated": {
+        "per_estimator": {
+          "mean": {
+            "direction_norm": 4.454283714294434,
+            "mean_cosine_to_mean_direction": 0.7695208787918091,
+            "min_cosine_to_mean_direction": 0.26429569721221924,
+            "mean_direction_energy_fraction": 0.5795249660138309
+          },
+          "median": {
+            "direction_norm": 4.441746711730957,
+            "mean_cosine_to_mean_direction": 0.768995463848114,
+            "min_cosine_to_mean_direction": 0.23674321174621582,
+            "mean_direction_energy_fraction": 0.5746750266766226
+          },
+          "trimmed_mean": {
+            "direction_norm": 4.451965808868408,
+            "mean_cosine_to_mean_direction": 0.7700057029724121,
+            "min_cosine_to_mean_direction": 0.24459955096244812,
+            "mean_direction_energy_fraction": 0.5779919865644275
+          }
+        }
+      },
+      "split_half_cosine_mean": 0.9949718713760376,
+      "split_half_cosine_median": 0.9954053163528442,
+      "split_half_cosine_ci95": [
+        0.9904075860977173,
+        0.9973208904266357
+      ],
+      "split_half_n_reps": 500,
+      "split_half_seed": 20260828
+    }
+  },
+  "h2_dangle": {
+    "point_estimate_from_full_data": -0.7649901572149247,
+    "source_level_bootstrap_mean": -0.7641251683235168,
+    "source_level_bootstrap_ci95": [
+      -0.7942880392074585,
+      -0.7331302762031555
+    ],
+    "P_lt_0": 1.0,
+    "n_bootstrap": 2000,
+    "seed": 20260829
+  },
+  "h2_dangle_components": {
+    "early_refusal_pairs": 0.4912987232208252,
+    "late_refusal_pairs": 0.04516101744957268,
+    "early_prefix_persona": 0.4177426427602768,
+    "late_prefix_persona": 0.736595094203949
+  },
+  "h2_norm_relative_change": {
+    "prefix_injection": {
+      "early_mean_norm": 0.9533059261739254,
+      "late_mean_norm": 12.702262115478515,
+      "relative_change": 12.324434231158925
+    },
+    "refusal_suppression": {
+      "early_mean_norm": 0.8253645755350589,
+      "late_mean_norm": 10.724931669235229,
+      "relative_change": 11.994174922376066
+    },
+    "persona_roleplay": {
+      "early_mean_norm": 0.9537222821265459,
+      "late_mean_norm": 10.664859533309937,
+      "relative_change": 10.182353325676894
+    }
+  },
+  "h3_common_component": {
+    "unit_normalized": {
+      "Delta_CO_perp": {
+        "mean": 0.07784789055585861,
+        "median": 0.07840391248464584,
+        "ci_lo": 0.07303514331579208,
+        "ci_hi": 0.0797688215970993,
+        "n": 500,
+        "interval_name": "repeated_split_stability_interval",
+        "n_splits": 500,
+        "seed": 20260829,
+        "sign_proportion_positive": 1.0
+      },
+      "Delta_MG_perp": {
+        "mean": 0.1714901179075241,
+        "median": 0.17110683023929596,
+        "ci_lo": 0.16996578872203827,
+        "ci_hi": 0.17524126172065735,
+        "n": 500,
+        "interval_name": "repeated_split_stability_interval",
+        "n_splits": 500,
+        "seed": 20260829,
+        "sign_proportion_positive": 1.0
+      },
+      "V_bilateral": {
+        "mean": 0.07784789055585861,
+        "median": 0.07840391248464584,
+        "ci_lo": 0.07303514331579208,
+        "ci_hi": 0.0797688215970993,
+        "n": 500,
+        "interval_name": "repeated_split_stability_interval",
+        "n_splits": 500,
+        "seed": 20260829,
+        "sign_proportion_positive": 1.0
+      },
+      "A_refusal_perp": {
+        "mean": -0.34578150510787964,
+        "median": -0.3458963930606842,
+        "ci_lo": -0.3491559624671936,
+        "ci_hi": -0.3412558436393738,
+        "n": 500,
+        "interval_name": "repeated_split_stability_interval",
+        "n_splits": 500,
+        "seed": 20260829,
+        "sign_proportion_positive": 0.0
+      }
+    },
+    "raw_magnitude": {
+      "Delta_CO_perp": {
+        "mean": 0.14356839656829834,
+        "median": 0.14408737421035767,
+        "ci_lo": 0.1384507268667221,
+        "ci_hi": 0.145613893866539,
+        "n": 500,
+        "interval_name": "repeated_split_stability_interval",
+        "n_splits": 500,
+        "seed": 20260829,
+        "sign_proportion_positive": 1.0
+      },
+      "Delta_MG_perp": {
+        "mean": -0.009457249194383621,
+        "median": -0.010497567243874073,
+        "ci_lo": -0.012550820596516132,
+        "ci_hi": 0.00016102661902550608,
+        "n": 500,
+        "interval_name": "repeated_split_stability_interval",
+        "n_splits": 500,
+        "seed": 20260829,
+        "sign_proportion_positive": 0.028
+      },
+      "V_bilateral": {
+        "mean": -0.009457249194383621,
+        "median": -0.010497567243874073,
+        "ci_lo": -0.012550820596516132,
+        "ci_hi": 0.00016102661902550608,
+        "n": 500,
+        "interval_name": "repeated_split_stability_interval",
+        "n_splits": 500,
+        "seed": 20260829,
+        "sign_proportion_positive": 0.028
+      },
+      "A_refusal_perp": {
+        "mean": -0.07554854452610016,
+        "median": -0.07420545071363449,
+        "ci_lo": -0.08923689275979996,
+        "ci_hi": -0.06873839348554611,
+        "n": 500,
+        "interval_name": "repeated_split_stability_interval",
+        "n_splits": 500,
+        "seed": 20260829,
+        "sign_proportion_positive": 0.0
+      }
+    }
+  },
+  "h4_prototype_affinity": {
+    "prefix_injection": {
+      "point_estimate": 0.06626558303833008,
+      "source_level_bootstrap_ci95": [
+        0.052299048751592636,
+        0.07913905382156372
+      ],
+      "P_gt_0": 1.0,
+      "n_bootstrap": 2000,
+      "seed": 20260829
+    },
+    "refusal_suppression": {
+      "point_estimate": -0.308453768491745,
+      "source_level_bootstrap_ci95": [
+        -0.32598936557769775,
+        -0.2895444333553314
+      ],
+      "P_gt_0": 0.0,
+      "n_bootstrap": 2000,
+      "seed": 20260829
+    },
+    "persona_roleplay": {
+      "point_estimate": 0.12677502632141113,
+      "source_level_bootstrap_ci95": [
+        0.11310762166976929,
+        0.13880255818367004
+      ],
+      "P_gt_0": 1.0,
+      "n_bootstrap": 2000,
+      "seed": 20260829
+    },
+    "encoding_obfuscation": {
+      "point_estimate": 0.21063104271888733,
+      "source_level_bootstrap_ci95": [
+        0.1971350610256195,
+        0.22359217703342438
+      ],
+      "P_gt_0": 1.0,
+      "n_bootstrap": 2000,
+      "seed": 20260829
+    },
+    "payload_splitting": {
+      "point_estimate": 0.18004322052001953,
+      "source_level_bootstrap_ci95": [
+        0.1664072871208191,
+        0.19262389838695526
+      ],
+      "P_gt_0": 1.0,
+      "n_bootstrap": 2000,
+      "seed": 20260829
+    },
+    "distractors_negated": {
+      "point_estimate": -0.08208662271499634,
+      "source_level_bootstrap_ci95": [
+        -0.09338964521884918,
+        -0.07024485617876053
+      ],
+      "P_gt_0": 0.0,
+      "n_bootstrap": 2000,
+      "seed": 20260829
+    }
+  },
+  "interpretation_matrix": [
+    {
+      "rule_id": 1,
+      "description": "measurement-instability candidate",
+      "evidence": {
+        "refusal_split_half_mean": 0.9956080317497253,
+        "prefix_split_half_mean": 0.996084451675415,
+        "persona_split_half_mean": 0.9949718713760376,
+        "refusal_norm": 5.581336498260498,
+        "geometric_mean_prefix_persona_norm": 4.963814231127675,
+        "norm_ratio": 1.1244047900222354,
+        "threshold_sensitivity_0.6_0.7_0.8": {
+          "0.6": {
+            "condition_a_split_half": false,
+            "condition_b_norm_ratio": false,
+            "triggers_rule_1": false
+          },
+          "0.7": {
+            "condition_a_split_half": false,
+            "condition_b_norm_ratio": false,
+            "triggers_rule_1": false
+          },
+          "0.8": {
+            "condition_a_split_half": false,
+            "condition_b_norm_ratio": false,
+            "triggers_rule_1": false
+          }
+        }
+      },
+      "verdict": "does not support measurement-instability candidate"
+    },
+    {
+      "rule_id": 2,
+      "description": "shared-component masking",
+      "evidence": {
+        "reliability_ok": true,
+        "original_Delta_CO_known_negative": true,
+        "Delta_CO_perp_unit_normalized_stability_interval": [
+          0.07303514331579208,
+          0.0797688215970993
+        ]
+      },
+      "verdict": "supports shared-component masking"
+    },
+    {
+      "rule_id": 3,
+      "description": "stable template-specific geometric divergence",
+      "evidence": {
+        "reliability_ok": true,
+        "A_refusal_source_level_bootstrap_ci95": [
+          -0.32598936557769775,
+          -0.2895444333553314
+        ],
+        "Delta_CO_perp_unit_normalized_stability_interval": [
+          0.07303514331579208,
+          0.0797688215970993
+        ]
+      },
+      "verdict": "does not support stable template-specific geometric divergence"
+    },
+    {
+      "rule_id": 4,
+      "description": "selective angular divergence rather than magnitude collapse",
+      "evidence": {
+        "D_angle_point_estimate": -0.7649901572149247,
+        "D_angle_source_level_bootstrap_ci95": [
+          -0.7942880392074585,
+          -0.7331302762031555
+        ],
+        "norm_relative_change": {
+          "refusal_suppression": 11.994174922376066,
+          "prefix_injection": 12.324434231158925,
+          "persona_roleplay": 10.182353325676894
+        },
+        "refusal_has_most_extreme_relative_decline": false
+      },
+      "verdict": "supports selective angular divergence rather than magnitude collapse"
+    },
+    {
+      "rule_id": 5,
+      "description": "common-component conclusion is estimator-sensitive/inconclusive",
+      "evidence": {
+        "unit_normalized_stability_interval": [
+          0.07303514331579208,
+          0.0797688215970993
+        ],
+        "raw_magnitude_stability_interval": [
+          0.1384507268667221,
+          0.145613893866539
+        ]
+      },
+      "verdict": "common-component conclusion is consistent across both common-direction definitions"
+    }
+  ]
+}

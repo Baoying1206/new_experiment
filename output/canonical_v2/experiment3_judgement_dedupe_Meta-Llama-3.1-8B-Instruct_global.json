@@ -1,0 +1,14 @@
+{
+  "model_alias": "Meta-Llama-3.1-8B-Instruct",
+  "method": "global",
+  "input_path": "output/canonical_v2/experiment3_validation_judgements_Meta-Llama-3.1-8B-Instruct_global.jsonl",
+  "sha256_before": "318f1aeedd9e22b92c3d8f99dd9c50e74a7a99b6e052d7c4120faff891d2bc8d",
+  "total_rows_before": 2005,
+  "total_rows_after": 1921,
+  "duplicate_groups": 54,
+  "rows_removed": 84,
+  "content_verification": "passed (all duplicate groups byte-identical on ('request_harmful', 'refusal', 'response_harmful', 'parse_success', 'raw_judge_output'))",
+  "applied": true,
+  "sha256_after": "132aba4e1a152045b87495f1719ec9178d2e68a14f53287756aa7dafd0f178ce",
+  "timestamp_utc": "2026-08-31T05:11:27.251321+00:00"
+}

@@ -1,0 +1,111 @@
+{
+  "model": "Meta-Llama-3.1-8B-Instruct",
+  "method": "adaptive",
+  "generation_input_path": "output/canonical_v2/experiment3_validation_generations_Meta-Llama-3.1-8B-Instruct_adaptive.jsonl",
+  "generation_input_sha256": "c65a78b33ffb9e23580fa1055dd224940ed89aeec31833c8052e601521eed717",
+  "judgement_input_path": "output/canonical_v2/experiment3_validation_judgements_Meta-Llama-3.1-8B-Instruct_adaptive.jsonl",
+  "judgement_input_sha256": "4baf7f3a0ba220471dca607fda46606e5a43248a0753b98ccc22824ad1484dac",
+  "judge_key_function": "judge_cache_key (40_defence_generation_driver.py, imported not reimplemented)",
+  "judge_model_version": "allenai/wildguard",
+  "judge_prompt_version": "wildguard_prompt_v1_from_03_generate_and_label",
+  "generation_rows": 3648,
+  "unique_judgement_rows": 1814,
+  "expanded_joined_rows": 3648,
+  "cache_hits": 1834,
+  "cache_hit_rate": 0.5027412280701754,
+  "missing_keys_count": 0,
+  "orphan_keys_count": 0,
+  "duplicate_generation_record_keys": 0,
+  "parse_failures": 0,
+  "split_ids_sha256": "529ae240ac61521ebdf7c061a2af95562a9e01585e3836a238d8a98c1f267d7a",
+  "taxonomy_config_sha256": "07bc0eecbf6f74bd7256abe48661dd06d14769a68bb6a86a335996eb0d439ced",
+  "taxonomy_version": "wei_canonical_v2",
+  "direction_config_hash": "0f72150fddb7a863cfbb63b30c297a77e580c101326e682852093779658b98be",
+  "generation_config_hash": "74ba8d6cad00bbe0db62279edb069d4db22e0d33548b620fc1c9f0b716171a42",
+  "git_commit": "37bbf59c769661183d8bb0e5810e76af9bc8d830",
+  "timestamp_utc": "2026-08-31T09:20:54.276352+00:00",
+  "checks": {
+    "total_count": {
+      "value": 3648,
+      "expected": 3648,
+      "pass": true
+    },
+    "harmful_count": {
+      "value": 1728,
+      "expected": 1728,
+      "pass": true
+    },
+    "benign_count": {
+      "value": 1920,
+      "expected": 1920,
+      "pass": true
+    },
+    "no_duplicate_record_key": {
+      "pass": true,
+      "n_duplicates": 0,
+      "sample": []
+    },
+    "harmful_alpha_template_counts": {
+      "pass": true,
+      "n_combos_found": 24,
+      "n_combos_expected": 24,
+      "bad_combos": {}
+    },
+    "benign_alpha_template_counts": {
+      "pass": true,
+      "n_combos_found": 24,
+      "n_combos_expected": 24,
+      "bad_combos": {}
+    },
+    "config_hashes_consistent": {
+      "pass": true,
+      "direction_config_hash": "0f72150fddb7a863cfbb63b30c297a77e580c101326e682852093779658b98be",
+      "generation_config_hash": "74ba8d6cad00bbe0db62279edb069d4db22e0d33548b620fc1c9f0b716171a42",
+      "distinct_direction_hashes_found": [],
+      "distinct_generation_hashes_found": []
+    },
+    "no_duplicate_judge_key": {
+      "pass": true,
+      "n_duplicates": 0,
+      "sample": []
+    },
+    "parse_success_count": {
+      "value": 1814,
+      "total": 1814
+    },
+    "parse_failure_count": {
+      "value": 0,
+      "pass": true
+    },
+    "joined_rows_equal_generation_rows": {
+      "pass": true,
+      "joined": 3648,
+      "generation": 3648
+    },
+    "no_missing_keys": {
+      "pass": true,
+      "n_missing": 0,
+      "sample": []
+    },
+    "no_orphan_keys": {
+      "pass": true,
+      "n_orphan": 0,
+      "sample": []
+    },
+    "no_duplicate_joined_record_key": {
+      "pass": true,
+      "n_duplicates": 0
+    },
+    "no_missing_labels": {
+      "pass": true,
+      "n_missing_labels": 0
+    },
+    "unique_judge_keys_match": {
+      "pass": true,
+      "unique_gen_keys": 1814,
+      "judge_rows": 1814
+    }
+  },
+  "warnings": [],
+  "overall_pass": true
+}

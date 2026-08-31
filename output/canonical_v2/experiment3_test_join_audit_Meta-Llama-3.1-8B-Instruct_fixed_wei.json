@@ -1,0 +1,99 @@
+{
+  "model": "Meta-Llama-3.1-8B-Instruct",
+  "method": "fixed_wei",
+  "alpha": 0.5,
+  "split": "test",
+  "generation_input": "output/canonical_v2/experiment3_test_generations_Meta-Llama-3.1-8B-Instruct_fixed_wei.jsonl",
+  "judgement_input": "output/canonical_v2/experiment3_test_judgements_Meta-Llama-3.1-8B-Instruct_fixed_wei.jsonl",
+  "generation_rows": 1800,
+  "unique_judgement_rows": 1522,
+  "expanded_joined_rows": 1800,
+  "cache_hits": 278,
+  "cache_hit_rate": 0.15444444444444444,
+  "parse_failures": 0,
+  "checks": {
+    "total_count": {
+      "value": 1800,
+      "expected": 1800,
+      "pass": true
+    },
+    "harmful_count": {
+      "value": 1200,
+      "expected": 1200,
+      "pass": true
+    },
+    "benign_count": {
+      "value": 600,
+      "expected": 600,
+      "pass": true
+    },
+    "harmful_template_counts": {
+      "pass": true,
+      "counts": {
+        "prefix_injection": 200,
+        "refusal_suppression": 200,
+        "persona_roleplay": 200,
+        "encoding_obfuscation": 200,
+        "payload_splitting": 200,
+        "distractors_negated": 200
+      },
+      "expected_per_template": 200
+    },
+    "benign_template_counts": {
+      "pass": true,
+      "counts": {
+        "distractors_negated": 100,
+        "prefix_injection": 100,
+        "encoding_obfuscation": 100,
+        "persona_roleplay": 100,
+        "refusal_suppression": 100,
+        "payload_splitting": 100
+      },
+      "expected_per_template": 100
+    },
+    "no_duplicate_judge_key": {
+      "pass": true,
+      "n_duplicates": 0,
+      "sample": []
+    },
+    "parse_success_count": {
+      "value": 1522,
+      "total": 1522
+    },
+    "parse_failure_count": {
+      "value": 0,
+      "pass": true
+    },
+    "joined_rows_equal_generation_rows": {
+      "pass": true,
+      "joined": 1800,
+      "generation": 1800
+    },
+    "no_missing_keys": {
+      "pass": true,
+      "n_missing": 0,
+      "sample": []
+    },
+    "no_orphan_keys": {
+      "pass": true,
+      "n_orphan": 0,
+      "sample": []
+    },
+    "no_duplicate_joined_record_key": {
+      "pass": true,
+      "n_duplicates": 0
+    },
+    "no_missing_labels": {
+      "pass": true,
+      "n_missing_labels": 0
+    },
+    "unique_judge_keys_match": {
+      "pass": true,
+      "unique_gen_keys": 1522,
+      "judge_rows": 1522
+    }
+  },
+  "overall_pass": true,
+  "git_commit": "64738fc2ce12ec4f9ca6a813f879ceca4d0dc531",
+  "timestamp_utc": "2026-08-31T10:57:23.230373+00:00"
+}

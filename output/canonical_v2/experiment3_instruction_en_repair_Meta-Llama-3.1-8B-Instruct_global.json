@@ -1,0 +1,13 @@
+{
+  "model_alias": "Meta-Llama-3.1-8B-Instruct",
+  "method": "global",
+  "input_path": "output/canonical_v2/experiment3_validation_generations_Meta-Llama-3.1-8B-Instruct_global.jsonl",
+  "sha256_before": "b2ab91278454153c9d0fd5ad7556c835ebec005da1494096b88912f9b5c0a8c0",
+  "total_rows": 3648,
+  "already_correct_rows": 0,
+  "changed_rows": 3648,
+  "unchanged_field_semantic_validation": "passed (all non-instruction_en fields identical, verified per-record)",
+  "timestamp_utc": "2026-08-31T04:54:29.424484+00:00",
+  "applied": true,
+  "sha256_after": "f8f1d11f9d7636957025d944317dea092187992f34b8cecbfac863f3a09b3c52"
+}

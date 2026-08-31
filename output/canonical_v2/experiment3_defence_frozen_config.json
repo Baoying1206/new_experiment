@@ -1,0 +1,109 @@
+{
+  "protocol_version": "exp3_reduced_v1",
+  "primary_conditions": [
+    "no_defence",
+    "fixed_wei",
+    "adaptive"
+  ],
+  "supplementary_conditions": [
+    "global",
+    "placebo"
+  ],
+  "per_model": {
+    "Qwen2.5-7B-Instruct": {
+      "fixed_layer_0based": 16,
+      "direction_config_hash": "3f30db793472bc65deb48094aa3092e17082901a8bf35a79673dc5c75dd748a8",
+      "generation_config_hash": "db27f5185aefafbcb067b7d9a7dd9acf7ee3a0f4cdd30be8a4b24277ce979eeb",
+      "alpha": {
+        "fixed_wei": 1.5,
+        "adaptive": 1.5
+      },
+      "alpha_freeze_reason": {
+        "fixed_wei": "min_macro_asr_subject_to_benign_frr_constraint",
+        "adaptive": "min_macro_asr_subject_to_benign_frr_constraint"
+      },
+      "adaptive_grouping": {
+        "template_specific": [
+          "prefix_injection"
+        ],
+        "subgroups": {
+          "CO_reduced": [
+            "refusal_suppression",
+            "persona_roleplay"
+          ],
+          "MG_full": [
+            "encoding_obfuscation",
+            "payload_splitting",
+            "distractors_negated"
+          ]
+        }
+      }
+    },
+    "Meta-Llama-3.1-8B-Instruct": {
+      "fixed_layer_0based": 19,
+      "direction_config_hash": "0f72150fddb7a863cfbb63b30c297a77e580c101326e682852093779658b98be",
+      "generation_config_hash": "74ba8d6cad00bbe0db62279edb069d4db22e0d33548b620fc1c9f0b716171a42",
+      "alpha": {
+        "fixed_wei": 0.5,
+        "adaptive": 1.5
+      },
+      "alpha_freeze_reason": {
+        "fixed_wei": "min_macro_asr_subject_to_benign_frr_constraint",
+        "adaptive": "min_macro_asr_subject_to_benign_frr_constraint"
+      },
+      "adaptive_grouping": {
+        "template_specific": [
+          "refusal_suppression",
+          "distractors_negated"
+        ],
+        "subgroups": {
+          "CO_reduced": [
+            "prefix_injection",
+            "persona_roleplay"
+          ],
+          "MG_reduced": [
+            "encoding_obfuscation",
+            "payload_splitting"
+          ]
+        }
+      }
+    },
+    "gemma-2-9b-it": {
+      "fixed_layer_0based": 25,
+      "direction_config_hash": "ddb05eb209976c40c9a3b7aababf8dc0b1d1af4a70a38da0df06c7bceb69a43d",
+      "generation_config_hash": "8d0efb3233746dd523955a314e65720fbc9519134439434e8d680cb2f1b5aad2",
+      "alpha": {
+        "fixed_wei": 0.5,
+        "adaptive": 0.25
+      },
+      "alpha_freeze_reason": {
+        "fixed_wei": "min_macro_asr_subject_to_benign_frr_constraint",
+        "adaptive": "min_macro_asr_subject_to_benign_frr_constraint"
+      },
+      "adaptive_grouping": {
+        "template_specific": [
+          "prefix_injection"
+        ],
+        "subgroups": {
+          "CO_reduced": [
+            "refusal_suppression",
+            "persona_roleplay"
+          ],
+          "MG_full": [
+            "encoding_obfuscation",
+            "payload_splitting",
+            "distractors_negated"
+          ]
+        }
+      }
+    }
+  },
+  "adaptive_grouping_source_commit": "6d03822 Add one-shot prefill hook and defence direction builder",
+  "test_split": {
+    "harmful_test_ids_count": 200,
+    "benign_test_100_count": 100,
+    "n_templates": 6
+  },
+  "git_commit_at_freeze": "b78e9a4b3796cf507008f977c24ecade1adab71e",
+  "timestamp_utc": "2026-08-31T09:47:15.940654+00:00"
+}
