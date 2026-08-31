@@ -75,6 +75,28 @@ none_field['generation_length'] = None
 assert not drv.record_is_valid(none_field)
 print("Test 4d PASSED: a record with a None value in a required field is invalid.")
 
+# Regression: no_defence's alpha is legitimately None (no direction applies) --
+# confirmed broken on real data (job 5010-5012: all 480 no_defence_benign
+# records per model misclassified as "invalid/truncated", judge stage found
+# 0 valid records for all 3 models). A blanket "alpha must be non-None" check
+# cannot distinguish this from genuine truncation.
+no_defence_record = dict(good)
+no_defence_record['method'] = 'no_defence'
+no_defence_record['alpha'] = None
+assert drv.record_is_valid(no_defence_record), "no_defence record with alpha=None must be VALID"
+print("Test 4e PASSED: a no_defence record with alpha=None is valid (None is the correct value, "
+      "not a truncation signal, for this method).")
+
+intervention_record_null_alpha = dict(good)
+intervention_record_null_alpha['method'] = 'fixed_wei'
+intervention_record_null_alpha['alpha'] = None
+assert not drv.record_is_valid(intervention_record_null_alpha), (
+    "an intervention method (fixed_wei/adaptive/global/placebo) record with alpha=None "
+    "must still be treated as truncated/invalid"
+)
+print("Test 4f PASSED: a non-no_defence (intervention) record with alpha=None is still correctly "
+      "treated as truncated/invalid -- the fix is targeted to no_defence only, not a blanket relaxation.")
+
 # 4. load_valid_existing_keys -- integrity-aware resume
 tmpdir = tempfile.mkdtemp()
 jsonl_path = os.path.join(tmpdir, 'gen.jsonl')

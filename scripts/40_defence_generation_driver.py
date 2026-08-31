@@ -623,8 +623,14 @@ def direction_vector_for(conds, method, template):
 
 
 REQUIRED_GENERATION_FIELDS = ('record_key', 'model', 'split', 'instruction_id', 'benign_or_harmful',
-                              'template', 'method', 'alpha', 'response', 'generation_tokens',
+                              'template', 'method', 'response', 'generation_tokens',
                               'generation_length', 'stop_reason', 'instruction_en')
+# 'alpha' is checked separately, NOT in the blanket non-None list above: it is
+# legitimately None for method='no_defence' (no direction/alpha applies), so a
+# blanket "must be non-None" check misclassified every no_defence record as
+# truncated -- confirmed on real data (job 5010-5012: "Loaded 0 valid
+# generation records ... 480 invalid/truncated skipped" for all 3 models'
+# no_defence_benign judge stage, even though generation had completed cleanly).
 
 
 def record_is_valid(record):
@@ -634,6 +640,10 @@ def record_is_valid(record):
     regenerated, never counted as already-done."""
     if not all(k in record and record[k] is not None for k in REQUIRED_GENERATION_FIELDS):
         return False
+    if 'alpha' not in record:
+        return False
+    if record['method'] != 'no_defence' and record['alpha'] is None:
+        return False  # None alpha only legitimate for no_defence; otherwise a truncation signal
     if not isinstance(record['response'], str) or record['response'] == '':
         return False
     return True
