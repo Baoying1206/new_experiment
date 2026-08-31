@@ -95,6 +95,39 @@ def main():
     assert jmetrics2['n_cache_hits'] == 100 and jmetrics2['n_judged_new'] == 0
     print("Test 4 PASSED: fully-cached re-run makes zero WildGuard calls and never fires on_new_batch.")
 
+    # Regression test for the real Llama x global rejudge (job 4985): 54 pairs of
+    # records shared a judge_cache_key (identical instruction_en+response across
+    # different templates/alphas) and landed in the SAME judge_batch_size chunk,
+    # so both got judged and both got written -- 84 duplicate rows in the output
+    # file. Build a batch with an intra-chunk duplicate key and confirm it's
+    # judged exactly once and appears exactly once per on_new_batch call.
+    dup_records = [
+        {'instruction_id': 'a', 'template': 'persona_roleplay', 'method': 'global', 'alpha': 1.0,
+         'benign_or_harmful': 'harmful', 'model': 'Llama', 'instruction_en': 'same text', 'response': 'same resp'},
+        {'instruction_id': 'b', 'template': 'prefix_injection', 'method': 'global', 'alpha': 0.5,
+         'benign_or_harmful': 'harmful', 'model': 'Llama', 'instruction_en': 'same text', 'response': 'same resp'},
+        {'instruction_id': 'c', 'template': 'payload_splitting', 'method': 'global', 'alpha': 1.5,
+         'benign_or_harmful': 'harmful', 'model': 'Llama', 'instruction_en': 'other text', 'response': 'other resp'},
+    ]
+    guard_model3 = FakeGuardModel()
+    persisted_batches3 = []
+    judgements3, jmetrics3, cache3 = drv.run_judge(
+        dup_records, guard_model3, guard_tok, script03, on_new_batch=persisted_batches3.append)
+
+    assert guard_model3.call_sizes == [2], (
+        f"expected exactly 1 WildGuard call of size 2 (2 unique keys among 3 records), got {guard_model3.call_sizes}")
+    assert jmetrics3['n_judged_new'] == 2, jmetrics3
+    all_persisted = [j for b in persisted_batches3 for j in b]
+    persisted_keys = [j['judge_cache_key'] for j in all_persisted]
+    assert len(persisted_keys) == len(set(persisted_keys)) == 2, (
+        f"on_new_batch must never emit the same judge_cache_key twice: {persisted_keys}")
+    assert len(judgements3) == 3, "the returned per-record judgements list must still cover all 3 input records"
+    assert judgements3[0]['judge_cache_key'] == judgements3[1]['judge_cache_key']
+    assert judgements3[0]['request_harmful'] == judgements3[1]['request_harmful']
+    print("Test 5 PASSED: two records sharing a judge_cache_key within the same call/batch are judged "
+          "exactly once and written exactly once, while both still receive the merged judgement in the "
+          "returned per-record list.")
+
     print()
     print("ALL run_judge BATCHING TESTS PASSED.")
 

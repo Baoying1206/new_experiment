@@ -321,12 +321,25 @@ def run_judge(records, guard_model, guard_tok, script03, cache=None,
     of only writing everything at the very end."""
     cache = cache if cache is not None else {}
     to_judge, cache_hits = [], []
+    seen_keys_this_call = set()
     for r in records:
         key = judge_cache_key(r['instruction_en'], r['response'])
         r['judge_cache_key'] = key
         if key in cache:
             cache_hits.append(r)
+        elif key in seen_keys_this_call:
+            # Same (instruction_en, response) pair appears again within THIS call
+            # (e.g. two different templates/alphas that produced byte-identical
+            # text). Do NOT re-queue it: if a duplicate landed in the same
+            # WILDGUARD_JUDGE_BATCH_SIZE chunk as its first occurrence, both
+            # would be judged and both written by on_new_batch, since the
+            # caller's existing_cache_keys filter only updates BETWEEN batches,
+            # not within one -- this produced 54 duplicate judge_cache_key rows
+            # (84 extra records) in a real run. It will resolve correctly from
+            # `cache` once its first occurrence has been judged below.
+            pass
         else:
+            seen_keys_this_call.add(key)
             to_judge.append(r)
 
     t0 = time.time()
