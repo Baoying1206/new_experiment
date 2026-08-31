@@ -415,6 +415,23 @@ passed -- see the timing-pilot section above.
   completions but re-judge with the new pipeline" requirement -- it is a
   WildGuard-only job, no target model / no `pipeline` import needed for
   this specific path.
+- **Bug found and fixed after the first real run** (job 4982, Llama x
+  global, 3648/3648 records generated successfully): `run_validation_intervention_method`
+  only generated -- there was no corresponding judge step wired up, and
+  `run_judge`'s judgement-building loop hardcoded `r['condition']`, which
+  validation records don't have (they use `method`/`benign_or_harmful`
+  instead of the timing-pilot schema's `condition`) -- would have KeyError'd
+  the first time judging was attempted. Fixed by generalizing `run_judge`
+  to pass through whichever of a fixed field list (`instruction_id`,
+  `template`, `condition`, `method`, `benign_or_harmful`, `alpha`, `model`,
+  `split`, `record_key`) each record actually has, and adding
+  `run_validation_judge` (new `--stage generate|judge` CLI flag; `generate`
+  is the default, matching the already-run jobs' behavior) plus
+  `_validation_gen_and_judge_paths` for consistent per-(model,method)
+  filenames. `run_no_defence_harmful_rejudge` also now sets `r['method']`
+  (previously only `r['condition']`) for consistency across all judgement
+  files. Verified with `scripts/audits/audit_run_judge_schema_dry_run.py`
+  against both schemas using a faked WildGuard tokenizer/model (no GPU).
 - `compute_template_asr`/`compute_template_frr`/`compute_macro_asr`/
   `compute_macro_frr` -- pure functions; both explicitly exclude
   `parse_success=False` rows and (for ASR) `request_harmful=0` rows from

@@ -366,11 +366,16 @@ def run_judge(records, guard_model, guard_tok, script03, cache=None):
             cache[r['judge_cache_key']] = judgement
     wall = time.time() - t0
 
+    # Copy back whichever identifying fields the record actually has -- timing-pilot
+    # records use 'condition' (no_hook/hook_alpha_zero/global_alpha_one); validation
+    # records use 'method'/'benign_or_harmful' instead. Using .get() with a fallback
+    # rather than hardcoding one schema keeps this usable by both callers.
+    JUDGEMENT_PASSTHROUGH_FIELDS = ('instruction_id', 'template', 'condition', 'method',
+                                     'benign_or_harmful', 'alpha', 'model', 'split', 'record_key')
     judgements = []
     for r in records:
         j = dict(cache[r['judge_cache_key']])
-        j.update({'instruction_id': r['instruction_id'], 'template': r['template'],
-                   'condition': r['condition'], 'alpha': r['alpha']})
+        j.update({f: r[f] for f in JUDGEMENT_PASSTHROUGH_FIELDS if f in r})
         judgements.append(j)
 
     n_parse_failures = sum(1 for j in judgements if not j['parse_success'])
@@ -854,7 +859,7 @@ def run_no_defence_harmful_rejudge(args):
 
     for r in records:
         r['instruction_id'], r['benign_or_harmful'], r['template'] = r['id'], 'harmful', r['condition']
-        r['condition'] = 'no_defence'
+        r['condition'] = r['method'] = 'no_defence'
         r['alpha'] = None
 
     out_dir = os.path.join(args.output_path, 'canonical_v2')
@@ -872,6 +877,58 @@ def run_no_defence_harmful_rejudge(args):
                                                         device_map='auto').eval()
 
     cache = {j['judge_cache_key']: j for j in existing}
+    judgements, jmetrics, cache = run_judge(records, guard_model, guard_tok, script03, cache=cache)
+    new_judgements = [j for j in judgements if j['judge_cache_key'] not in existing_cache_keys]
+    append_jsonl(judge_path, new_judgements)
+    print(f"Judge metrics: {jmetrics}. Wrote {len(new_judgements)} new judgements to {judge_path}.")
+
+
+def _validation_gen_and_judge_paths(args, model_alias):
+    out_dir = os.path.join(args.output_path, 'canonical_v2')
+    if args.method == 'no_defence':
+        assert args.no_defence_target == 'benign', (
+            "no_defence harmful judging is produced by run_no_defence_harmful_rejudge itself "
+            "(it judges directly off the reused completions, there is no separate generation "
+            "jsonl for it to read)"
+        )
+        stem = f'{model_alias}_no_defence_benign'
+    else:
+        stem = f'{model_alias}_{args.method}'
+    gen_path = os.path.join(out_dir, f'experiment3_validation_generations_{stem}.jsonl')
+    judge_path = os.path.join(out_dir, f'experiment3_validation_judgements_{stem}.jsonl')
+    return gen_path, judge_path
+
+
+def run_validation_judge(args):
+    """Judges an already-generated experiment3_validation_generations_{model}_{method}.jsonl
+    (intervention methods) or ..._no_defence_benign.jsonl -- separate from
+    run_no_defence_harmful_rejudge, which judges directly off reused
+    completions and has no generation jsonl of its own to read."""
+    model_alias, _ = MODEL_PATHS[args.model_idx]
+    gen_path, judge_path = _validation_gen_and_judge_paths(args, model_alias)
+    print(f"=== Judge: {model_alias} x {args.method}"
+          f"{' (' + args.no_defence_target + ')' if args.method == 'no_defence' else ''} ===")
+
+    all_rows = load_jsonl(gen_path)
+    records = [r for r in all_rows if record_is_valid(r)]
+    n_invalid = len(all_rows) - len(records)
+    print(f"Loaded {len(records)} valid generation records from {gen_path} ({n_invalid} invalid/truncated skipped).")
+    if not records:
+        print("Nothing to judge.")
+        return
+
+    existing = load_jsonl(judge_path)
+    existing_cache_keys = {j['judge_cache_key'] for j in existing}
+    cache = {j['judge_cache_key']: j for j in existing}
+
+    script03 = _import_by_path('script03', os.path.join(SCRIPT_DIR, '03_generate_and_label.py'))
+    from transformers import AutoModelForCausalLM, AutoTokenizer
+    print("Loading WildGuard...")
+    guard_tok = AutoTokenizer.from_pretrained('allenai/wildguard')
+    guard_tok.padding_side = 'left'
+    guard_model = AutoModelForCausalLM.from_pretrained('allenai/wildguard', torch_dtype=torch.bfloat16,
+                                                        device_map='auto').eval()
+
     judgements, jmetrics, cache = run_judge(records, guard_model, guard_tok, script03, cache=cache)
     new_judgements = [j for j in judgements if j['judge_cache_key'] not in existing_cache_keys]
     append_jsonl(judge_path, new_judgements)
@@ -946,7 +1003,14 @@ def main():
     parser.add_argument('--no_defence_target', choices=['benign', 'harmful_rejudge'], default=None,
                          help="Only used when --method no_defence: which of the two No-defence "
                               "sub-jobs to run (benign needs fresh generation; harmful_rejudge reuses "
-                              "corrected completions and only re-judges them).")
+                              "corrected completions and only re-judges them, ignoring --stage).")
+    parser.add_argument('--stage', choices=['generate', 'judge'], default='generate',
+                         help="For --method in {placebo,global,fixed_wei,adaptive} or "
+                              "--method no_defence --no_defence_target benign: 'generate' runs target-model "
+                              "generation, 'judge' runs the strict WildGuard judge on the resulting jsonl "
+                              "(a separate job/step, run only after generation is done). Ignored for "
+                              "--no_defence_target harmful_rejudge, which always does both in one step "
+                              "(it reads reused completions, not a generation jsonl).")
     args = parser.parse_args()
     args.start_timestamp = datetime.now(timezone.utc).isoformat()
 
@@ -958,12 +1022,16 @@ def main():
     if args.method == 'no_defence':
         assert args.no_defence_target in ('benign', 'harmful_rejudge'), \
             "--method no_defence requires --no_defence_target benign|harmful_rejudge"
-        if args.no_defence_target == 'benign':
+        if args.no_defence_target == 'harmful_rejudge':
+            run_no_defence_harmful_rejudge(args)
+        elif args.stage == 'generate':
             run_no_defence_benign(args)
         else:
-            run_no_defence_harmful_rejudge(args)
-    else:
+            run_validation_judge(args)
+    elif args.stage == 'generate':
         run_validation_intervention_method(args)
+    else:
+        run_validation_judge(args)
 
 
 if __name__ == '__main__':
