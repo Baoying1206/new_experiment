@@ -1,13 +1,26 @@
-"""CPU-only unit tests for direction_metadata.py's schema enforcement."""
+"""CPU-only unit tests for direction_metadata.py's schema enforcement.
+
+Updated 2026-09-04 (R/H rebuild, artifact-lineage audit fallout):
+build_direction_metadata() deliberately no longer returns a directly-savable
+dict -- it only builds the LOGICAL fields (knowable before any tensor
+exists); the three TENSOR_FIELDS (sha256/shape/dtype) are filled in only by
+save_direction_atomic(), which is now the sole sanctioned write path. See
+scripts/audits/audit_rh_rebuild_dry_run.py for the fuller synthetic-data
+test suite covering save_direction_atomic/verify_direction_file/
+save_delta_atomic/verify_delta_file -- this file keeps the original,
+narrower schema-enforcement tests, updated for the new contract."""
 import json
 import os
 import sys
 import tempfile
 
+import torch
+
 sys.path.insert(0, os.path.dirname(__file__))
 from direction_metadata import (
     build_direction_metadata, save_direction_metadata, load_direction_metadata,
-    REQUIRED_FIELDS,
+    save_direction_atomic, verify_direction_file,
+    LOGICAL_FIELDS, REQUIRED_FIELDS,
 )
 
 
@@ -25,9 +38,18 @@ def _sample_meta(**overrides):
 
 
 def test_all_required_fields_present():
+    # build_direction_metadata() only produces the LOGICAL fields now (tensor
+    # fields aren't knowable until save_direction_atomic() computes them from
+    # a real tensor) -- this is intentional, not a regression. See the module
+    # docstring update above.
     meta = _sample_meta()
-    for f in REQUIRED_FIELDS:
+    for f in LOGICAL_FIELDS:
         assert f in meta, f"missing {f}"
+    for f in ('tensor_sha256', 'tensor_shape', 'tensor_dtype'):
+        assert f not in meta, (
+            f"build_direction_metadata() should NOT produce {f} -- that would mean it's "
+            f"claiming tensor properties before any tensor was ever given to it"
+        )
 
 
 def test_rejects_bad_direction_type():
@@ -59,12 +81,16 @@ def test_source_ids_hash_differs_for_different_sets():
 
 
 def test_save_and_load_roundtrip():
+    # Now goes through the sanctioned atomic path: a real tensor is required,
+    # since tensor_sha256/shape/dtype are computed from it, not hand-supplied.
     meta = _sample_meta()
+    tensor = torch.randn(3, 5)
     with tempfile.TemporaryDirectory() as d:
-        path = os.path.join(d, 'refusal_dir_en.json')
-        save_direction_metadata(meta, path)
-        loaded = load_direction_metadata(path)
-        assert loaded == meta
+        pt_path = os.path.join(d, 'refusal_dir_en.pt')
+        written = save_direction_atomic(tensor, meta, pt_path)
+        loaded_tensor, loaded_meta = verify_direction_file(pt_path)
+        assert torch.allclose(loaded_tensor, tensor)
+        assert loaded_meta == written
 
 
 def test_save_refuses_incomplete_metadata():

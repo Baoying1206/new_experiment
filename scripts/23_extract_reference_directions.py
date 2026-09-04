@@ -67,7 +67,7 @@ import torch
 SCRIPT_DIR = os.path.dirname(__file__)
 sys.path.insert(0, SCRIPT_DIR)
 from utils.token_positions import get_instruction_end_position, get_post_instruction_position, _chat_template_hash
-from utils.direction_metadata import build_direction_metadata, save_direction_metadata
+from utils.direction_metadata import build_direction_metadata, save_direction_atomic
 from pipeline.utils.hook_utils import add_hooks
 
 DATA_DIR = os.path.join(SCRIPT_DIR, '..', 'data')
@@ -195,8 +195,7 @@ def run_extraction(model_base, harmful_instrs, harmless_instrs, model_alias, lan
         (harmfulness_direction, 'harmfulness_dir', 't_inst'),
     ]:
         pt_path = os.path.join(out_dir, f'{name}_v2_{lang}.pt')
-        torch.save(direction.cpu(), pt_path)
-        meta = build_direction_metadata(
+        logical_meta = build_direction_metadata(
             direction_type='refusal_direction' if name == 'refusal_dir' else 'harmfulness_direction',
             model=model_alias, model_revision='unknown', tokenizer_revision='unknown',
             chat_template_hash=chat_template_hash, semantic_position=position,
@@ -207,8 +206,11 @@ def run_extraction(model_base, harmful_instrs, harmless_instrs, model_alias, lan
             extra={'n_train_per_class': n, 'excluded_overlap_texts': excluded_texts,
                    'lang': lang},
         )
-        save_direction_metadata(meta, pt_path.replace('.pt', '.json'))
-        print(f"  Saved: {pt_path} (+ metadata)")
+        # Atomic: tensor written+renamed into place first, metadata (with the
+        # tensor's real sha256/shape/dtype) only written if that succeeded --
+        # a metadata JSON existing is now proof its tensor exists and matches.
+        save_direction_atomic(direction, logical_meta, pt_path)
+        print(f"  Saved: {pt_path} (+ metadata, atomic)")
 
 
 def main(args):

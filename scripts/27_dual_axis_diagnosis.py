@@ -54,15 +54,25 @@ Usage:
 import argparse
 import json
 import os
+import sys
 
 import torch
 import torch.nn.functional as F
 
 SCRIPT_DIR = os.path.dirname(__file__)
-REAL_MECHS = ['prefix_injection', 'refusal_suppression', 'instruction_hierarchy',
-              'persona_roleplay', 'fictional_framing', 'encoding_obfuscation']
-CO = ['prefix_injection', 'refusal_suppression', 'instruction_hierarchy']
-MG = ['persona_roleplay', 'fictional_framing', 'encoding_obfuscation']
+sys.path.insert(0, SCRIPT_DIR)
+from utils.direction_metadata import verify_delta_file, verify_direction_file, atomic_json_save, current_git_commit
+from _taxonomy_v2_loader import load_taxonomy_v2
+
+# FIXED 2026-09-04 (artifact-lineage audit): same stale-hardcoded-list bug as
+# 25_extract_delta_r_h.py had -- 'instruction_hierarchy'/'fictional_framing'
+# have not existed in templates_en.json since the wei_canonical_v2
+# correction. Read live from the same source of truth every current-taxonomy
+# script uses, never hand-copied.
+_taxonomy = load_taxonomy_v2()
+REAL_MECHS = _taxonomy['active_mechanisms']
+CO = _taxonomy['CO_mechs']
+MG = _taxonomy['MG_mechs']
 WEI_LABEL = {m: 'CO' for m in CO}
 WEI_LABEL.update({m: 'MG' for m in MG})
 
@@ -86,12 +96,18 @@ def one_way_r2(values, group_labels):
 
 
 def load_delta_r_h(output_dir, model_alias, lang, suffix, ids_key):
+    """Fail-fast, hash-verified, mechanism-set-checked load -- NEVER a bare
+    torch.load(). Raises immediately (FileNotFoundError/ValueError) rather
+    than letting a missing/stale/corrupted input surface later as a
+    confusing KeyError deep inside the R^2 computation."""
     path = os.path.join(output_dir, model_alias, f'delta_r_h_{lang}{suffix}_{ids_key}.pt')
-    return torch.load(path, map_location='cpu')
+    payload, meta = verify_delta_file(path, expected_active_mechanisms=REAL_MECHS)
+    return payload
 
 
 def descriptive_summary(data, mech_list=REAL_MECHS):
     n_layers = data['n_layers']
+    has_perp = 'delta_H_perp' in data  # older payloads (pre R/H-orthogonality addition) won't have this
     summary = {}
     for mech in mech_list:
         summary[mech] = {
@@ -100,7 +116,47 @@ def descriptive_summary(data, mech_list=REAL_MECHS):
             'delta_R_pc_mean_per_layer': data['delta_R_placebo_calibrated'][mech].mean(0).tolist(),
             'delta_H_pc_mean_per_layer': data['delta_H_placebo_calibrated'][mech].mean(0).tolist(),
         }
+        if has_perp:
+            summary[mech]['delta_H_perp_mean_per_layer'] = data['delta_H_perp'][mech].mean(0).tolist()
+            summary[mech]['delta_H_perp_pc_mean_per_layer'] = data['delta_H_perp_placebo_calibrated'][mech].mean(0).tolist()
     return summary
+
+
+def shape_and_finite_check(data, mech_list=REAL_MECHS):
+    """Per-mechanism tensor shape + torch.isfinite() check -- part of the
+    single-model pilot report (item 6): confirms the payload's tensors are
+    well-formed BEFORE any statistic is computed on them, independent of the
+    hash check verify_delta_file already did on load."""
+    n_layers = data['n_layers']
+    n_instr = data['delta_R'][mech_list[0]].shape[0]
+    out = {}
+    for mech in mech_list:
+        for key in ('delta_R', 'delta_H'):
+            t = data[key][mech]
+            out[f'{key}[{mech}]'] = {
+                'shape': list(t.shape),
+                'shape_ok': list(t.shape) == [n_instr, n_layers],
+                'all_finite': bool(torch.isfinite(t).all()),
+            }
+    return out
+
+
+def direction_norms_and_angle(output_dir, lang, model_alias):
+    """Loads (hash-verified) refusal_direction_v3 + harmfulness_direction_v2
+    for one model, returns per-layer ||r||, ||h||, cos(r,h) -- the R/H
+    independence check (protocol Sec 10), usable standalone in pilot mode
+    without needing a delta_r_h payload at all."""
+    v2_dir = os.path.join(output_dir, 'output_v2_dual_position', model_alias)
+    v3_dir = os.path.join(output_dir, 'output_v3_behavioral_refusal', model_alias)
+    refusal_dir, _ = verify_direction_file(os.path.join(v3_dir, f'refusal_dir_v3_{lang}.pt'))
+    harmfulness_dir, _ = verify_direction_file(os.path.join(v2_dir, f'harmfulness_dir_v2_{lang}.pt'))
+    refusal_dir, harmfulness_dir = refusal_dir.float(), harmfulness_dir.float()
+    cos = F.cosine_similarity(refusal_dir, harmfulness_dir, dim=-1)
+    return {
+        'refusal_direction_norm_per_layer': refusal_dir.norm(dim=-1).tolist(),
+        'harmfulness_direction_norm_per_layer': harmfulness_dir.norm(dim=-1).tolist(),
+        'cos_r_h_per_layer': cos.tolist(),
+    }
 
 
 def variance_decomposition_per_model(data, key='delta_R_placebo_calibrated'):
@@ -153,11 +209,70 @@ def cross_model_decomposition(all_data, key='delta_R_placebo_calibrated'):
     }
 
 
+CANONICAL_3_MODELS = {'Qwen2.5-7B-Instruct', 'Meta-Llama-3.1-8B-Instruct', 'gemma-2-9b-it'}
+
+
 def main(args):
     models = args.models.split(',')
-    all_data = {m: load_delta_r_h(args.output_dir, m, args.lang, args.suffix, args.ids_key) for m in models}
+    print(f"Loading delta_R/delta_H for {len(models)} model(s), verifying each before use...")
+    all_data = {}
+    for m in models:
+        all_data[m] = load_delta_r_h(args.output_dir, m, args.lang, args.suffix, args.ids_key)
+        print(f"  [{m}] OK -- {all_data[m]['n_layers']} layers, "
+              f"{all_data[m]['delta_R'][REAL_MECHS[0]].shape[0]} instructions, hash-verified.")
+    print(f"All {len(models)} model(s) loaded and verified.\n")
 
-    results = {'lang': args.lang, 'suffix': args.suffix, 'ids_key': args.ids_key, 'per_model': {}}
+    # Formal cross-model R^2 analysis (variance decomposition + pooled
+    # cross-model decomposition) is only meaningful, and only permitted, once
+    # all 3 canonical models' formal delta_r_h artifacts are present and
+    # hash-verified (the load loop above already did the verification --
+    # this gate only decides whether it's the FULL canonical set, not a
+    # subset). Anything else (1 or 2 models, or a non-canonical alias) is
+    # treated as a PILOT run: only descriptive/shape/finite/norm/angle
+    # output, explicitly never labeled or saved as a formal R^2 result --
+    # per item 6 of the 2026-09-04 correction, added specifically because
+    # this function used to run variance decomposition and the pooled
+    # "cross-model" section unconditionally, even for a single model, which
+    # silently produced a degenerate/misleading pooled result (R^2(model)
+    # trivially computed on one group).
+    is_formal = (len(models) == 3 and set(models) == CANONICAL_3_MODELS)
+
+    results = {'lang': args.lang, 'suffix': args.suffix, 'ids_key': args.ids_key,
+               'taxonomy_version': _taxonomy['taxonomy_version'], 'active_mechanisms': REAL_MECHS,
+               'git_commit': current_git_commit(SCRIPT_DIR),
+               'result_status': 'FORMAL' if is_formal else 'PILOT_NON_RESULT',
+               'models_requested': models, 'per_model': {}}
+
+    if not is_formal:
+        print(f"=== PILOT MODE ({len(models)} model(s): {models}) ===")
+        print("Not the full canonical 3-model set -- variance decomposition (R^2 Wei-vs-mechanism) "
+              "and the cross-model section are SKIPPED. Only descriptive projections, tensor "
+              "shape/finite checks, direction norms, and R/H angle are reported below. This output "
+              "is tagged result_status=PILOT_NON_RESULT and must not be cited as an Experiment 2 result.\n")
+        for model_alias, data in all_data.items():
+            print(f"[{model_alias}]")
+            desc = descriptive_summary(data)
+            shape_finite = shape_and_finite_check(data)
+            n_bad_shape = sum(1 for v in shape_finite.values() if not v['shape_ok'])
+            n_nonfinite = sum(1 for v in shape_finite.values() if not v['all_finite'])
+            print(f"  shape/finite: {len(shape_finite)} tensors checked, "
+                  f"{n_bad_shape} shape mismatches, {n_nonfinite} with non-finite values")
+            entry = {'descriptive': desc, 'shape_and_finite_check': shape_finite}
+            try:
+                norms_angle = direction_norms_and_angle(args.output_dir, args.lang, model_alias)
+                entry['direction_norms_and_r_h_angle'] = norms_angle
+                mid = int(0.6 * data['n_layers'])
+                print(f"  ||r||[layer {mid}]={norms_angle['refusal_direction_norm_per_layer'][mid]:.3f}  "
+                      f"||h||[layer {mid}]={norms_angle['harmfulness_direction_norm_per_layer'][mid]:.3f}  "
+                      f"cos(r,h)[layer {mid}]={norms_angle['cos_r_h_per_layer'][mid]:+.4f}")
+            except FileNotFoundError as e:
+                entry['direction_norms_and_r_h_angle'] = None
+                print(f"  direction files not available for norm/angle check: {e}")
+            results['per_model'][model_alias] = entry
+        out_path = os.path.join(args.output_dir, f'dual_axis_diagnosis_PILOT_{args.lang}{args.suffix}_{args.ids_key}.json')
+        atomic_json_save(results, out_path)
+        print(f"\nSaved (PILOT_NON_RESULT): {out_path} (atomic)")
+        return
 
     print("=== 1. Descriptive: per-mechanism delta_R / delta_H (placebo-calibrated, mean per layer) ===")
     for model_alias, data in all_data.items():
@@ -169,7 +284,10 @@ def main(args):
         for mech in REAL_MECHS:
             dr = desc[mech]['delta_R_pc_mean_per_layer'][mid]
             dh = desc[mech]['delta_H_pc_mean_per_layer'][mid]
-            print(f"  [{WEI_LABEL[mech]}] {mech:24s}  delta_R={dr:+.4f}  delta_H={dh:+.4f}  (layer {mid})")
+            dh_perp_str = ""
+            if 'delta_H_perp_pc_mean_per_layer' in desc[mech]:
+                dh_perp_str = f"  delta_H_perp={desc[mech]['delta_H_perp_pc_mean_per_layer'][mid]:+.4f}"
+            print(f"  [{WEI_LABEL[mech]}] {mech:24s}  delta_R={dr:+.4f}  delta_H={dh:+.4f}{dh_perp_str}  (layer {mid})")
 
     print("\n=== 2. Variance decomposition: Wei's binary label vs template_identity ===")
     for model_alias, data in all_data.items():
@@ -196,20 +314,27 @@ def main(args):
         print(f"    R2(mechanism x model)    = {cmd['r2_joint_mechanism_x_model']:.4f}")
         print(f"    interaction R2 (approx)  = {cmd['interaction_r2_approx']:.4f}")
 
-    print("\n=== cos(refusal_direction_v3, harmfulness_direction_v2) per model, per layer ===")
+    print("\n=== R/H independence check: cos(r,h) and ||h_perp||/||h|| per model, per layer "
+          "(protocol Sec 10 -- no threshold imposed, reported for review) ===")
     for model_alias in models:
         v2_dir = os.path.join(args.output_dir, 'output_v2_dual_position', model_alias)
         v3_dir = os.path.join(args.output_dir, 'output_v3_behavioral_refusal', model_alias)
-        refusal_dir = torch.load(os.path.join(v3_dir, f'refusal_dir_v3_{args.lang}.pt'), map_location='cpu').float()
-        harmfulness_dir = torch.load(os.path.join(v2_dir, f'harmfulness_dir_v2_{args.lang}.pt'), map_location='cpu').float()
+        refusal_dir, _ = verify_direction_file(os.path.join(v3_dir, f'refusal_dir_v3_{args.lang}.pt'))
+        harmfulness_dir, _ = verify_direction_file(os.path.join(v2_dir, f'harmfulness_dir_v2_{args.lang}.pt'))
+        refusal_dir, harmfulness_dir = refusal_dir.float(), harmfulness_dir.float()
         cos = F.cosine_similarity(refusal_dir, harmfulness_dir, dim=-1)
+        r_dot_r = (refusal_dir * refusal_dir).sum(-1, keepdim=True).clamp_min(1e-12)
+        h_dot_r = (harmfulness_dir * refusal_dir).sum(-1, keepdim=True)
+        h_perp = harmfulness_dir - (h_dot_r / r_dot_r) * refusal_dir
+        h_perp_ratio = h_perp.norm(dim=-1) / harmfulness_dir.norm(dim=-1).clamp_min(1e-12)
         results['per_model'][model_alias]['cos_refusal_v3_harmfulness_v2_per_layer'] = cos.tolist()
-        print(f"  [{model_alias}] mean cos = {cos.mean():.4f}  range=[{cos.min():.4f},{cos.max():.4f}]")
+        results['per_model'][model_alias]['h_perp_norm_ratio_per_layer'] = h_perp_ratio.tolist()
+        print(f"  [{model_alias}] mean cos = {cos.mean():.4f}  range=[{cos.min():.4f},{cos.max():.4f}]  "
+              f"mean ||h_perp||/||h|| = {h_perp_ratio.mean():.4f}")
 
     out_path = os.path.join(args.output_dir, f'dual_axis_diagnosis_{args.lang}{args.suffix}_{args.ids_key}.json')
-    with open(out_path, 'w') as f:
-        json.dump(results, f, indent=2)
-    print(f"\nSaved: {out_path}")
+    atomic_json_save(results, out_path)
+    print(f"\nSaved: {out_path} (atomic)")
 
 
 if __name__ == '__main__':
