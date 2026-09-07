@@ -403,6 +403,17 @@ def _run_axis_manifest_construction(args, rows):
     gate in main()/_run_axis_manifest_validation() exists to permit."""
     from pipeline.model_utils.model_factory import construct_model_base
 
+    # Fail fast on the harmfulness_direction dependency BEFORE loading the
+    # model / extracting 448+ activations -- this used to only be checked
+    # right before the final save (after all the expensive work), so a
+    # missing/stale-schema v2 file wasted a full extraction pass. Same
+    # discipline the legacy path already applies before its generation step.
+    v2_dir = os.path.join(args.output_dir, 'output_v2_dual_position', args.model_alias)
+    harmfulness_pt = os.path.join(v2_dir, f'harmfulness_dir_v2_{args.lang}.pt')
+    print(f"Verifying harmfulness_direction dependency before loading the model: {harmfulness_pt}")
+    verify_direction_file(harmfulness_pt)  # raises immediately if missing/mismatched/pre-hash-schema
+    print("  OK -- tensor present, hash-verified against its metadata.\n")
+
     id_to_text = _load_manifest_source_texts(rows)
 
     axis_rows = [r for r in rows if r['split'] == 'axis']
