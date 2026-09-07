@@ -309,9 +309,10 @@ def main(args):
 def _run_axis_manifest_validation(args):
     """Validates an independent-axis manifest against EXPERIMENT2_RH_REBUILD_PROTOCOL.md
     Sec 15's schema and independence checks. Pure Python/JSON -- no model, no
-    GPU. If validation passes, activation extraction from the manifest rows
-    is the next step, NOT implemented in this round (requires a model) --
-    this function stops after a successful validation, on purpose."""
+    GPU. If validation passes AND --confirmed is given, proceeds to real
+    activation extraction + direction construction (_run_axis_manifest_construction).
+    Without --confirmed, stops after validation -- so re-running to just
+    re-check a manifest never accidentally triggers a real model/GPU job."""
     from utils.axis_manifest import load_axis_manifest, validate_axis_manifest, load_pool_text_hashes
     from _taxonomy_v2_loader import load_taxonomy_v2
 
@@ -325,8 +326,181 @@ def _run_axis_manifest_validation(args):
           f"{stats['n_axis_accepted']} accepted)")
     print(f"  val:  {stats['n_val']} rows ({stats['n_val_refused']} refused, "
           f"{stats['n_val_accepted']} accepted)")
-    print("\nManifest validated. Activation extraction from manifest rows is NOT YET "
-          "IMPLEMENTED (requires a model/GPU, out of scope for this round) -- stopping here.")
+
+    if not args.confirmed:
+        print("\nManifest validated. Refusing to extract activations / build the direction "
+              "without --confirmed (this is real model+GPU work). Re-run with --confirmed "
+              "once ready.")
+        return
+
+    print("\nManifest validated -- proceeding to activation extraction + direction "
+          "construction (REAL model, REAL GPU work). This IS a formal "
+          "refusal_direction_v3 build, saved to the primary result path.")
+    _run_axis_manifest_construction(args, rows)
+
+
+def _load_manifest_source_texts(rows):
+    """Re-reads each unique source_path referenced by the manifest ONLY to
+    build a stable_source_id -> instruction text lookup for tokenisation --
+    NEVER to copy that text into anything this script saves. Assumes each
+    source file is a SORRY-Bench-style question.jsonl (question_id/turns/
+    prompt_style fields) -- the only format any confirmed axis source uses
+    as of this writing (EXPERIMENT2_RH_REBUILD_PROTOCOL.md Sec 13)."""
+    by_path = {}
+    for r in rows:
+        by_path.setdefault(r['source_path'], True)
+    id_to_text = {}
+    for path in by_path:
+        with open(path, encoding='utf-8') as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                row = json.loads(line)
+                if row.get('prompt_style') == 'base':
+                    id_to_text[f"sorry_bench_{row['question_id']}"] = row['turns'][0]
+    return id_to_text
+
+
+def _extract_activations_from_manifest_rows(model_base, rows_subset, id_to_text, n_layers, model_alias):
+    """rows_subset: manifest rows (all condition=='plain'). Returns tensor
+    [len(rows_subset), n_layers, d_model] of t_post activations -- same
+    position/extraction mechanics as extract_t_post_activations() above,
+    generalised to manifest rows whose text is looked up externally rather
+    than carried inline."""
+    acts = torch.zeros(len(rows_subset), n_layers, model_base.model.config.hidden_size)
+    for i, row in enumerate(rows_subset):
+        text = id_to_text[row['stable_source_id']]
+        tokenized = model_base.tokenize_instructions_fn(instructions=[text])
+        full_ids = tokenized.input_ids[0].tolist()
+        cache = {}
+        fwd_pre_hooks = [
+            (model_base.model_block_modules[layer], get_activations_pre_hook(layer, cache))
+            for layer in range(n_layers)
+        ]
+        with add_hooks(module_forward_pre_hooks=fwd_pre_hooks, module_forward_hooks=[]):
+            with torch.no_grad():
+                model_base.model(input_ids=tokenized.input_ids.to(model_base.model.device),
+                                  attention_mask=tokenized.attention_mask.to(model_base.model.device))
+        t_post = get_post_instruction_position(model_base.tokenizer, text, model_alias, full_ids=full_ids)
+        for layer in range(n_layers):
+            acts[i, layer] = cache[layer][t_post.position_index]
+        if (i + 1) % 64 == 0 or i == len(rows_subset) - 1:
+            print(f"    {i + 1}/{len(rows_subset)}")
+    return acts
+
+
+def _run_axis_manifest_construction(args, rows):
+    """THE sanctioned, non-circular refusal_direction_v3 construction path:
+    v_R = mean(t_post activations | refused, axis split) -
+          mean(t_post activations | accepted, axis split)
+    per EXPERIMENT2_RH_REBUILD_PROTOCOL.md Sec 2.1 -- simple pooled mean,
+    NOT stratified by prompt_family/category (that remains a
+    secondary-robustness question, not decided here). Validated on the
+    manifest's held-out val split with the same 4-metric discipline as
+    everywhere else in this pipeline. Saved to the REAL (non-suffixed)
+    output_v3_behavioral_refusal/{model}/ path -- this is what the whole
+    gate in main()/_run_axis_manifest_validation() exists to permit."""
+    from pipeline.model_utils.model_factory import construct_model_base
+
+    id_to_text = _load_manifest_source_texts(rows)
+
+    axis_rows = [r for r in rows if r['split'] == 'axis']
+    val_rows = [r for r in rows if r['split'] == 'val']
+    axis_refused = [r for r in axis_rows if r['refusal_label'] == 1]
+    axis_accepted = [r for r in axis_rows if r['refusal_label'] == 0]
+    val_refused = [r for r in val_rows if r['refusal_label'] == 1]
+    val_accepted = [r for r in val_rows if r['refusal_label'] == 0]
+
+    print("Loading model...")
+    model_base = construct_model_base(args.model_path, lang=args.lang)
+    n_layers = model_base.model.config.num_hidden_layers
+    print(f"  Loaded: {args.model_alias}  n_layers={n_layers}\n")
+
+    print(f"Extracting AXIS t_post activations: {len(axis_refused)} refused + "
+          f"{len(axis_accepted)} accepted...")
+    axis_refused_acts = _extract_activations_from_manifest_rows(
+        model_base, axis_refused, id_to_text, n_layers, args.model_alias)
+    axis_accepted_acts = _extract_activations_from_manifest_rows(
+        model_base, axis_accepted, id_to_text, n_layers, args.model_alias)
+
+    print(f"\nExtracting VAL t_post activations: {len(val_refused)} refused + "
+          f"{len(val_accepted)} accepted...")
+    val_refused_acts = _extract_activations_from_manifest_rows(
+        model_base, val_refused, id_to_text, n_layers, args.model_alias)
+    val_accepted_acts = _extract_activations_from_manifest_rows(
+        model_base, val_accepted, id_to_text, n_layers, args.model_alias)
+
+    d_R = axis_refused_acts.mean(0) - axis_accepted_acts.mean(0)  # [n_layers, d_model]
+    d_R_hat = F.normalize(d_R, dim=-1)
+    direction_norm = d_R.norm(dim=-1)
+
+    val_acts = torch.cat([val_refused_acts, val_accepted_acts], dim=0)
+    val_mask = torch.cat([torch.ones(len(val_refused), dtype=torch.bool),
+                           torch.zeros(len(val_accepted), dtype=torch.bool)])
+    proj = (val_acts * d_R_hat.unsqueeze(0)).sum(-1)
+    cohens_d = _cohens_d_per_layer(proj, val_mask)
+    auc = _auc_per_layer(proj, val_mask)
+    boot_lo, boot_hi = _bootstrap_cohens_d_ci(proj, val_mask, n_boot=args.n_bootstrap, seed=args.seed)
+
+    axis_acts_cat = torch.cat([axis_refused_acts, axis_accepted_acts], dim=0)
+    axis_mask = torch.cat([torch.ones(len(axis_refused), dtype=torch.bool),
+                            torch.zeros(len(axis_accepted), dtype=torch.bool)])
+    split_half_cos = _split_half_reliability_shared(axis_acts_cat, axis_mask, args.seed)
+
+    print("\n=== refusal_direction_v3 (manifest-based) held-out validation: "
+          "multiple lines of evidence (no single hard threshold) ===")
+    for l in range(n_layers):
+        ci = f"[{boot_lo[l]:+.3f},{boot_hi[l]:+.3f}]" if boot_lo is not None else "unavailable"
+        sh = f"{split_half_cos[l]:+.3f}" if split_half_cos is not None else "unavailable"
+        print(f"  layer {l:2d}: cohens_d={cohens_d[l]:+.3f}  bootstrap_ci={ci}  "
+              f"auc={auc[l]:.3f}  split_half_cos={sh}  ||d_R||={direction_norm[l]:.3f}")
+
+    v2_dir = os.path.join(args.output_dir, 'output_v2_dual_position', args.model_alias)
+    harmfulness_pt = os.path.join(v2_dir, f'harmfulness_dir_v2_{args.lang}.pt')
+    harmfulness_dir, _ = verify_direction_file(harmfulness_pt)
+    harmfulness_dir = harmfulness_dir.float()
+    cos_with_harmfulness = F.cosine_similarity(d_R, harmfulness_dir, dim=-1)
+    print(f"\ncos(new refusal_direction, harmfulness_direction) per layer:")
+    for l in range(n_layers):
+        print(f"  layer {l:2d}: {cos_with_harmfulness[l]:+.4f}")
+
+    prompt_family_axis = {}
+    for r in axis_rows:
+        prompt_family_axis[r['prompt_family']] = prompt_family_axis.get(r['prompt_family'], 0) + 1
+
+    # REAL (non-suffixed) result path -- this construction is the sanctioned,
+    # non-circular one the whole manifest gate exists to permit.
+    out_dir = os.path.join(args.output_dir, 'output_v3_behavioral_refusal', args.model_alias)
+    os.makedirs(out_dir, exist_ok=True)
+    pt_path = os.path.join(out_dir, f'refusal_dir_v3_{args.lang}.pt')
+    logical_meta = build_direction_metadata(
+        direction_type='refusal_direction', model=args.model_alias,
+        model_revision='unknown', tokenizer_revision='unknown',
+        chat_template_hash=_chat_template_hash(model_base.tokenizer), semantic_position='t_post',
+        layer='all', source_partition='independent_train',
+        source_ids=[r['stable_source_id'] for r in axis_rows],
+        construction_contrast='refused_mean_minus_accepted_mean',
+        random_seed=args.seed,
+        extra={'status': 'PRIMARY_RESULT_MANIFEST_BASED',
+               'axis_manifest_path': os.path.abspath(args.axis_manifest),
+               'dataset_name': axis_rows[0]['dataset_name'] if axis_rows else None,
+               'dataset_version': axis_rows[0]['dataset_version'] if axis_rows else None,
+               'n_axis_refused': len(axis_refused), 'n_axis_accepted': len(axis_accepted),
+               'n_val_refused': len(val_refused), 'n_val_accepted': len(val_accepted),
+               'prompt_family_distribution_axis': prompt_family_axis,
+               'val_cohens_d_per_layer': cohens_d.tolist(),
+               'val_auc_per_layer': auc.tolist(),
+               'val_bootstrap_cohens_d_ci_lo_per_layer': boot_lo.tolist() if boot_lo is not None else None,
+               'val_bootstrap_cohens_d_ci_hi_per_layer': boot_hi.tolist() if boot_hi is not None else None,
+               'n_bootstrap': args.n_bootstrap,
+               'split_half_reliability_cosine_per_layer': split_half_cos.tolist() if split_half_cos is not None else None,
+               'direction_norm_per_layer': direction_norm.tolist(),
+               'cos_with_harmfulness_direction_per_layer': cos_with_harmfulness.tolist(),
+               'lang': args.lang},
+    )
+    save_direction_atomic(d_R, logical_meta, pt_path)
+    print(f"\nSaved: {pt_path} (+ metadata, atomic) -- PRIMARY refusal_direction_v3 result")
 
 
 def _run_legacy_pooled_templates(args):

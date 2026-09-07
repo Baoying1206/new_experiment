@@ -269,6 +269,7 @@ def main():
             def __init__(self, **kw):
                 self.axis_manifest = None
                 self.legacy_pooled_templates = None
+                self.confirmed = False  # manifest-path activation extraction now also gates on this
                 self.__dict__.update(kw)
 
         # ---- Test 14: neither axis source given -> SystemExit(1), before any heavy import ----
@@ -345,23 +346,49 @@ def main():
                   f"deliberately-unstubbed dependency and failed there instead, proving the gate "
                   f"itself did not block it): {type(e).__name__}: {str(e)[:70]}")
 
-        # ---- Test 20: static check -- legacy output path and status tag are literally
-        # present in the source, distinct from the real result directory ----
+        # ---- Test 20: static check -- legacy output path/status tag and the
+        # REAL (manifest-based) output path/status tag are both present and
+        # kept structurally separate in the source ----
         with open(os.path.join(SCRIPTS_ROOT, '26_rebuild_refusal_direction_behavioral.py')) as f:
             src26 = f.read()
         assert 'output_v3_behavioral_refusal_LEGACY_PROVISIONAL' in src26
         assert "'LEGACY_PROVISIONAL_POOLED_TEMPLATES_NOT_FOR_RESULTS'" in src26
-        # script26 currently has NO code path that writes to the plain
-        # output_v3_behavioral_refusal/ (no-suffix) result directory at all --
-        # only the manifest path (not yet implemented -- no save call exists)
-        # and the LEGACY_PROVISIONAL path (writes to the suffixed directory).
-        # This is intentional: nothing should write to the real result path
-        # until real independent axis data flows through. Confirm no stray
-        # save call still targets the bare (non-suffixed, non-legacy) path.
-        assert "os.path.join(args.output_dir, 'output_v3_behavioral_refusal', args.model_alias)" not in src26
-        print("Test 20 PASSED: script26's source contains a distinct LEGACY_PROVISIONAL output "
-              "directory and status tag, and (correctly, by design) no code path writes to the "
-              "bare output_v3_behavioral_refusal/ result directory this round.")
+        assert "os.path.join(args.output_dir, 'output_v3_behavioral_refusal', args.model_alias)" in src26
+        assert "'PRIMARY_RESULT_MANIFEST_BASED'" in src26
+        # The bare (non-suffixed) result path must appear ONLY in
+        # _run_axis_manifest_construction, never inside _run_legacy_pooled_templates
+        # -- i.e. the legacy function's own body must not reference it.
+        legacy_start = src26.index('def _run_legacy_pooled_templates')
+        legacy_body = src26[legacy_start:]
+        assert "os.path.join(args.output_dir, 'output_v3_behavioral_refusal', args.model_alias)" not in legacy_body, (
+            "the legacy (circular) construction must never write to the bare, non-suffixed "
+            "result path -- only _run_axis_manifest_construction may"
+        )
+        print("Test 20 PASSED: script26's source keeps the LEGACY_PROVISIONAL output path/tag and "
+              "the real manifest-based PRIMARY_RESULT output path/tag structurally separate -- the "
+              "legacy (circular) function body never references the bare result path.")
+
+        # ---- Test 21: _load_manifest_source_texts correctly re-reads the
+        # external source file to build an id->text lookup, without ever
+        # persisting that text anywhere (pure function, no model needed) ----
+        fake_question_jsonl = os.path.join(tmpdir, 'fake_question.jsonl')
+        with open(fake_question_jsonl, 'w') as f:
+            f.write(json.dumps({'question_id': 1, 'category': '1',
+                                 'turns': ['fake instruction one'], 'prompt_style': 'base'}) + '\n')
+            f.write(json.dumps({'question_id': 2, 'category': '2',
+                                 'turns': ['fake instruction two'], 'prompt_style': 'base'}) + '\n')
+            # a non-'base' row must be ignored
+            f.write(json.dumps({'question_id': 1, 'category': '1',
+                                 'turns': ['fake instruction one, role_play mutation'],
+                                 'prompt_style': 'role_play'}) + '\n')
+        fake_rows = [{'source_path': fake_question_jsonl, 'stable_source_id': 'sorry_bench_1'},
+                     {'source_path': fake_question_jsonl, 'stable_source_id': 'sorry_bench_2'}]
+        id_to_text = script26._load_manifest_source_texts(fake_rows)
+        assert id_to_text == {'sorry_bench_1': 'fake instruction one',
+                               'sorry_bench_2': 'fake instruction two'}, id_to_text
+        print("Test 21 PASSED: _load_manifest_source_texts correctly rebuilds the id->text lookup "
+              "from the external source file (base rows only, mutation rows correctly ignored), "
+              "re-reading the file rather than trusting any inline copy.")
 
         print()
         print("ALL AXIS-MANIFEST / SCRIPT26-GATE TESTS PASSED.")
