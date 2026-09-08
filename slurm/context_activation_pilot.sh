@@ -2,7 +2,6 @@
 #SBATCH --job-name=ctx-act-pilot
 #SBATCH --partition=gpu
 #SBATCH --account=slurm-students
-#SBATCH --gres=gpu:1
 #SBATCH --output=slurm/logs/ctx_activation_pilot_%j.out
 
 # Context Activation Pilot (Meta-Llama-3.1-8B-Instruct, direction_ids[:30],
