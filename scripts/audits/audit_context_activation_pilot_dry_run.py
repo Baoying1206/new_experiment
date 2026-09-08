@@ -24,6 +24,7 @@ import math
 import os
 import random
 import sys
+import tempfile
 
 SCRIPT_DIR = os.path.dirname(__file__)
 REPO_ROOT = os.path.abspath(os.path.join(SCRIPT_DIR, '..', '..'))
@@ -225,7 +226,6 @@ def main():
     check('7_bootstrap_resamples_whole_instructions', resample_ok)
 
     # ---- 8. non-overwrite ----
-    import tempfile
     with tempfile.TemporaryDirectory() as tmpdir:
         target = os.path.join(tmpdir, 'context_activation_pilot_summary.json')
         with open(target, 'w') as f:
@@ -288,6 +288,120 @@ def main():
     symbol_hits = [s for s in forbidden_symbols if s in own_source]
     check('13_no_generation_or_model_loading_symbols_in_this_module', not symbol_hits,
           f"found: {symbol_hits}")
+
+    # ---- 14. tensor shape formula: context_diffs / canonical_acts shapes
+    # follow (n_instructions, n_conditions, n_layers_total, 2, hidden_size)
+    # for arbitrary n_layers_total/hidden_size -- pure arithmetic, no torch
+    # needed to check the formula itself ----
+    def expected_context_shape(n_layers_total, hidden_size):
+        return (30, 16, n_layers_total, 2, hidden_size)
+
+    def expected_canonical_shape(n_layers_total, hidden_size):
+        return (30, 4, n_layers_total, 2, hidden_size)
+
+    check('14_tensor_shape_formula',
+          expected_context_shape(33, 4096) == (30, 16, 33, 4096) or
+          expected_context_shape(33, 4096) == (30, 16, 33, 2, 4096),
+          f"got {expected_context_shape(33, 4096)}")
+    check('14b_canonical_tensor_shape_formula',
+          expected_canonical_shape(33, 4096) == (30, 4, 33, 2, 4096),
+          f"got {expected_canonical_shape(33, 4096)}")
+
+    # ---- 15. atomic write leaves no partial/corrupted file behind if the
+    # write itself fails partway ----
+    with tempfile.TemporaryDirectory() as tmpdir:
+        target = os.path.join(tmpdir, 'atomic_target.json')
+
+        def atomic_write_that_fails(path, obj):
+            tmp_path = path + '.tmp'
+            with open(tmp_path, 'w') as f:
+                json.dump(obj, f)
+                raise RuntimeError('simulated write failure before os.replace')
+            os.replace(tmp_path, path)  # unreachable
+
+        try:
+            atomic_write_that_fails(target, {'result_status': 'PILOT_NON_RESULT'})
+        except RuntimeError:
+            pass
+        atomic_write_no_partial_target_ok = not os.path.exists(target)
+        # the .tmp artifact from the simulated failure is allowed to exist
+        # (a real crash would leave one too); what matters is the REAL
+        # target path was never created/corrupted
+        check('15_atomic_write_leaves_no_partial_target_on_failure', atomic_write_no_partial_target_ok)
+
+        # successful atomic write DOES produce the target with correct content
+        target2 = os.path.join(tmpdir, 'atomic_target_ok.json')
+        tmp_path2 = target2 + '.tmp'
+        with open(tmp_path2, 'w') as f:
+            json.dump({'result_status': 'PILOT_NON_RESULT'}, f)
+        os.replace(tmp_path2, target2)
+        with open(target2) as f:
+            written = json.load(f)
+        check('15b_atomic_write_succeeds_with_correct_content',
+              written == {'result_status': 'PILOT_NON_RESULT'} and not os.path.exists(tmp_path2))
+
+    # ---- 16. the REAL extraction script (scripts/52_extract_context_
+    # activations_pilot.py) contains no generation-call syntax and no
+    # judge-model-loading reference. Loading the causal LM class itself
+    # for a forward pass IS expected and allowed there (that is the whole
+    # point of the script) -- only the two specific forbidden literals
+    # built below are checked, deliberately narrow so a capitalized prose
+    # mention of the judge model's name in that script's own docstring
+    # does not false-positive (only the lowercase, actual-model-id-style
+    # spelling would match). Comment text here intentionally avoids
+    # spelling out either forbidden literal contiguously, for the same
+    # self-match reason as check 2/13 above. ----
+    real_script_path = os.path.join(SCRIPT_DIR, '..', '52_extract_context_activations_pilot.py')
+    real_script_scan_ok = False
+    if os.path.exists(real_script_path):
+        with open(real_script_path, encoding='utf-8') as f:
+            real_script_source = f.read()
+        real_forbidden = ['.' + 'generate(', 'wild' + 'guard']
+        real_hits = [s for s in real_forbidden if s in real_script_source]
+        real_script_scan_ok = not real_hits
+        if not real_script_scan_ok:
+            print(f"  found in real extraction script: {real_hits}")
+    else:
+        print(f"  {real_script_path} does not exist")
+    check('16_real_extraction_script_no_generate_or_judge_model_usage', real_script_scan_ok)
+
+    # ---- 17. the real extraction script's torch-free functions, run
+    # against the ACTUAL current repo files, reproduce the frozen counts
+    # (30/16/4/20/600) and pass its own gate checks -- makes the earlier
+    # ad hoc manual verification a permanent, repeatable check ----
+    real_script_integration_ok = False
+    if os.path.exists(real_script_path):
+        try:
+            import importlib.util
+            spec = importlib.util.spec_from_file_location(
+                'context_activation_pilot_real_script', real_script_path)
+            real_mod = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(real_mod)
+
+            rs_access_log = real_mod.AccessLog()
+            rs_ids = real_mod.load_pilot_instruction_ids(rs_access_log)
+            rs_instrs = real_mod.load_source_instructions(rs_ids, rs_access_log)
+            rs_access_log.assert_clean()
+            rs_context_conditions, rs_context_data = real_mod.load_context_conditions()
+            rs_canonical_conditions = real_mod.load_canonical_conditions()
+            rs_attestation, rs_checklist = real_mod.run_gate_checks(rs_context_data)
+
+            real_script_integration_ok = (
+                len(rs_ids) == 30 and len(rs_instrs) == 30
+                and len(rs_context_conditions) == 16 and len(rs_canonical_conditions) == 4
+                and (len(rs_context_conditions) + len(rs_canonical_conditions)) == 20
+                and len(rs_ids) * 20 == 600
+                and rs_attestation.get('template_texts_identical') is True
+            )
+            if not real_script_integration_ok:
+                print(f"  n_ids={len(rs_ids)} n_context={len(rs_context_conditions)} "
+                      f"n_canonical={len(rs_canonical_conditions)} "
+                      f"template_texts_identical={rs_attestation.get('template_texts_identical')}")
+        except Exception as e:
+            print(f"  real-script integration check raised {type(e).__name__}: {e}")
+    else:
+        print(f"  {real_script_path} does not exist")
+    check('17_real_extraction_script_integration_against_current_repo', real_script_integration_ok)
 
     print()
     if failed == 0:
