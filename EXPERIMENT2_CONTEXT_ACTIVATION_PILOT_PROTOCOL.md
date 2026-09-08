@@ -441,3 +441,100 @@ script** (see §12).
 No model has been run. No GPU job has been submitted. No
 `validation_ids`/`test_ids` have been read. This document authorizes
 design and dry-run testing only.
+
+## 13. Pilot-driven design revision: primary token position (2026-09-08)
+
+**This section revises, but does not delete, §3's original design.** §3
+above is left completely unchanged as the historical record of the
+original pre-registration (`t_post` primary, `t_inst` a position-
+sensitivity diagnostic). Everything in this section reflects a decision
+made *after* seeing real pilot data, which is exactly the kind of
+revision §3 itself anticipated needing ("if a conclusion holds at `t_post`
+but not at `t_inst`... the format-position-cue confound... must be
+considered") -- it is recorded here as a distinct, dated, formal-
+experiment-preparation revision, not a silent edit of §3.
+
+**Revision**: for the *formal* (non-pilot) C-direction analysis going
+forward, **`t_inst` becomes the primary token position**; `t_post` is
+demoted to a **format-position sensitivity analysis**, not a co-equal
+primary measurement.
+
+**Basis for this decision** -- the real pilot run (extraction commit
+`7626eb9a482ef7f3952726769ed89e1b4b895a4d`; input tensors
+`context_paired_diffs_PILOT_direction30.pt`
+sha256=`a90ccf5a8b7c78d8cc7833b01d56631be038ba47faee346bded8c99c256d0f98`,
+`canonical_paired_diffs_PILOT_direction30.pt`
+sha256=`0ce90f91d99bf4924b0354e938c1844026a348df38ba5ed79da21841d85bfb52`;
+analysis commit `1a6cc72296abdba533ae37a61762bdcce9a9aa85`) found that at
+`t_post`, `ctx_continuation`'s direction norm (5.03-9.03 at layer 19) was
+roughly 5-8x larger than at `t_inst` (0.87-1.18), with
+`cos(t_inst, t_post) = 0.10-0.15` (i.e. the two token positions point in
+almost unrelated directions for this family only -- the other 3 families
+showed `t_inst == t_post` to floating-point precision, since their
+templates place `{instruction}` at the very end with nothing following).
+Combined with the real, previously-documented finding that
+`ctx_continuation`'s `t_post` position sits immediately after a
+`Response:`/`Speaker B:`/`New response:` token that carries its own
+strong identity/format signal (§3's original caveat, §7 of
+`EXPERIMENT2_CONTEXT_RECONFIGURATION_PROTOCOL.md`), the most defensible
+reading is that `t_post` for `ctx_continuation` is confounded with
+which trailing format token appears there, not a clean read of "the
+context manipulation's effect at the point generation begins." `t_inst`
+-- the instruction's own last token, before any such trailing cue -- does
+not have this specific confound, even though (per §3) it carries its own,
+different limitation (it precedes the full context manipulation for
+families that place structure after the instruction, though in practice
+none of the 4 families do that).
+
+**What this revision does NOT do**:
+- It does not adopt a single shared C direction.
+- It does not pre-adopt `k=2` for any shared subspace -- `k=1`/`k=2`
+  variance-explained are both reported as descriptive pilot diagnostics
+  only (§14 below), and the formal `k` decision remains open.
+- Until that decision is made, the **4 family-specific directions are
+  used as the conservative default representation** for any further
+  work -- i.e. no shared-direction or shared-subspace assumption is
+  baked into anything downstream of this revision.
+- It does not retract or invalidate any `t_post`-based number already
+  reported (§3, and the `t_post`-based results already reported to the
+  user from `context_activation_pilot_analysis.json`) -- those remain
+  valid `t_post` (now: format-position sensitivity) results, just no
+  longer the primary basis for a formal C-direction conclusion.
+
+## 14. Extended t_inst analysis (v2) -- descriptive pilot diagnostics only
+
+Computed by `scripts/53_analyze_context_activation_pilot.py`'s `v2`
+output (`context_activation_pilot_analysis_v2.json`, a new file --
+`context_activation_pilot_analysis.json` from the original `t_post`-
+primary run is kept, not overwritten). Reads only the two already-
+extracted `.pt` tensors above; no model, no GPU, no new activation
+extraction.
+
+- Full `t_inst` battery per (family, variant) at layer 19: direction
+  norm, signed paired projection with bootstrap CI, repeated split-half
+  cosine (>=100 predefined seeds, each seed a fresh random 15/15
+  instruction partition, reported as median + 2.5%/97.5% quantiles across
+  seeds -- **the 100+ seeds are not treated as independent samples for
+  any significance test**, only as a descriptive spread), bootstrap
+  direction-cosine stability (1000 instruction-level resamples, cosine of
+  each resampled direction against the full-sample direction, reported as
+  median + 95% interval -- the earlier "CI doesn't cross zero proves
+  stable direction" phrasing is retracted; the norm CI is magnitude
+  description only).
+- Full 4x4 family-centroid cosine matrix at `t_inst`/layer19 (not just
+  the upper triangle), average cross-family cosine, SVD singular values,
+  `k=1` and `k=2` variance-explained (both reported, neither adopted),
+  and leave-one-family-out cosine (predict a held-out family's centroid
+  from the mean of the other 3, cosine to the actual). **All of this is
+  labeled `DESCRIPTIVE_PILOT` and is explicitly not sufficient, on its
+  own, to select a formal dimensionality** (`n_family=4`, same caveat as
+  §6).
+- `ctx_continuation` format-position diagnostic: `t_inst` direction,
+  `t_post` direction, `cos(t_inst, t_post)`, `norm_ratio =
+  norm(t_post)/norm(t_inst)`, and a difference vector `d_tpost -
+  d_tinst`, which is labeled a **format-position-associated residual**,
+  not a causal "format direction" -- no causal claim is made about what
+  produces this residual.
+- Any cosine computed between two zero-norm vectors (observed at layer 0
+  in the original `t_post` sweep) is reported as
+  `{"value": null, "status": "UNDEFINED_ZERO_NORM"}`, never a bare `NaN`.
