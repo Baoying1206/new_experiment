@@ -34,14 +34,17 @@ Usage:
       --write_report output/audits/context/context_templates_token_length_audit.json
 """
 import argparse
+import datetime
+import hashlib
 import json
 import os
+import platform
 import statistics
 import sys
 
 SCRIPT_DIR = os.path.dirname(__file__)
 sys.path.insert(0, os.path.join(SCRIPT_DIR, '..'))
-from audit_context_templates_dry_run import load_context_templates, all_template_strings
+from audit_context_templates_dry_run import load_context_templates, all_template_strings, TEMPLATES_PATH
 
 DEFAULT_REPORT_DIR = os.path.join(SCRIPT_DIR, '..', '..', 'output', 'audits', 'context')
 
@@ -105,6 +108,22 @@ def main(args):
             lengths[(fam_name, vkey)] = n_tok
         per_model[alias] = lengths
 
+        # ---- per-model result-integrity checks (16 total, 12 positive + 4
+        # neutral, no duplicate template_id, no NaN/missing value) ----
+        template_ids = [
+            f"{fam}_{vkey}" if vkey != 'family_specific_neutral_control' else f"{fam}_neutral"
+            for fam, vkey in lengths.keys()
+        ]
+        assert len(lengths) == 16, f"{alias}: expected 16 template lengths, got {len(lengths)}"
+        assert len(template_ids) == len(set(template_ids)), f"{alias}: duplicate template_id detected"
+        n_pos = sum(1 for fam, vkey in lengths.keys() if vkey != 'family_specific_neutral_control')
+        n_neu = sum(1 for fam, vkey in lengths.keys() if vkey == 'family_specific_neutral_control')
+        assert n_pos == 12 and n_neu == 4, f"{alias}: expected 12 positive + 4 neutral, got {n_pos}+{n_neu}"
+        assert all(isinstance(v, int) and v >= 0 for v in lengths.values()), \
+            f"{alias}: found a non-integer or negative token length (NaN/missing surrogate)"
+        print(f"  Integrity check OK: 16/16 templates tokenized (12 positive + 4 neutral), "
+              f"{len(set(template_ids))} unique template_ids, no NaN/missing values.")
+
     # ---- per-family, per-model descriptive stats ----
     report = {'result_status': 'STATIC_AUDIT_NON_RESULT',
               'note': 'Descriptive token-length statistics for the 16 template WRAPPERS '
@@ -129,6 +148,7 @@ def main(args):
             diffs = [p - neutral_len for p in pos_lengths]
             rng = max(pos_lengths) - min(pos_lengths)
             std = statistics.stdev(pos_lengths) if len(pos_lengths) > 1 else 0.0
+            pos_mean = statistics.mean(pos_lengths)
             fam_avgs[fam_name] = statistics.mean(pos_lengths + [neutral_len])
 
             print(f"  {fam_name}:")
@@ -139,12 +159,16 @@ def main(args):
             print(f"    neutral: {neutral_len} tokens")
             print(f"    within-family positive range={rng}  stdev={std:.2f}")
 
+            all_positives_longer_than_neutral = all(d > 0 for d in diffs)
+
             report['per_model_family_stats'].setdefault(alias, {})[fam_name] = {
                 'positive_token_lengths': dict(zip(['v1', 'v2', 'v3'], pos_lengths)),
                 'neutral_token_length': neutral_len,
                 'diff_vs_neutral': dict(zip(['v1', 'v2', 'v3'], diffs)),
+                'positive_only_mean': pos_mean,
                 'within_family_range': rng,
                 'within_family_stdev': std,
+                'all_positives_longer_than_neutral': all_positives_longer_than_neutral,
                 'pooled_iqr_flag': {
                     f'v{i}': iqr_flag(p, all_pos_lengths_this_model)
                     for i, p in enumerate(pos_lengths, start=1)
@@ -159,6 +183,39 @@ def main(args):
         report['cross_family_avg'][alias] = {
             'per_family_avg': fam_avgs, 'cross_family_range': cross_fam_range,
         }
+
+    # ---- cross-model outlier agreement: for each of the 12 positive
+    # variants, do all 3 models' pooled_iqr_flag agree? ----
+    outlier_agreement = {}
+    disagreements = []
+    for fam_name in sorted(data['families'].keys()):
+        for i in (1, 2, 3):
+            key = f"{fam_name}_v{i}"
+            flags = {
+                alias: report['per_model_family_stats'][alias][fam_name]['pooled_iqr_flag'][f'v{i}']
+                for alias in model_aliases
+            }
+            agree = len(set(flags.values())) == 1
+            outlier_agreement[key] = {'flags_by_model': flags, 'all_models_agree': agree}
+            if not agree:
+                disagreements.append(key)
+    report['outlier_agreement'] = outlier_agreement
+    print(f"\nCross-model outlier agreement: {len(disagreements)}/12 positive variants have disagreeing "
+          f"pooled_iqr_flag across the 3 tokenizers"
+          + (f" ({disagreements})" if disagreements else " -- all 3 tokenizers agree on every variant."))
+
+    # ---- provenance metadata ----
+    with open(TEMPLATES_PATH, 'rb') as f:
+        source_template_sha256 = hashlib.sha256(f.read()).hexdigest()
+    import transformers as _transformers
+    report['source_template_path'] = 'templates/templates_context_v1.json'
+    report['source_template_sha256'] = source_template_sha256
+    report['tokenizer_paths'] = dict(zip(model_aliases, model_paths))
+    report['python_version'] = platform.python_version()
+    report['transformers_version'] = _transformers.__version__
+    report['generated_at'] = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    print(f"\nsource_template_sha256={source_template_sha256}")
+    print(f"python_version={report['python_version']}  transformers_version={report['transformers_version']}")
 
     if args.write_report:
         if os.path.exists(args.write_report):

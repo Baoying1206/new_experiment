@@ -14,6 +14,7 @@ Usage:
   python scripts/audits/audit_context_templates_dry_run.py --write_report output/audits/context/context_templates_audit.json
 """
 import argparse
+import hashlib
 import json
 import os
 import re
@@ -23,6 +24,31 @@ SCRIPT_DIR = os.path.dirname(__file__)
 TEMPLATES_PATH = os.path.join(SCRIPT_DIR, '..', '..', 'templates', 'templates_context_v1.json')
 CANONICAL_TEMPLATES_PATH = os.path.join(SCRIPT_DIR, '..', '..', 'templates', 'templates_en.json')
 DEFAULT_REPORT_DIR = os.path.join(SCRIPT_DIR, '..', '..', 'output', 'audits', 'context')
+
+V1_CHECKLIST_PATH = os.path.join(DEFAULT_REPORT_DIR, 'context_templates_human_review_checklist.json')
+V2_CHECKLIST_PATH = os.path.join(DEFAULT_REPORT_DIR, 'context_templates_human_review_checklist_v2.json')
+V3_CHECKLIST_PATH = os.path.join(DEFAULT_REPORT_DIR, 'context_templates_human_review_checklist_v3.json')
+V4_CHECKLIST_PATH = os.path.join(DEFAULT_REPORT_DIR, 'context_templates_human_review_checklist_v4.json')
+DECISIONS_SIDECAR_PATH = os.path.join(DEFAULT_REPORT_DIR, 'context_templates_human_review_decisions.json')
+# Hardcoded regression guard (added 2026-09-08, alongside the ctx_continuation
+# revision; extended the same day to also pin v3 once v4 existed) -- these
+# are the SHA-256 of the v1/v2/v3 checklist files as they existed once each
+# was finalized. v1/v2/v3 must never be modified again; only a new (v4, v5,
+# ...) file is ever added.
+EXPECTED_V1_CHECKLIST_SHA256 = '97edbb27ea247f8710c1d71689465854369550d98e22ea80f4c69dd9c8dec92d'
+EXPECTED_V2_CHECKLIST_SHA256 = 'f468fafc20306c3879808db83c47c8fc324b72b72f406005ef2de3c9429f2315'
+EXPECTED_V3_CHECKLIST_SHA256 = '91f54d6c72f017a3644a840bf90c3625fb6bfeebbc0f6b15edc4dc5fe58fb6a6'
+
+# Substrings that would overclaim empirical validation from a pilot
+# approval. Checked case-sensitively against the all-caps status vocabulary
+# this project actually uses (PENDING_*/APPROVED_FOR_PILOT*/READY_FOR_* are
+# all fine; nothing currently in use should ever match this).
+VALIDATION_CLAIM_SUBSTRINGS = ['VALIDATED', 'CONFIRMED']
+
+# Duplicated (not imported) from generate_context_templates_review_checklist.py
+# to avoid a circular import -- that script imports FROM this one.
+ANSWER_PREFILL_PHRASES = ['sure, here', 'certainly, here', 'here is how', "here's how"]
+FORMAT_ROLE_PREFIX_SUFFIXES = ('response:', 'speaker b:')
 
 EXPECTED_FAMILIES = {'ctx_persona', 'ctx_authority', 'ctx_fictional', 'ctx_continuation'}
 
@@ -218,6 +244,140 @@ def main(args):
                 write_ok = False
                 print(f"  refusing to write outside {DEFAULT_REPORT_DIR}: got {args.write_report}")
     check('10_never_overwrites_report_output_dir_restricted', write_ok)
+
+    # ---- 11. ctx_continuation contains no affirmative/compliant answer
+    # opener ('sure, here' / 'certainly, here' / 'here is how' / "here's
+    # how") anywhere in its 4 texts (added 2026-09-08 with the
+    # ctx_continuation template revision) ----
+    cont_prefill_ok = True
+    for vkey, text in cont_texts:
+        lowered = text.lower()
+        hits = [p for p in ANSWER_PREFILL_PHRASES if p in lowered]
+        if hits:
+            cont_prefill_ok = False
+            print(f"  ctx_continuation/{vkey}: contains answer-prefill phrase(s) {hits}")
+    check('11_continuation_no_answer_prefill_phrases', cont_prefill_ok)
+
+    # ---- 12. all 4 ctx_continuation texts end in a generation-position /
+    # role cue ('Response:' / 'Speaker B:' / 'New response:') ----
+    cont_format_prefix_ok = True
+    for vkey, text in cont_texts:
+        if not text.rstrip().lower().endswith(FORMAT_ROLE_PREFIX_SUFFIXES):
+            cont_format_prefix_ok = False
+            print(f"  ctx_continuation/{vkey}: does not end in a format/role-position cue")
+    check('12_continuation_format_prefix_present', cont_format_prefix_ok)
+
+    # The "latest" checklist is whichever of v4/v3 currently exists, most
+    # recent first. Pinning checks 13/15 to a single hardcoded version
+    # (originally v3) would make them fail forever after any later round adds
+    # a new checklist without regenerating the old one -- that's expected
+    # staleness for an archived snapshot, not a bug. Checking "the latest one
+    # that exists" keeps the invariant meaningful across rounds.
+    if os.path.exists(V4_CHECKLIST_PATH):
+        latest_checklist_path = V4_CHECKLIST_PATH
+    elif os.path.exists(V3_CHECKLIST_PATH):
+        latest_checklist_path = V3_CHECKLIST_PATH
+    else:
+        latest_checklist_path = None
+
+    # ---- 13 & 15. read the latest checklist (if present) and verify (a) its
+    # ctx_continuation entries name prefix_injection as the primary overlap,
+    # and (b) its recorded source_template_sha256 matches the CURRENT
+    # templates_context_v1.json on disk (i.e. the checklist was generated
+    # from -- and hasn't drifted from -- this exact template file) ----
+    latest_overlap_ok = False
+    latest_hash_ok = False
+    latest = None
+    if latest_checklist_path is not None:
+        with open(latest_checklist_path, encoding='utf-8') as f:
+            latest = json.load(f)
+        cont_entries = [e for e in latest.get('entries', []) if e.get('family') == 'ctx_continuation']
+        latest_overlap_ok = (
+            len(cont_entries) == 4
+            and all(e.get('template_level_overlap') == 'prefix_injection' for e in cont_entries)
+            and all('prefix_injection' in e.get('most_likely_canonical_overlap', '') for e in cont_entries)
+        )
+        if not latest_overlap_ok:
+            print(f"  {latest_checklist_path} ctx_continuation entries do not all name prefix_injection "
+                  f"as the primary overlap: "
+                  f"{[(e.get('template_id'), e.get('template_level_overlap')) for e in cont_entries]}")
+        with open(TEMPLATES_PATH, 'rb') as f:
+            current_template_sha256 = hashlib.sha256(f.read()).hexdigest()
+        latest_hash_ok = latest.get('source_template_sha256') == current_template_sha256
+        if not latest_hash_ok:
+            print(f"  {latest_checklist_path} source_template_sha256={latest.get('source_template_sha256')} "
+                  f"does not match current templates_context_v1.json sha256={current_template_sha256}")
+    else:
+        print(f"  neither {V3_CHECKLIST_PATH} nor {V4_CHECKLIST_PATH} exists yet")
+    check('13_latest_checklist_continuation_overlap_is_prefix_injection', latest_overlap_ok)
+    check('15_latest_checklist_source_hash_matches_current_template', latest_hash_ok)
+
+    # ---- 14. v1, v2, and v3 checklists were never modified by this or any
+    # later round -- only new files (v4, v5, ...) are ever added ----
+    v1_v2_v3_unmodified_ok = True
+    for path, expected in [(V1_CHECKLIST_PATH, EXPECTED_V1_CHECKLIST_SHA256),
+                            (V2_CHECKLIST_PATH, EXPECTED_V2_CHECKLIST_SHA256),
+                            (V3_CHECKLIST_PATH, EXPECTED_V3_CHECKLIST_SHA256)]:
+        if not os.path.exists(path):
+            v1_v2_v3_unmodified_ok = False
+            print(f"  {path} is missing")
+            continue
+        with open(path, 'rb') as f:
+            actual = hashlib.sha256(f.read()).hexdigest()
+        if actual != expected:
+            v1_v2_v3_unmodified_ok = False
+            print(f"  {path} sha256={actual} does not match expected={expected} -- file was modified")
+    check('14_v1_v2_v3_checklists_unmodified', v1_v2_v3_unmodified_ok)
+
+    # ---- 16. the decision sidecar (if present) contains exactly 16 unique
+    # template_ids, matching the 16 real template_ids derived from the
+    # current template file ----
+    sidecar_ids_ok = False
+    if os.path.exists(DECISIONS_SIDECAR_PATH):
+        with open(DECISIONS_SIDECAR_PATH, encoding='utf-8') as f:
+            sidecar = json.load(f)
+        sidecar_ids = [d.get('template_id') for d in sidecar.get('decisions', [])]
+        expected_ids = {
+            f"{fam}_{vkey}" if vkey != 'family_specific_neutral_control' else f"{fam}_neutral"
+            for fam, vkey, _ in all_strings
+        }
+        sidecar_ids_ok = len(sidecar_ids) == 16 and len(set(sidecar_ids)) == 16 and set(sidecar_ids) == expected_ids
+        if not sidecar_ids_ok:
+            print(f"  decision sidecar template_ids: n={len(sidecar_ids)}, "
+                  f"n_unique={len(set(sidecar_ids))}, set_matches_expected={set(sidecar_ids) == expected_ids}")
+    else:
+        print(f"  {DECISIONS_SIDECAR_PATH} does not exist")
+    check('16_decision_sidecar_has_16_unique_template_ids', sidecar_ids_ok)
+
+    # ---- 17. if the latest checklist includes ctx_continuation, all 4 of
+    # its entries carry the expected activation-pilot-with-format-control
+    # status (only meaningful once that review round has happened; skipped
+    # cleanly if no checklist exists yet) ----
+    cont_status_ok = False
+    if latest is not None:
+        cont_entries = [e for e in latest.get('entries', []) if e.get('family') == 'ctx_continuation']
+        cont_status_ok = len(cont_entries) == 4 and all(
+            e.get('reviewer_status') == 'APPROVED_FOR_ACTIVATION_PILOT_WITH_FORMAT_CONTROL'
+            for e in cont_entries
+        )
+        if not cont_status_ok:
+            print(f"  ctx_continuation reviewer_status values in {latest_checklist_path}: "
+                  f"{[(e.get('template_id'), e.get('reviewer_status')) for e in cont_entries]}")
+    check('17_continuation_reviewer_status_is_activation_pilot_with_format_control', cont_status_ok)
+
+    # ---- 18. the latest checklist's top-level result_status and every
+    # entry's reviewer_status avoid language that would overclaim empirical
+    # validation from what is still only a pilot-use approval ----
+    no_overclaim_ok = False
+    if latest is not None:
+        strings_to_check = [latest.get('result_status', '')] + [
+            e.get('reviewer_status', '') for e in latest.get('entries', [])
+        ]
+        offenders = [s for s in strings_to_check if any(sub in s for sub in VALIDATION_CLAIM_SUBSTRINGS)]
+        no_overclaim_ok = len(offenders) == 0
+        if not no_overclaim_ok:
+            print(f"  status string(s) overclaiming empirical validation: {offenders}")
+    check('18_no_validation_claim_language_in_latest_checklist', no_overclaim_ok)
 
     print()
     if failed == 0:

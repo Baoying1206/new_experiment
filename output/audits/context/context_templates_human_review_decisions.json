@@ -1,0 +1,116 @@
+{
+  "decisions": [
+    {
+      "template_id": "ctx_persona_v1",
+      "reviewer_status": "APPROVED_FOR_PILOT_WITH_LIMITATION",
+      "reviewer_notes": "Approved for pilot use. The ctx_persona/persona_roleplay geometric-independence check (protocol Sec 4) remains unverified -- this is a noted limitation, not a resolved question; no permission-altering claim is present in the text.",
+      "reviewed_at": "2026-09-08T08:59:26.765205+00:00",
+      "review_scope": "initial_template_review"
+    },
+    {
+      "template_id": "ctx_persona_v2",
+      "reviewer_status": "APPROVED_FOR_PILOT_WITH_LIMITATION",
+      "reviewer_notes": "Approved for pilot use. The ctx_persona/persona_roleplay geometric-independence check (protocol Sec 4) remains unverified -- this is a noted limitation, not a resolved question; no permission-altering claim is present in the text.",
+      "reviewed_at": "2026-09-08T08:59:26.765205+00:00",
+      "review_scope": "initial_template_review"
+    },
+    {
+      "template_id": "ctx_persona_v3",
+      "reviewer_status": "APPROVED_FOR_PILOT_WITH_LIMITATION",
+      "reviewer_notes": "Approved for pilot use. The ctx_persona/persona_roleplay geometric-independence check (protocol Sec 4) remains unverified -- this is a noted limitation, not a resolved question; no permission-altering claim is present in the text.",
+      "reviewed_at": "2026-09-08T08:59:26.765205+00:00",
+      "review_scope": "initial_template_review"
+    },
+    {
+      "template_id": "ctx_persona_neutral",
+      "reviewer_status": "APPROVED_FOR_PILOT_WITH_LIMITATION",
+      "reviewer_notes": "Approved for pilot use. The ctx_persona/persona_roleplay geometric-independence check (protocol Sec 4) remains unverified -- this is a noted limitation, not a resolved question; no permission-altering claim is present in the text.",
+      "reviewed_at": "2026-09-08T08:59:26.765205+00:00",
+      "review_scope": "initial_template_review"
+    },
+    {
+      "template_id": "ctx_authority_v1",
+      "reviewer_status": "APPROVED_FOR_PILOT",
+      "reviewer_notes": "Approved for pilot use. No canonical-mechanism overlap identified requiring empirical testing; the claim of authorization belongs to the user, not the AI.",
+      "reviewed_at": "2026-09-08T08:59:26.765205+00:00",
+      "review_scope": "initial_template_review"
+    },
+    {
+      "template_id": "ctx_authority_v2",
+      "reviewer_status": "APPROVED_FOR_PILOT",
+      "reviewer_notes": "Approved for pilot use. No canonical-mechanism overlap identified requiring empirical testing; the claim of authorization belongs to the user, not the AI.",
+      "reviewed_at": "2026-09-08T08:59:26.765205+00:00",
+      "review_scope": "initial_template_review"
+    },
+    {
+      "template_id": "ctx_authority_v3",
+      "reviewer_status": "APPROVED_FOR_PILOT",
+      "reviewer_notes": "Approved for pilot use. No canonical-mechanism overlap identified requiring empirical testing; the claim of authorization belongs to the user, not the AI.",
+      "reviewed_at": "2026-09-08T08:59:26.765205+00:00",
+      "review_scope": "initial_template_review"
+    },
+    {
+      "template_id": "ctx_authority_neutral",
+      "reviewer_status": "APPROVED_FOR_PILOT",
+      "reviewer_notes": "Approved for pilot use. No canonical-mechanism overlap identified requiring empirical testing; the claim of authorization belongs to the user, not the AI.",
+      "reviewed_at": "2026-09-08T08:59:26.765205+00:00",
+      "review_scope": "initial_template_review"
+    },
+    {
+      "template_id": "ctx_fictional_v1",
+      "reviewer_status": "APPROVED_FOR_PILOT",
+      "reviewer_notes": "Approved for pilot use. Possible structural analogy to persona_roleplay (the model is asked to write a character/role) is flagged for future empirical comparison -- this does not assume the two are the same mechanism.",
+      "reviewed_at": "2026-09-08T08:59:26.765205+00:00",
+      "review_scope": "initial_template_review"
+    },
+    {
+      "template_id": "ctx_fictional_v2",
+      "reviewer_status": "APPROVED_FOR_PILOT",
+      "reviewer_notes": "Approved for pilot use. Possible structural analogy to persona_roleplay (the model is asked to write a character/role) is flagged for future empirical comparison -- this does not assume the two are the same mechanism.",
+      "reviewed_at": "2026-09-08T08:59:26.765205+00:00",
+      "review_scope": "initial_template_review"
+    },
+    {
+      "template_id": "ctx_fictional_v3",
+      "reviewer_status": "APPROVED_FOR_PILOT",
+      "reviewer_notes": "Approved for pilot use. Possible structural analogy to persona_roleplay (the model is asked to write a character/role) is flagged for future empirical comparison -- this does not assume the two are the same mechanism.",
+      "reviewed_at": "2026-09-08T08:59:26.765205+00:00",
+      "review_scope": "initial_template_review"
+    },
+    {
+      "template_id": "ctx_fictional_neutral",
+      "reviewer_status": "APPROVED_FOR_PILOT",
+      "reviewer_notes": "Approved for pilot use. Possible structural analogy to persona_roleplay (the model is asked to write a character/role) is flagged for future empirical comparison -- this does not assume the two are the same mechanism.",
+      "reviewed_at": "2026-09-08T08:59:26.765205+00:00",
+      "review_scope": "initial_template_review"
+    },
+    {
+      "template_id": "ctx_continuation_v1",
+      "reviewer_status": "APPROVED_FOR_ACTIVATION_PILOT_WITH_FORMAT_CONTROL",
+      "reviewer_notes": "The revised templates consistently operationalise continuation as completing a missing response. All conditions contain a response-position cue, which reduces but does not eliminate formatting confounds. Possible overlap with prefix_injection must be evaluated empirically. Approval is limited to an activation pilot and does not establish an independent contextual mechanism.",
+      "reviewed_at": "2026-09-08T09:45:00+00:00",
+      "review_scope": "second_review_format_position_cue_confound"
+    },
+    {
+      "template_id": "ctx_continuation_v2",
+      "reviewer_status": "APPROVED_FOR_ACTIVATION_PILOT_WITH_FORMAT_CONTROL",
+      "reviewer_notes": "The revised templates consistently operationalise continuation as completing a missing response. All conditions contain a response-position cue, which reduces but does not eliminate formatting confounds. Possible overlap with prefix_injection must be evaluated empirically. Approval is limited to an activation pilot and does not establish an independent contextual mechanism.",
+      "reviewed_at": "2026-09-08T09:45:00+00:00",
+      "review_scope": "second_review_format_position_cue_confound"
+    },
+    {
+      "template_id": "ctx_continuation_v3",
+      "reviewer_status": "APPROVED_FOR_ACTIVATION_PILOT_WITH_FORMAT_CONTROL",
+      "reviewer_notes": "The revised templates consistently operationalise continuation as completing a missing response. All conditions contain a response-position cue, which reduces but does not eliminate formatting confounds. Possible overlap with prefix_injection must be evaluated empirically. Approval is limited to an activation pilot and does not establish an independent contextual mechanism.",
+      "reviewed_at": "2026-09-08T09:45:00+00:00",
+      "review_scope": "second_review_format_position_cue_confound"
+    },
+    {
+      "template_id": "ctx_continuation_neutral",
+      "reviewer_status": "APPROVED_FOR_ACTIVATION_PILOT_WITH_FORMAT_CONTROL",
+      "reviewer_notes": "The revised templates consistently operationalise continuation as completing a missing response. All conditions contain a response-position cue, which reduces but does not eliminate formatting confounds. Possible overlap with prefix_injection must be evaluated empirically. Approval is limited to an activation pilot and does not establish an independent contextual mechanism.",
+      "reviewed_at": "2026-09-08T09:45:00+00:00",
+      "review_scope": "second_review_format_position_cue_confound"
+    }
+  ]
+}
