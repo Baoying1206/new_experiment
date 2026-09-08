@@ -197,6 +197,46 @@ def render(template_text, instruction):
 
 
 # ---------------------------------------------------------------------------
+# Local instruction-end-position adapter (added after a real cluster run
+# found the generic subsequence search fails for every template-wrapped
+# condition in this pilot -- see EXPERIMENT2_CONTEXT_ACTIVATION_PILOT_PROTOCOL.md
+# for the confirmed root cause). NOT a change to the shared
+# utils/token_positions.py (scripts/23/25/26's already-archived R/H results
+# depend on that module unchanged) -- this wrapper lives only here.
+# ---------------------------------------------------------------------------
+
+def locate_instruction_end(tokenizer, instruction, model_family, full_ids):
+    """get_instruction_end_position, with one fallback retry.
+
+    Root cause (confirmed on the real Llama tokenizer, 2026-09-08): every
+    context/canonical template in this pilot places {instruction} right
+    after a literal space character (e.g. "...consultation. {instruction}",
+    "Request: {instruction}") -- except 'plain', which has no wrapper at
+    all and is preceded only by the chat template's own newline. A BPE
+    tokenizer merges a leading space into the first word's token (e.g.
+    Llama-3: token 40 decodes to 'I', token 358 decodes to ' I' -- two
+    different ids for the same word). get_instruction_end_position encodes
+    the RAW instruction with no leading space, so for every space-preceded
+    template the resulting instr_ids never matches the actual token
+    sequence inside the rendered prompt, and the search raises.
+
+    Fix: try the unmodified instruction first (this is what actually
+    succeeds for 'plain'); if that raises, retry with a single leading
+    space prepended to the instruction text passed to
+    get_instruction_end_position. Since only the FIRST token of instr_ids
+    changes (the space merges into it), the sequence length is unchanged
+    and the resulting position_index -- the LAST token of the instruction
+    span -- is identical to what a correct match would have given; this
+    retry only fixes the match, it does not shift the semantic answer.
+    """
+    try:
+        return get_instruction_end_position(tokenizer, instruction, model_family, full_ids=full_ids)
+    except ValueError:
+        pass
+    return get_instruction_end_position(tokenizer, ' ' + instruction, model_family, full_ids=full_ids)
+
+
+# ---------------------------------------------------------------------------
 # Phase 0: gate checks (content hash, checklist/audit presence, status)
 # ---------------------------------------------------------------------------
 
@@ -276,7 +316,7 @@ def audit_token_positions(tokenizer, sample_instruction, context_data, canonical
         row['instruction_char_span'] = [instr_start_char, instr_start_char + len(sample_instruction)]
 
         try:
-            t_inst = get_instruction_end_position(tokenizer, sample_instruction, MODEL_FAMILY, full_ids=full_ids)
+            t_inst = locate_instruction_end(tokenizer, sample_instruction, MODEL_FAMILY, full_ids)
             t_post = get_post_instruction_position(tokenizer, sample_instruction, MODEL_FAMILY, full_ids=full_ids)
         except ValueError as e:
             anomalies.append(f"{sample_id}: position-finding raised {e}")
@@ -476,7 +516,7 @@ def run_real_pilot(instruction_ids, instructions_by_id, context_conditions, cano
                     raise GateViolation(f"model returned {len(hidden_states)} hidden_states, "
                                         f"expected {n_layers_total}")
                 full_ids_list = full_ids[0].tolist()
-                t_inst = get_instruction_end_position(tokenizer, instr, MODEL_FAMILY, full_ids=full_ids_list)
+                t_inst = locate_instruction_end(tokenizer, instr, MODEL_FAMILY, full_ids_list)
                 t_post = get_post_instruction_position(tokenizer, instr, MODEL_FAMILY, full_ids=full_ids_list)
                 per_layer = torch.stack([
                     torch.stack([hs[0, t_inst.position_index, :], hs[0, t_post.position_index, :]])
