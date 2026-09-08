@@ -1,0 +1,35 @@
+{
+  "result_status": "PROVENANCE_ATTESTATION",
+  "audited_git_commit": "f46522fe9f80a7175b6c16e91b5d7886b503160e",
+  "audit_report_path": "output/audits/context/context_templates_token_length_audit.json",
+  "audit_report_sha256": "1610e1ca5d8c6ed24df5eec93c72f29b2b90b17696beb821d673981deeb39358",
+  "audit_time_source_file_sha256": "d1ea8a382f49f62e95694e41e2f3e8eb799b8b69a7980b58eb46bf45993f6231",
+  "current_source_file_sha256": "4cccc5bcae4ef49f553fbb4a63e35d857cc55dcdaaa77ef832fe821c427cc07f",
+  "audit_time_template_content_sha256": "b63a2e75127eec93dc4157f48b44cb2373772c982de98339e074adfea935faeb",
+  "current_template_content_sha256": "b63a2e75127eec93dc4157f48b44cb2373772c982de98339e074adfea935faeb",
+  "content_hash_schema_version": "context_template_content_v1",
+  "included_fields": [
+    "families.<name> (the 4 family names themselves)",
+    "families.<name>.variants.<id> (v1/v2/v3 -> full template text)",
+    "families.<name>.family_specific_neutral_control (full template text)"
+  ],
+  "excluded_fields": [
+    "status",
+    "source_note",
+    "scope_note",
+    "notes (all sub-keys)",
+    "taxonomy_version",
+    "families.<name>.operational_definition",
+    "families.<name>.n_positive_variants",
+    "families.<name>.neutral_control_type",
+    "any timestamp or reviewer/provenance field"
+  ],
+  "template_texts_identical": true,
+  "mismatched_template_ids": [],
+  "metadata_only_change": true,
+  "changed_json_paths": [
+    "status"
+  ],
+  "content_changed_paths": [],
+  "generated_at": "2026-09-08T14:44:53.658471+00:00"
+}

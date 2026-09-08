@@ -22,7 +22,23 @@ import re
 import sys
 
 SCRIPT_DIR = os.path.dirname(__file__)
+REPO_ROOT = os.path.abspath(os.path.join(SCRIPT_DIR, '..', '..'))
+sys.path.insert(0, os.path.join(SCRIPT_DIR, '..'))
+from utils.context_template_provenance import (  # noqa: E402
+    template_content_sha256, canonical_template_content_payload, diff_json_paths, get_git_show_text,
+)
+
 TEMPLATES_PATH = os.path.join(SCRIPT_DIR, '..', '..', 'templates', 'templates_context_v1.json')
+TEMPLATES_REL_PATH = 'templates/templates_context_v1.json'
+# The commit whose templates/templates_context_v1.json was measured by the
+# formal token-length audit (output/audits/context/context_templates_token_length_audit.json) --
+# read-only via `git show`, never checked out.
+TOKEN_AUDIT_COMMIT = 'f46522fe9f80a7175b6c16e91b5d7886b503160e'
+# Any diff path matching this touches actual rendered template CONTENT
+# (a variant text or a family's neutral control) rather than metadata
+# (status, notes, operational_definition, ...). Used to verify that a
+# historical-vs-current template diff is metadata-only.
+CONTENT_DIFF_PATH_PATTERN = re.compile(r'^families\.[^.]+\.(variants\.|family_specific_neutral_control$)')
 CANONICAL_TEMPLATES_PATH = os.path.join(SCRIPT_DIR, '..', '..', 'templates', 'templates_en.json')
 DEFAULT_REPORT_DIR = os.path.join(SCRIPT_DIR, '..', '..', 'output', 'audits', 'context')
 
@@ -515,6 +531,95 @@ def main(args):
     if not template_status_ok:
         print(f"  templates_context_v1.json status={template_status!r} contains a validation-claim substring")
     check('25_template_status_no_validation_claim', template_status_ok)
+
+    # ---- 26-30: template-CONTENT provenance against git history (added
+    # 2026-09-08, P0). These re-derive everything at test-run time via a
+    # real `git show` -- nothing here is a hardcoded "expect pass". If git
+    # is unavailable or the commit/path can't be read, every one of these
+    # checks FAILS with a PROVENANCE_UNVERIFIED detail -- never a silent
+    # PASS on missing evidence. ----
+    historical_text, git_err = get_git_show_text(TOKEN_AUDIT_COMMIT, TEMPLATES_REL_PATH, REPO_ROOT)
+    historical_data = None
+    if git_err is not None:
+        print(f"  PROVENANCE_UNVERIFIED: {git_err}")
+    else:
+        try:
+            historical_data = json.loads(historical_text)
+        except json.JSONDecodeError as e:
+            print(f"  PROVENANCE_UNVERIFIED: historical file at {TOKEN_AUDIT_COMMIT} is not valid JSON: {e}")
+    check('26_historical_template_readable_via_git_show', historical_data is not None,
+          'PROVENANCE_UNVERIFIED -- see detail above' if historical_data is None else '')
+
+    # 27. historical full-file hash (from git show, hashed fresh here)
+    # equals the formal token audit's OWN recorded source_template_sha256
+    # (read dynamically from the report already loaded above for checks
+    # 19-23, not hardcoded)
+    hist_hash_matches_audit_ok = False
+    if historical_data is not None and token_audit is not None:
+        hist_full_sha256 = hashlib.sha256(historical_text.encode('utf-8')).hexdigest()
+        audit_recorded_sha256 = token_audit.get('source_template_sha256')
+        hist_hash_matches_audit_ok = hist_full_sha256 == audit_recorded_sha256
+        if not hist_hash_matches_audit_ok:
+            print(f"  historical full-file sha256={hist_full_sha256} != "
+                  f"token audit's source_template_sha256={audit_recorded_sha256}")
+    elif historical_data is None:
+        print("  PROVENANCE_UNVERIFIED -- historical file unavailable (see check 26)")
+    else:
+        print("  PROVENANCE_UNVERIFIED -- formal token audit report unavailable (see check 21-23 section)")
+    check('27_historical_full_hash_matches_token_audit_source_hash', hist_hash_matches_audit_ok)
+
+    # 28. template-CONTENT hash (16 template texts only, metadata excluded)
+    # is identical between the historical (audited) version and the
+    # current version
+    content_hash_match_ok = False
+    if historical_data is not None:
+        hist_content_hash = template_content_sha256(historical_data)
+        current_content_hash = template_content_sha256(data)
+        content_hash_match_ok = hist_content_hash == current_content_hash
+        if not content_hash_match_ok:
+            print(f"  historical template_content_sha256={hist_content_hash} != "
+                  f"current template_content_sha256={current_content_hash}")
+    else:
+        print("  PROVENANCE_UNVERIFIED -- historical file unavailable (see check 26)")
+    check('28_template_content_hash_identical_historical_vs_current', content_hash_match_ok)
+
+    # 29. all 16 template_id -> text pairs are byte-identical between the
+    # historical and current versions (direct payload comparison, not just
+    # a hash match, so a specific offending template_id can be named)
+    all_16_identical_ok = False
+    if historical_data is not None:
+        hist_payload = canonical_template_content_payload(historical_data)
+        cur_payload = canonical_template_content_payload(data)
+        mismatches = []
+        for fam_name in sorted(set(hist_payload) | set(cur_payload)):
+            hist_fam = hist_payload.get(fam_name, {})
+            cur_fam = cur_payload.get(fam_name, {})
+            for vkey in sorted(set(hist_fam.get('variants', {})) | set(cur_fam.get('variants', {}))):
+                if hist_fam.get('variants', {}).get(vkey) != cur_fam.get('variants', {}).get(vkey):
+                    mismatches.append(f"{fam_name}_{vkey}")
+            if hist_fam.get('family_specific_neutral_control') != cur_fam.get('family_specific_neutral_control'):
+                mismatches.append(f"{fam_name}_neutral")
+        all_16_identical_ok = len(mismatches) == 0
+        if not all_16_identical_ok:
+            print(f"  template_id(s) with historical != current text: {mismatches}")
+    else:
+        print("  PROVENANCE_UNVERIFIED -- historical file unavailable (see check 26)")
+    check('29_all_16_template_ids_identical_historical_vs_current', all_16_identical_ok)
+
+    # 30. the ONLY differences between the historical and current full JSON
+    # files are metadata (status, etc.) -- no path touching actual template
+    # content changed
+    metadata_only_change_ok = False
+    if historical_data is not None:
+        changed_paths = diff_json_paths(historical_data, data)
+        content_changed_paths = [p for p in changed_paths if CONTENT_DIFF_PATH_PATTERN.match(p)]
+        metadata_only_change_ok = len(content_changed_paths) == 0
+        print(f"  changed_json_paths={changed_paths}")
+        if not metadata_only_change_ok:
+            print(f"  content-touching path(s) changed: {content_changed_paths}")
+    else:
+        print("  PROVENANCE_UNVERIFIED -- historical file unavailable (see check 26)")
+    check('30_historical_vs_current_diff_is_metadata_only', metadata_only_change_ok)
 
     print()
     if failed == 0:
