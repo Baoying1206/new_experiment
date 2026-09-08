@@ -538,3 +538,71 @@ extraction.
 - Any cosine computed between two zero-norm vectors (observed at layer 0
   in the original `t_post` sweep) is reported as
   `{"value": null, "status": "UNDEFINED_ZERO_NORM"}`, never a bare `NaN`.
+
+## 15. Frozen decision: family-specific primary representation (2026-09-08)
+
+Based on the pilot's real `t_inst` results (§14;
+`context_activation_pilot_analysis_v2.json`,
+sha256=`d60a4fb94feebff0e503053efedb680424ed2df984a9cc5fc9311ab112bd1f94`),
+the user made the following frozen decisions for the formal (non-pilot)
+experiment. **This is a decision, not a re-derivation of §6/§14's
+descriptive caveats** -- those sections remain accurate historical
+records of what the pilot itself claimed (nothing conclusive, `n_family=4`).
+
+**Decisions**:
+1. **No single shared C direction is adopted.**
+2. **`k=2` is NOT pre-fixed as the final formal dimensionality.**
+3. **The primary formal C representation is the 4-tuple of
+   family-specific directions**:
+   ```
+   C_m = (C_persona, C_authority, C_fictional, C_continuation)
+   ```
+4. `k=2` SVD compression is carried forward only as a **secondary,
+   exploratory** analysis on top of the 4 family-specific directions --
+   never as a substitute for them, and never adopted as final before the
+   formal experiment's own `k=2` diagnostics (bootstrap stability,
+   split-half subspace stability, LOFO reconstruction -- §19 below) are
+   seen.
+5. **Primary token position for the formal experiment is `t_inst`**
+   (already recorded in §13); `t_post` remains a format-position
+   sensitivity analysis only.
+6. **All 4 families proceed to the formal experiment** -- none is
+   dropped or deprioritized based on pilot numbers.
+7. The pilot itself, and everything derived from it, **remains
+   `PILOT_NON_RESULT`** -- this decision governs the *design* of the
+   formal experiment; it is not itself a formal result.
+
+**Reasons (must be read together, not individually)**:
+- Average cross-family cosine at `t_inst`/layer19 is only **0.150** --
+  weak overall alignment across the 4 families.
+- The dominant SVD component (`k=1`) explains only **0.553** of variance
+  among the 4 (centered) family centroids -- not dominant enough to
+  justify collapsing to one direction.
+- `k=2` explains more (**0.847**), but **leave-one-family-out cosine is
+  only 0.10-0.45** -- a family's centroid is poorly predicted from the
+  other 3's shared structure, which argues against treating the `k=2`
+  subspace as already capturing genuine cross-family structure at
+  pilot scale.
+- Within-family evidence is comparatively strong: **bootstrap
+  direction-cosine 0.93-0.97** and **repeated split-half cosine
+  0.71-0.89** across all 12 (family, variant) pairs -- each
+  family-specific direction is itself well-estimated, even where
+  cross-family structure is not.
+- `ctx_continuation`'s `t_post`/`t_inst` norm ratio is **4.34-7.73** --
+  confirms §13's format-position confound is large in magnitude, not a
+  minor effect, reinforcing the `t_inst`-primary decision.
+- The `t_inst`-based length-sensitivity correlation is still
+  substantial (Pearson r=0.762, Spearman r=0.846, n=12) -- **switching
+  to `t_inst` reduces but does not eliminate the length confound** (it
+  also *flipped sign* relative to the `t_post` correlation of r=-0.806,
+  which is itself informative: the confound's direction is
+  position-dependent, not a fixed artifact). **Because of this, formal
+  results must be described as a "context-framing-induced effect", never
+  as a "pure semantic context direction"** -- the token-length
+  confound is reduced, not resolved, by the position switch alone.
+
+These reasons, taken together, are why the formal representation is
+family-specific (strong within-family evidence) rather than shared
+(weak cross-family evidence, weak LOFO despite non-trivial `k=2`
+variance) -- and why `k=2` is retained as an exploratory lens rather
+than discarded or adopted.

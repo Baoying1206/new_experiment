@@ -1,0 +1,25 @@
+{
+  "result_status": "PILOT_NON_RESULT",
+  "note": "Tensor-shape and gate-check summary only. No direction-existence claim. See context_activation_pilot_metadata.json for full provenance.",
+  "n_instructions": 30,
+  "n_context_conditions": 16,
+  "n_canonical_conditions": 4,
+  "n_conditions": 20,
+  "n_forward_passes": 600,
+  "context_diffs_shape": [
+    30,
+    16,
+    33,
+    2,
+    4096
+  ],
+  "canonical_acts_shape": [
+    30,
+    4,
+    33,
+    2,
+    4096
+  ],
+  "primary_layer": 19,
+  "dry_run": false
+}

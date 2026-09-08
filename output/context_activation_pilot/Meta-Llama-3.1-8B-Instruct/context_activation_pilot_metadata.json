@@ -1,0 +1,103 @@
+{
+  "result_status": "PILOT_NON_RESULT",
+  "dry_run": false,
+  "git_commit": "7626eb9a482ef7f3952726769ed89e1b4b895a4d",
+  "model_path": "/home/h24/baga0553/models/Llama-3.1-8B-Instruct",
+  "model_alias": "Meta-Llama-3.1-8B-Instruct",
+  "model_config_hash": "86c51ee771cd8e318a27b2bbf6b2979cb8813e3c8a3314a4a35027ca5bab35c3",
+  "source_template_file_sha256": "4cccc5bcae4ef49f553fbb4a63e35d857cc55dcdaaa77ef832fe821c427cc07f",
+  "template_content_sha256": "b63a2e75127eec93dc4157f48b44cb2373772c982de98339e074adfea935faeb",
+  "human_review_checklist_path": "output/audits/context/context_templates_human_review_checklist_v5.json",
+  "human_review_checklist_sha256": "929cefea672a5dfe7cfc40940fad916d1f146fad30b0341559d349a56bf7c7fa",
+  "token_audit_report_sha256": "1610e1ca5d8c6ed24df5eec93c72f29b2b90b17696beb821d673981deeb39358",
+  "provenance_attestation_sha256": "f3405c0ae63d43792ba25c5d9d840e4a3bc8c29e96ed54b0b04eeb1f931dd082",
+  "splits_file_sha256": "529ae240ac61521ebdf7c061a2af95562a9e01585e3836a238d8a98c1f267d7a",
+  "instruction_ids": [
+    "p002",
+    "p003",
+    "p004",
+    "p005",
+    "p007",
+    "p009",
+    "p010",
+    "p012",
+    "p015",
+    "p017",
+    "p021",
+    "p022",
+    "p024",
+    "p025",
+    "p026",
+    "p027",
+    "p028",
+    "p030",
+    "p032",
+    "p033",
+    "p034",
+    "p038",
+    "p039",
+    "p043",
+    "p044",
+    "p047",
+    "p048",
+    "p049",
+    "p050",
+    "p052"
+  ],
+  "ids_key": "direction_ids",
+  "test_data_read": false,
+  "validation_data_read": false,
+  "access_log": [
+    {
+      "source": "data/splits.json",
+      "key_or_action": "file_opened",
+      "detail": "",
+      "at": "2026-09-08T20:31:30.208917+00:00"
+    },
+    {
+      "source": "data/splits.json",
+      "key_or_action": "direction_ids",
+      "detail": "reading first 30",
+      "at": "2026-09-08T20:31:30.208923+00:00"
+    },
+    {
+      "source": "data/sampled_prompts.json",
+      "key_or_action": "file_opened",
+      "detail": "n_total=572",
+      "at": "2026-09-08T20:31:30.218461+00:00"
+    }
+  ],
+  "n_layers_total": 33,
+  "primary_layer": 19,
+  "hidden_size": 4096,
+  "token_positions": [
+    "t_inst",
+    "t_post"
+  ],
+  "dtype": "torch.bfloat16",
+  "estimator": "paired_mean_difference",
+  "bootstrap_resamples": 1000,
+  "bootstrap_resample_unit": "instruction",
+  "random_seed": 0,
+  "batch_size": 1,
+  "context_paired_diffs_path": "output/context_activation_pilot/Meta-Llama-3.1-8B-Instruct/context_paired_diffs_PILOT_direction30.pt",
+  "context_paired_diffs_shape": [
+    30,
+    16,
+    33,
+    2,
+    4096
+  ],
+  "context_paired_diffs_sha256": "a90ccf5a8b7c78d8cc7833b01d56631be038ba47faee346bded8c99c256d0f98",
+  "canonical_paired_diffs_path": "output/context_activation_pilot/Meta-Llama-3.1-8B-Instruct/canonical_paired_diffs_PILOT_direction30.pt",
+  "canonical_paired_diffs_shape": [
+    30,
+    4,
+    33,
+    2,
+    4096
+  ],
+  "canonical_paired_diffs_sha256": "0ce90f91d99bf4924b0354e938c1844026a348df38ba5ed79da21841d85bfb52",
+  "run_started_at": "2026-09-08T20:31:30.206409+00:00",
+  "run_finished_at": "2026-09-08T20:32:23.702764+00:00"
+}

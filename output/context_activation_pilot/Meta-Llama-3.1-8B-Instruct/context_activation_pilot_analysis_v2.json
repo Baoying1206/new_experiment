@@ -1,0 +1,683 @@
+{
+  "result_status": "PILOT_NON_RESULT",
+  "checklist_version": "v2",
+  "primary_position_for_formal_followup": "t_inst",
+  "secondary_position": "t_post",
+  "design_revision_reason": "Real pilot data (t_post primary run) found ctx_continuation's t_post direction norm ~5-8x larger than t_inst, with cos(t_inst,t_post)=0.10-0.15, while the other 3 families showed t_inst==t_post exactly (their templates place {instruction} at the very end). t_post for ctx_continuation sits immediately after a Response:/Speaker B:/New response: token carrying its own identity/format signal -- t_post is therefore confounded with trailing-format-token identity for that family and is demoted to a sensitivity analysis; t_inst does not have this specific confound. See EXPERIMENT2_CONTEXT_ACTIVATION_PILOT_PROTOCOL.md Sec 13 for the full record (Sec 3's original t_post-primary design is NOT deleted, only revised going forward).",
+  "note": "Descriptive pilot diagnostics only. No single metric decides whether a C direction exists. Section D (candidate structure) is DESCRIPTIVE_PILOT and not sufficient, on its own, to select a formal dimensionality (n_family=4). Neither a single shared direction nor k=2 is adopted here -- the 4 family-specific directions are the conservative default representation until a formal decision is made.",
+  "primary_layer": 19,
+  "per_variant_tinst_layer19": {
+    "ctx_persona": {
+      "v1": {
+        "direction_norm": 1.8267884254455566,
+        "signed_paired_projection": {
+          "mean": 1.826788306236267,
+          "bootstrap_ci_2_5": 1.5618363618850708,
+          "bootstrap_ci_97_5": 2.0843398571014404,
+          "note": "magnitude/projection description only -- NOT a claim that the CI failing to cross zero proves the direction itself is stable; see bootstrap_direction_cosine for that."
+        },
+        "bootstrap_direction_cosine": {
+          "median": 0.9439638257026672,
+          "ci_2_5": 0.8974909782409668,
+          "ci_97_5": 0.9709818363189697
+        },
+        "repeated_split_half_cosine": {
+          "median": 0.7634394764900208,
+          "q2_5": 0.7033509016036987,
+          "q97_5": 0.8038070201873779,
+          "n_seeds": 100
+        }
+      },
+      "v2": {
+        "direction_norm": 1.4619587659835815,
+        "signed_paired_projection": {
+          "mean": 1.4619591236114502,
+          "bootstrap_ci_2_5": 1.2068405151367188,
+          "bootstrap_ci_97_5": 1.7245594263076782,
+          "note": "magnitude/projection description only -- NOT a claim that the CI failing to cross zero proves the direction itself is stable; see bootstrap_direction_cosine for that."
+        },
+        "bootstrap_direction_cosine": {
+          "median": 0.9436845779418945,
+          "ci_2_5": 0.8909357786178589,
+          "ci_97_5": 0.9707232713699341
+        },
+        "repeated_split_half_cosine": {
+          "median": 0.7629355192184448,
+          "q2_5": 0.6649433970451355,
+          "q97_5": 0.8036947846412659,
+          "n_seeds": 100
+        }
+      },
+      "v3": {
+        "direction_norm": 1.614635705947876,
+        "signed_paired_projection": {
+          "mean": 1.6146361827850342,
+          "bootstrap_ci_2_5": 1.369194507598877,
+          "bootstrap_ci_97_5": 1.8566200733184814,
+          "note": "magnitude/projection description only -- NOT a claim that the CI failing to cross zero proves the direction itself is stable; see bootstrap_direction_cosine for that."
+        },
+        "bootstrap_direction_cosine": {
+          "median": 0.9407259821891785,
+          "ci_2_5": 0.8924134969711304,
+          "ci_97_5": 0.9682390689849854
+        },
+        "repeated_split_half_cosine": {
+          "median": 0.7520707249641418,
+          "q2_5": 0.6872789859771729,
+          "q97_5": 0.7967979907989502,
+          "n_seeds": 100
+        }
+      }
+    },
+    "ctx_authority": {
+      "v1": {
+        "direction_norm": 2.254218339920044,
+        "signed_paired_projection": {
+          "mean": 2.254218339920044,
+          "bootstrap_ci_2_5": 1.8880175352096558,
+          "bootstrap_ci_97_5": 2.620469808578491,
+          "note": "magnitude/projection description only -- NOT a claim that the CI failing to cross zero proves the direction itself is stable; see bootstrap_direction_cosine for that."
+        },
+        "bootstrap_direction_cosine": {
+          "median": 0.9532602429389954,
+          "ci_2_5": 0.9042603969573975,
+          "ci_97_5": 0.9762282967567444
+        },
+        "repeated_split_half_cosine": {
+          "median": 0.8010740280151367,
+          "q2_5": 0.7223845720291138,
+          "q97_5": 0.8408306837081909,
+          "n_seeds": 100
+        }
+      },
+      "v2": {
+        "direction_norm": 2.6378471851348877,
+        "signed_paired_projection": {
+          "mean": 2.637847423553467,
+          "bootstrap_ci_2_5": 2.217494249343872,
+          "bootstrap_ci_97_5": 3.0645148754119873,
+          "note": "magnitude/projection description only -- NOT a claim that the CI failing to cross zero proves the direction itself is stable; see bootstrap_direction_cosine for that."
+        },
+        "bootstrap_direction_cosine": {
+          "median": 0.9486395120620728,
+          "ci_2_5": 0.8955593109130859,
+          "ci_97_5": 0.9738951921463013
+        },
+        "repeated_split_half_cosine": {
+          "median": 0.7885660529136658,
+          "q2_5": 0.7098785042762756,
+          "q97_5": 0.8294298052787781,
+          "n_seeds": 100
+        }
+      },
+      "v3": {
+        "direction_norm": 2.2451865673065186,
+        "signed_paired_projection": {
+          "mean": 2.2451868057250977,
+          "bootstrap_ci_2_5": 1.8014928102493286,
+          "bootstrap_ci_97_5": 2.669687509536743,
+          "note": "magnitude/projection description only -- NOT a claim that the CI failing to cross zero proves the direction itself is stable; see bootstrap_direction_cosine for that."
+        },
+        "bootstrap_direction_cosine": {
+          "median": 0.9466590285301208,
+          "ci_2_5": 0.8877795934677124,
+          "ci_97_5": 0.9730793237686157
+        },
+        "repeated_split_half_cosine": {
+          "median": 0.7751002311706543,
+          "q2_5": 0.6732616424560547,
+          "q97_5": 0.8250835537910461,
+          "n_seeds": 100
+        }
+      }
+    },
+    "ctx_fictional": {
+      "v1": {
+        "direction_norm": 1.4505008459091187,
+        "signed_paired_projection": {
+          "mean": 1.4505009651184082,
+          "bootstrap_ci_2_5": 1.2678196430206299,
+          "bootstrap_ci_97_5": 1.6460609436035156,
+          "note": "magnitude/projection description only -- NOT a claim that the CI failing to cross zero proves the direction itself is stable; see bootstrap_direction_cosine for that."
+        },
+        "bootstrap_direction_cosine": {
+          "median": 0.9459027051925659,
+          "ci_2_5": 0.8981970548629761,
+          "ci_97_5": 0.9724360704421997
+        },
+        "repeated_split_half_cosine": {
+          "median": 0.7677179574966431,
+          "q2_5": 0.69526207447052,
+          "q97_5": 0.8116158246994019,
+          "n_seeds": 100
+        }
+      },
+      "v2": {
+        "direction_norm": 1.5597721338272095,
+        "signed_paired_projection": {
+          "mean": 1.559772253036499,
+          "bootstrap_ci_2_5": 1.3470977544784546,
+          "bootstrap_ci_97_5": 1.7634638547897339,
+          "note": "magnitude/projection description only -- NOT a claim that the CI failing to cross zero proves the direction itself is stable; see bootstrap_direction_cosine for that."
+        },
+        "bootstrap_direction_cosine": {
+          "median": 0.9345704913139343,
+          "ci_2_5": 0.8706170916557312,
+          "ci_97_5": 0.9651784896850586
+        },
+        "repeated_split_half_cosine": {
+          "median": 0.7227371335029602,
+          "q2_5": 0.6535146832466125,
+          "q97_5": 0.7739015817642212,
+          "n_seeds": 100
+        }
+      },
+      "v3": {
+        "direction_norm": 1.769317865371704,
+        "signed_paired_projection": {
+          "mean": 1.7693179845809937,
+          "bootstrap_ci_2_5": 1.4975876808166504,
+          "bootstrap_ci_97_5": 2.0375139713287354,
+          "note": "magnitude/projection description only -- NOT a claim that the CI failing to cross zero proves the direction itself is stable; see bootstrap_direction_cosine for that."
+        },
+        "bootstrap_direction_cosine": {
+          "median": 0.9301275610923767,
+          "ci_2_5": 0.8681054711341858,
+          "ci_97_5": 0.9636456966400146
+        },
+        "repeated_split_half_cosine": {
+          "median": 0.710692286491394,
+          "q2_5": 0.6097686290740967,
+          "q97_5": 0.747635543346405,
+          "n_seeds": 100
+        }
+      }
+    },
+    "ctx_continuation": {
+      "v1": {
+        "direction_norm": 0.8668942451477051,
+        "signed_paired_projection": {
+          "mean": 0.8668944239616394,
+          "bootstrap_ci_2_5": 0.767682671546936,
+          "bootstrap_ci_97_5": 0.9746177196502686,
+          "note": "magnitude/projection description only -- NOT a claim that the CI failing to cross zero proves the direction itself is stable; see bootstrap_direction_cosine for that."
+        },
+        "bootstrap_direction_cosine": {
+          "median": 0.9739716053009033,
+          "ci_2_5": 0.9492984414100647,
+          "ci_97_5": 0.9858810305595398
+        },
+        "repeated_split_half_cosine": {
+          "median": 0.8906456828117371,
+          "q2_5": 0.8652262091636658,
+          "q97_5": 0.9062104821205139,
+          "n_seeds": 100
+        }
+      },
+      "v2": {
+        "direction_norm": 1.1796772480010986,
+        "signed_paired_projection": {
+          "mean": 1.1796772480010986,
+          "bootstrap_ci_2_5": 1.058705449104309,
+          "bootstrap_ci_97_5": 1.3025771379470825,
+          "note": "magnitude/projection description only -- NOT a claim that the CI failing to cross zero proves the direction itself is stable; see bootstrap_direction_cosine for that."
+        },
+        "bootstrap_direction_cosine": {
+          "median": 0.967936098575592,
+          "ci_2_5": 0.9426848888397217,
+          "ci_97_5": 0.9822283387184143
+        },
+        "repeated_split_half_cosine": {
+          "median": 0.8679059147834778,
+          "q2_5": 0.8322713971138,
+          "q97_5": 0.8821989297866821,
+          "n_seeds": 100
+        }
+      },
+      "v3": {
+        "direction_norm": 1.1593055725097656,
+        "signed_paired_projection": {
+          "mean": 1.1593056917190552,
+          "bootstrap_ci_2_5": 1.0217171907424927,
+          "bootstrap_ci_97_5": 1.2987020015716553,
+          "note": "magnitude/projection description only -- NOT a claim that the CI failing to cross zero proves the direction itself is stable; see bootstrap_direction_cosine for that."
+        },
+        "bootstrap_direction_cosine": {
+          "median": 0.9676443338394165,
+          "ci_2_5": 0.9353265166282654,
+          "ci_97_5": 0.9825276732444763
+        },
+        "repeated_split_half_cosine": {
+          "median": 0.8649501204490662,
+          "q2_5": 0.8338508605957031,
+          "q97_5": 0.880448043346405,
+          "n_seeds": 100
+        }
+      }
+    }
+  },
+  "family_structure_tinst_layer19": {
+    "ctx_persona": {
+      "centroid_norm": 1.4983590841293335,
+      "within_family_pairwise_cosine": {
+        "v1_v2": {
+          "value": 0.7946368416246024,
+          "status": "OK"
+        },
+        "v1_v3": {
+          "value": 0.7399550257001772,
+          "status": "OK"
+        },
+        "v2_v3": {
+          "value": 0.7444504394803482,
+          "status": "OK"
+        }
+      },
+      "leave_one_variant_out_cosine": {
+        "v1": {
+          "value": 0.8199767081126141,
+          "status": "OK"
+        },
+        "v2": {
+          "value": 0.8264718663838877,
+          "status": "OK"
+        },
+        "v3": {
+          "value": 0.7827041481754303,
+          "status": "OK"
+        }
+      }
+    },
+    "ctx_authority": {
+      "centroid_norm": 2.32277774810791,
+      "within_family_pairwise_cosine": {
+        "v1_v2": {
+          "value": 0.9228923053729433,
+          "status": "OK"
+        },
+        "v1_v3": {
+          "value": 0.9273794629931974,
+          "status": "OK"
+        },
+        "v2_v3": {
+          "value": 0.938319268854843,
+          "status": "OK"
+        }
+      },
+      "leave_one_variant_out_cosine": {
+        "v1": {
+          "value": 0.9394602177629613,
+          "status": "OK"
+        },
+        "v2": {
+          "value": 0.9479595483302865,
+          "status": "OK"
+        },
+        "v3": {
+          "value": 0.951689320353965,
+          "status": "OK"
+        }
+      }
+    },
+    "ctx_fictional": {
+      "centroid_norm": 1.4105271100997925,
+      "within_family_pairwise_cosine": {
+        "v1_v2": {
+          "value": 0.8651099974013126,
+          "status": "OK"
+        },
+        "v1_v3": {
+          "value": 0.6097451851959204,
+          "status": "OK"
+        },
+        "v2_v3": {
+          "value": 0.5788094641991064,
+          "status": "OK"
+        }
+      },
+      "leave_one_variant_out_cosine": {
+        "v1": {
+          "value": 0.820504532017045,
+          "status": "OK"
+        },
+        "v2": {
+          "value": 0.7879930589410742,
+          "status": "OK"
+        },
+        "v3": {
+          "value": 0.6147813306644349,
+          "status": "OK"
+        }
+      }
+    },
+    "ctx_continuation": {
+      "centroid_norm": 0.8838319778442383,
+      "within_family_pairwise_cosine": {
+        "v1_v2": {
+          "value": 0.5472481408798932,
+          "status": "OK"
+        },
+        "v1_v3": {
+          "value": 0.4756236335349502,
+          "status": "OK"
+        },
+        "v2_v3": {
+          "value": 0.5367059775386204,
+          "status": "OK"
+        }
+      },
+      "leave_one_variant_out_cosine": {
+        "v1": {
+          "value": 0.5838087905691892,
+          "status": "OK"
+        },
+        "v2": {
+          "value": 0.6277647586944562,
+          "status": "OK"
+        },
+        "v3": {
+          "value": 0.5788077880683165,
+          "status": "OK"
+        }
+      }
+    }
+  },
+  "tinst_length_sensitivity": {
+    "note": "descriptive sensitivity diagnostic only, not a statistical conclusion (n=12)",
+    "pearson_r": 0.7615841983537407,
+    "spearman_r": 0.8461538461538461,
+    "n_points": 12
+  },
+  "candidate_context_structure_tinst_layer19": {
+    "result_status": "DESCRIPTIVE_PILOT",
+    "full_4x4_pairwise_cosine_matrix": {
+      "ctx_persona": {
+        "ctx_persona": {
+          "value": 1.0,
+          "status": "OK"
+        },
+        "ctx_authority": {
+          "value": 0.4393307848439069,
+          "status": "OK"
+        },
+        "ctx_fictional": {
+          "value": -0.05598916573533647,
+          "status": "OK"
+        },
+        "ctx_continuation": {
+          "value": 0.005849963653389941,
+          "status": "OK"
+        }
+      },
+      "ctx_authority": {
+        "ctx_persona": {
+          "value": 0.4393307848439069,
+          "status": "OK"
+        },
+        "ctx_authority": {
+          "value": 1.0,
+          "status": "OK"
+        },
+        "ctx_fictional": {
+          "value": 0.12633812692066712,
+          "status": "OK"
+        },
+        "ctx_continuation": {
+          "value": 0.2120662913109261,
+          "status": "OK"
+        }
+      },
+      "ctx_fictional": {
+        "ctx_persona": {
+          "value": -0.05598916573533647,
+          "status": "OK"
+        },
+        "ctx_authority": {
+          "value": 0.12633812692066712,
+          "status": "OK"
+        },
+        "ctx_fictional": {
+          "value": 1.0,
+          "status": "OK"
+        },
+        "ctx_continuation": {
+          "value": 0.1729434905009334,
+          "status": "OK"
+        }
+      },
+      "ctx_continuation": {
+        "ctx_persona": {
+          "value": 0.005849963653389941,
+          "status": "OK"
+        },
+        "ctx_authority": {
+          "value": 0.2120662913109261,
+          "status": "OK"
+        },
+        "ctx_fictional": {
+          "value": 0.1729434905009334,
+          "status": "OK"
+        },
+        "ctx_continuation": {
+          "value": 0.9999999236971654,
+          "status": "OK"
+        }
+      }
+    },
+    "average_cross_family_cosine": 0.1500899152490812,
+    "svd_singular_values": [
+      1.9063615798950195,
+      1.3874071836471558,
+      1.003772497177124,
+      9.206919457938056e-07
+    ],
+    "svd_variance_explained": [
+      0.553433193557983,
+      0.2931315250928914,
+      0.15343528134899656,
+      1.2908724668547849e-13
+    ],
+    "k1_variance_explained": 0.553433193557983,
+    "k2_variance_explained": 0.8465647186508745,
+    "leave_one_family_out_cosine": {
+      "ctx_persona": {
+        "value": 0.29502933927222535,
+        "status": "OK"
+      },
+      "ctx_authority": {
+        "value": 0.4479015014445463,
+        "status": "OK"
+      },
+      "ctx_fictional": {
+        "value": 0.10306157539144475,
+        "status": "OK"
+      },
+      "ctx_continuation": {
+        "value": 0.2045215306860745,
+        "status": "OK"
+      }
+    },
+    "note": "n_family=4 -- descriptive only, NOT sufficient on its own to select a formal dimensionality. Neither k=1 nor k=2 is adopted by this report."
+  },
+  "ctx_continuation_format_position_diagnostic_layer19": {
+    "v1": {
+      "t_inst_norm": 0.8668942451477051,
+      "t_post_norm": 6.70109224319458,
+      "cosine_t_inst_t_post": {
+        "value": 0.15060199155421572,
+        "status": "OK"
+      },
+      "norm_ratio_tpost_over_tinst": 7.729999686470199,
+      "difference_vector_norm": 6.626192092895508,
+      "difference_vector_label": "format-position-associated residual (d_tpost - d_tinst) -- NOT a causal format direction; no causal claim is made about what produces this residual."
+    },
+    "v2": {
+      "t_inst_norm": 1.1796772480010986,
+      "t_post_norm": 9.027982711791992,
+      "cosine_t_inst_t_post": {
+        "value": 0.14563747571624486,
+        "status": "OK"
+      },
+      "norm_ratio_tpost_over_tinst": 7.652926024545643,
+      "difference_vector_norm": 8.93274974822998,
+      "difference_vector_label": "format-position-associated residual (d_tpost - d_tinst) -- NOT a causal format direction; no causal claim is made about what produces this residual."
+    },
+    "v3": {
+      "t_inst_norm": 1.1593055725097656,
+      "t_post_norm": 5.029276371002197,
+      "cosine_t_inst_t_post": {
+        "value": 0.10308080767602015,
+        "status": "OK"
+      },
+      "norm_ratio_tpost_over_tinst": 4.3381801056251135,
+      "difference_vector_norm": 5.043370723724365,
+      "difference_vector_label": "format-position-associated residual (d_tpost - d_tinst) -- NOT a causal format direction; no causal claim is made about what produces this residual."
+    }
+  },
+  "provenance": {
+    "pilot_metadata_path": "output/context_activation_pilot/Meta-Llama-3.1-8B-Instruct/context_activation_pilot_metadata.json",
+    "context_paired_diffs_sha256": "a90ccf5a8b7c78d8cc7833b01d56631be038ba47faee346bded8c99c256d0f98",
+    "canonical_paired_diffs_sha256": "0ce90f91d99bf4924b0354e938c1844026a348df38ba5ed79da21841d85bfb52",
+    "pilot_extraction_git_commit": "7626eb9a482ef7f3952726769ed89e1b4b895a4d",
+    "instruction_ids": [
+      "p002",
+      "p003",
+      "p004",
+      "p005",
+      "p007",
+      "p009",
+      "p010",
+      "p012",
+      "p015",
+      "p017",
+      "p021",
+      "p022",
+      "p024",
+      "p025",
+      "p026",
+      "p027",
+      "p028",
+      "p030",
+      "p032",
+      "p033",
+      "p034",
+      "p038",
+      "p039",
+      "p043",
+      "p044",
+      "p047",
+      "p048",
+      "p049",
+      "p050",
+      "p052"
+    ],
+    "analysis_git_commit": "452269e7390a4e618d5cddeaeb8db1f1af69eaa9"
+  },
+  "bootstrap_seeds": {
+    "n_resamples": 1000,
+    "seed": 0
+  },
+  "split_half_seeds": [
+    1000,
+    1001,
+    1002,
+    1003,
+    1004,
+    1005,
+    1006,
+    1007,
+    1008,
+    1009,
+    1010,
+    1011,
+    1012,
+    1013,
+    1014,
+    1015,
+    1016,
+    1017,
+    1018,
+    1019,
+    1020,
+    1021,
+    1022,
+    1023,
+    1024,
+    1025,
+    1026,
+    1027,
+    1028,
+    1029,
+    1030,
+    1031,
+    1032,
+    1033,
+    1034,
+    1035,
+    1036,
+    1037,
+    1038,
+    1039,
+    1040,
+    1041,
+    1042,
+    1043,
+    1044,
+    1045,
+    1046,
+    1047,
+    1048,
+    1049,
+    1050,
+    1051,
+    1052,
+    1053,
+    1054,
+    1055,
+    1056,
+    1057,
+    1058,
+    1059,
+    1060,
+    1061,
+    1062,
+    1063,
+    1064,
+    1065,
+    1066,
+    1067,
+    1068,
+    1069,
+    1070,
+    1071,
+    1072,
+    1073,
+    1074,
+    1075,
+    1076,
+    1077,
+    1078,
+    1079,
+    1080,
+    1081,
+    1082,
+    1083,
+    1084,
+    1085,
+    1086,
+    1087,
+    1088,
+    1089,
+    1090,
+    1091,
+    1092,
+    1093,
+    1094,
+    1095,
+    1096,
+    1097,
+    1098,
+    1099
+  ],
+  "generated_at": "2026-09-08T20:55:39.844074+00:00"
+}
