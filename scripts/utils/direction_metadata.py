@@ -72,9 +72,17 @@ def current_git_commit(repo_dir='.'):
 def sha256_of_tensor(tensor):
     """Content hash of a tensor's actual values (not its Python object identity
     or its file's mtime) -- moved to CPU/contiguous first so the hash is
-    device- and stride-independent."""
+    device- and stride-independent. Reinterpreted as raw uint8 bytes before
+    going through numpy (2026-09-08, found via the context activation pilot,
+    which is the first caller to hash a bfloat16 tensor): numpy has no
+    native bfloat16 support, so plain `.numpy()` raises TypeError for that
+    dtype. Viewing as uint8 first sidesteps this for ANY dtype and produces
+    byte-for-byte identical output to the old code path for every dtype
+    numpy already supported (same underlying memory, just accessed via a
+    differently-typed view) -- this does not change any previously
+    computed hash."""
     arr = tensor.detach().cpu().contiguous()
-    return hashlib.sha256(arr.numpy().tobytes()).hexdigest()
+    return hashlib.sha256(arr.view(torch.uint8).numpy().tobytes()).hexdigest()
 
 
 def sha256_of_file(path):
@@ -242,7 +250,11 @@ def sha256_of_nested_tensors(obj):
     def _walk(o, path):
         if torch.is_tensor(o):
             h.update(path.encode('utf-8'))
-            h.update(o.detach().cpu().contiguous().numpy().tobytes())
+            # viewed as uint8 first -- see sha256_of_tensor's docstring for
+            # why (numpy has no native bfloat16 support; this is
+            # byte-identical to the old path for every dtype numpy already
+            # supported, so no previously computed hash changes)
+            h.update(o.detach().cpu().contiguous().view(torch.uint8).numpy().tobytes())
         elif isinstance(o, dict):
             for k in sorted(o.keys(), key=str):
                 _walk(o[k], f'{path}/{k}')

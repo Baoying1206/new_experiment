@@ -449,6 +449,7 @@ def main(args):
         'canonical_paired_diffs': os.path.join(output_dir, f'canonical_paired_diffs_PILOT_direction30{suffix}.pt'),
         'summary': os.path.join(output_dir, f'context_activation_pilot_summary{suffix}.json'),
         'metadata': os.path.join(output_dir, f'context_activation_pilot_metadata{suffix}.json'),
+        'token_position_audit': os.path.join(output_dir, f'context_token_position_audit{suffix}.json'),
     }
     for name, p in paths.items():
         if os.path.exists(p):
@@ -466,15 +467,14 @@ def main(args):
     sample_instruction = next(iter(instructions_by_id.values()))
     audit_rows, anomalies = audit_token_positions(tokenizer, sample_instruction, context_data, canonical_conditions)
     print(f"Token-position audit: {len(audit_rows)} samples, {len(anomalies)} anomalies.")
-    audit_report_path = os.path.join(output_dir, f'context_token_position_audit{suffix}.json')
-    if not args.dry_run or not os.path.exists(audit_report_path):
-        os.makedirs(os.path.dirname(audit_report_path), exist_ok=True)
-        _atomic_json_save(
-            {'result_status': 'PILOT_NON_RESULT', 'rows': audit_rows, 'anomalies': anomalies,
-             'generated_at': datetime.datetime.now(datetime.timezone.utc).isoformat()},
-            audit_report_path,
-        )
-        print(f"Wrote token-position audit: {audit_report_path}")
+    audit_report_path = paths['token_position_audit']  # already confirmed non-existent above
+    os.makedirs(os.path.dirname(audit_report_path), exist_ok=True)
+    _atomic_json_save(
+        {'result_status': 'PILOT_NON_RESULT', 'rows': audit_rows, 'anomalies': anomalies,
+         'generated_at': datetime.datetime.now(datetime.timezone.utc).isoformat()},
+        audit_report_path,
+    )
+    print(f"Wrote token-position audit: {audit_report_path}")
     if anomalies:
         raise GateViolation(f"token-position audit found {len(anomalies)} anomalie(s) -- refusing to "
                              f"proceed to model pilot: {anomalies}")
@@ -708,6 +708,8 @@ def save_outputs(context_diffs, canonical_acts, instruction_ids, context_conditi
     atomic_json_save(metadata, paths['metadata'])
 
     for name, p in paths.items():
+        if name == 'token_position_audit':
+            continue  # already written and printed during Phase 0
         print(f"Wrote ({'DRY RUN' if dry_run else 'real'}, non-overwriting): {p}")
 
 
