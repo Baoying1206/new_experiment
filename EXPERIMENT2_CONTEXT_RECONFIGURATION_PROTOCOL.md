@@ -316,15 +316,18 @@ recorded here for the human reviewer to resolve.
 
 ## 8. Current status
 
-`status: HUMAN_REVIEWED_READY_FOR_TOKEN_AUDIT` in
-`templates/templates_context_v1.json` (updated from
-`CANDIDATE_NOT_EMPIRICALLY_VALIDATED` on 2026-09-08, once all 4 families
-had a completed human-review decision -- see below). This status means
-the template *wording* has been human-reviewed and approved for pilot
-use; it does **not** mean any C direction, family independence, or
-canonical-mechanism distinction has been empirically validated -- all of
-§1's "explicitly NOT assumed" items and §4/§7's open confounds still
-stand.
+`status: HUMAN_AND_TOKEN_AUDITED_READY_FOR_ACTIVATION_PILOT` in
+`templates/templates_context_v1.json` (progression: `CANDIDATE_NOT_
+EMPIRICALLY_VALIDATED` -> `HUMAN_REVIEWED_READY_FOR_TOKEN_AUDIT` once all
+4 families had a completed human-review decision -> `HUMAN_AND_TOKEN_
+AUDITED_READY_FOR_ACTIVATION_PILOT` once the real token-length QC pass
+(§9) was also accepted, all on 2026-09-08). This status means the
+template *wording* has been human-reviewed **and** passed a tokenizer-
+length QC pass; it does **not** mean any C direction, family
+independence, or canonical-mechanism distinction has been empirically
+validated, and does **not** mean the length confound documented in §9 is
+resolved -- all of §1's "explicitly NOT assumed" items and §4/§7/§9's
+open confounds still stand.
 
 **Checklist file provenance (added 2026-09-08)**: four checklist files
 now exist under `output/audits/context/`. `context_templates_human_
@@ -412,6 +415,132 @@ History:
   was changed this round -- only review status, provenance metadata, and
   the top-level template status field.
 
+- **2026-09-08 (token-length QC, activation-pilot admission)**: the real
+  tokenizer-only length audit (§9 below) was run against all 3 models on
+  the current (human-reviewed, `ctx_continuation`-revised) template text
+  and accepted. `templates/templates_context_v1.json`'s top-level
+  `status` updated to `HUMAN_AND_TOKEN_AUDITED_READY_FOR_ACTIVATION_PILOT`
+  (from `HUMAN_REVIEWED_READY_FOR_TOKEN_AUDIT`). A new
+  `output/audits/context/context_templates_human_review_checklist_v5.json`
+  was generated (reusing v4's decision sidecar unchanged -- no per-
+  template human decision changed this round -- plus the token audit's
+  own SHA-256 as additional provenance); v1-v4 untouched. Static audit
+  extended from 18 to 25 checks (added: formal token audit's
+  `source_template_sha256` matches the current template; the audit
+  reports 16 records -- 12 positive + 4 neutral -- for each of the 3
+  models; the audit is not a mock result; Python/transformers versions
+  are present and version-shaped; `tokenizer_paths` metadata is present
+  for exactly the 3 expected models; the `PRE_CONTINUATION_REVISION`
+  snapshot is documented in this protocol as superseded; the template's
+  own `status` field carries no validation-claim language; check 14
+  extended to also hash-pin v4). All 25 pass. No template *wording* was
+  changed this round.
+
 No model has been run. No generation, activation extraction, or WildGuard
-judging has occurred against these templates. No commit has been made for
-this round's work.
+judging has occurred against these templates.
+
+## 9. Token-length QC results and pre-registered interpretation rules
+(added 2026-09-08)
+
+**Full results** (all 3 models, wrapper-only token counts, `{instruction}`
+removed, `add_special_tokens=False`, no chat template; see
+`output/audits/context/context_templates_token_length_audit.json` for the
+machine-readable version):
+
+| family | model | v1 | v2 | v3 | neutral | diff(v1/v2/v3) | range | stdev |
+|---|---|---|---|---|---|---|---|---|
+| ctx_authority | Qwen / Llama | 16 | 17 | 17 | 13 | +3/+4/+4 | 1 | 0.58 |
+| ctx_authority | Gemma | 16 | 17 | 17 | 13 | +3/+4/+4 | 1 | 0.58 |
+| ctx_continuation | Qwen / Llama | 25 | 25 | 24 | 29 | -4/-4/-5 | 1 | 0.58 |
+| ctx_continuation | Gemma | 27 | 27 | 26 | 31 | -4/-4/-5 | 1 | 0.58 |
+| ctx_fictional | Qwen / Llama | 18 | 18 | 19 | 17 | +1/+1/+2 | 1 | 0.58 |
+| ctx_fictional | Gemma | 18 | 18 | 21 | 17 | +1/+1/+4 | 3 | 1.73 |
+| ctx_persona | all 3 | 17 | 15 | 13 | 11 | +6/+4/+2 | 4 | 2.00 |
+
+Cross-family average wrapper length: Qwen/Llama -- `ctx_authority`=15.8,
+`ctx_continuation`=25.8, `ctx_fictional`=18.0, `ctx_persona`=14.0
+(cross-family range 11.8); Gemma -- `ctx_authority`=15.8,
+`ctx_continuation`=27.8, `ctx_fictional`=18.5, `ctx_persona`=14.0
+(cross-family range 13.8).
+
+**Systematic direction of the positive-vs-neutral length gap**:
+- `ctx_authority`, `ctx_fictional`, `ctx_persona`: all 3 positive variants
+  are **systematically longer than** their family's neutral, in all 3
+  models.
+- `ctx_continuation`: all 3 positive variants are **systematically
+  shorter than** their family's neutral, in all 3 models -- the opposite
+  direction from the other 3 families. The gap is **-4 to -5 tokens**
+  (Qwen/Llama: -4/-4/-5; Gemma: -4/-4/-5). This is a direct consequence
+  of the 2026-09-08 `ctx_continuation` neutral revision (§7) now being
+  longer, in wrapper-only tokens, than any of the 3 rewritten positives.
+
+**Outliers**: 0/12 pooled positive variants flagged by the 1.5×IQR
+convention, in any of the 3 models. `outlier_agreement` in the report
+confirms all 3 tokenizers agree on every one of the 12 positive variants
+(no disagreement).
+
+**No automatic length matching or text padding was applied, and none is
+planned** -- per this protocol's standing rule (templates are never
+auto-rewritten to fix a flagged issue), the reversed `ctx_continuation`
+gap is treated as a known, recorded limitation and a **sensitivity
+variable** for the pilot and any formal analysis, not something to be
+equalized by inserting filler text (which would itself introduce a new,
+unreviewed semantic confound).
+
+**Pre-registered interpretation rules** (written before any activation
+data exists, to prevent post-hoc rationalization either way):
+- If the 4 context families show similar directional structure in
+  activation space, and `ctx_continuation` -- despite its reversed
+  length-gap direction -- still aligns with the others, then a shared
+  structure is **not easily explained** by positive-minus-neutral length
+  direction alone.
+- If `ctx_continuation` separates from, or reverses relative to, the
+  other 3 families in activation space, this **must not** be interpreted
+  as evidence of mechanism independence by itself -- both the length gap
+  and the response-position-cue confound (§7) must be considered as
+  competing explanations before any such claim.
+- **Directional alignment or separation among families is not, by
+  itself, sufficient to claim that the C dimension exists.** Any such
+  claim requires ruling out length and format-position-cue confounds
+  specifically, not just observing a pattern.
+
+**File provenance and status of QC artifacts**:
+- `output/audits/context/context_templates_token_length_audit.json` is
+  the current, formal **`TEMPLATE_QC_RESULT`** -- a template-quality-
+  control artifact (token-length descriptive statistics only). It is
+  **not an activation-pilot or generation result** and must not be cited
+  as one.
+- `output/audits/context/context_templates_token_length_audit_PRE_CONTINUATION_REVISION.json`
+  is a **`SUPERSEDED_TEMPLATE_QC_SNAPSHOT`**: it measured the
+  pre-2026-09-08 `ctx_continuation` wording (the `[Continuation:]`/
+  `Speaker B:`/`[The draft continues:]` version, superseded by §7's
+  rewrite). It must **not** be used to decide pilot admission for the
+  current templates. It exists only on the cluster filesystem, was
+  archived (not deleted or overwritten) by renaming, and is not tracked
+  in this repository.
+- `output/audits/context/context_templates_human_review_checklist_v5.json`
+  is the current, effective checklist (superseding v4 for admission-status
+  purposes, per the same "always read the latest version" rule established
+  when v4 superseded v3 -- §8's checklist-provenance note). v1-v4 remain
+  historical snapshots, never modified.
+- **Two different template-hash lineages exist by design, and this is not
+  a data-integrity problem**: `context_templates_human_review_checklist_v5.json`'s
+  own `source_template_sha256` (`4cccc5bc...`) is the CURRENT template
+  file's hash, computed after the `status` field was bumped to
+  `HUMAN_AND_TOKEN_AUDITED_READY_FOR_ACTIVATION_PILOT`. The token audit
+  report's internal `source_template_sha256` (`d1ea8a382...`) is the
+  template's hash at the moment the audit actually ran, while `status`
+  still read `HUMAN_REVIEWED_READY_FOR_TOKEN_AUDIT`. The two differ only
+  because `status` (metadata, never tokenized) changed in between --
+  none of the 16 templates' wording differs between the two hashes.
+  `audit_context_templates_dry_run.py`'s check 19 pins the expected
+  value to the audit-time hash (`d1ea8a382...`) rather than comparing
+  against "whatever the current file hash is", since a same-round status
+  bump would otherwise make that comparison fail by construction, every
+  time admission is granted.
+- `status: HUMAN_AND_TOKEN_AUDITED_READY_FOR_ACTIVATION_PILOT` means
+  **only** that the template wording has passed human review AND a
+  tokenizer-length QC pass. It does **not** mean the length confound is
+  resolved, and it does **not** mean any C (context-reconfiguration)
+  direction has been validated -- both remain explicitly open per the
+  pre-registered interpretation rules above.

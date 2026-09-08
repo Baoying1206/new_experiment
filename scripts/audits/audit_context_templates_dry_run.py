@@ -14,6 +14,7 @@ Usage:
   python scripts/audits/audit_context_templates_dry_run.py --write_report output/audits/context/context_templates_audit.json
 """
 import argparse
+import datetime
 import hashlib
 import json
 import os
@@ -25,19 +26,38 @@ TEMPLATES_PATH = os.path.join(SCRIPT_DIR, '..', '..', 'templates', 'templates_co
 CANONICAL_TEMPLATES_PATH = os.path.join(SCRIPT_DIR, '..', '..', 'templates', 'templates_en.json')
 DEFAULT_REPORT_DIR = os.path.join(SCRIPT_DIR, '..', '..', 'output', 'audits', 'context')
 
+PROTOCOL_PATH = os.path.join(SCRIPT_DIR, '..', '..', 'EXPERIMENT2_CONTEXT_RECONFIGURATION_PROTOCOL.md')
+
 V1_CHECKLIST_PATH = os.path.join(DEFAULT_REPORT_DIR, 'context_templates_human_review_checklist.json')
 V2_CHECKLIST_PATH = os.path.join(DEFAULT_REPORT_DIR, 'context_templates_human_review_checklist_v2.json')
 V3_CHECKLIST_PATH = os.path.join(DEFAULT_REPORT_DIR, 'context_templates_human_review_checklist_v3.json')
 V4_CHECKLIST_PATH = os.path.join(DEFAULT_REPORT_DIR, 'context_templates_human_review_checklist_v4.json')
+V5_CHECKLIST_PATH = os.path.join(DEFAULT_REPORT_DIR, 'context_templates_human_review_checklist_v5.json')
 DECISIONS_SIDECAR_PATH = os.path.join(DEFAULT_REPORT_DIR, 'context_templates_human_review_decisions.json')
+TOKEN_AUDIT_PATH = os.path.join(DEFAULT_REPORT_DIR, 'context_templates_token_length_audit.json')
+TOKEN_AUDIT_PRE_CONTINUATION_PATH = os.path.join(
+    DEFAULT_REPORT_DIR, 'context_templates_token_length_audit_PRE_CONTINUATION_REVISION.json')
 # Hardcoded regression guard (added 2026-09-08, alongside the ctx_continuation
-# revision; extended the same day to also pin v3 once v4 existed) -- these
-# are the SHA-256 of the v1/v2/v3 checklist files as they existed once each
-# was finalized. v1/v2/v3 must never be modified again; only a new (v4, v5,
-# ...) file is ever added.
+# revision; extended the same day to also pin v3 once v4 existed, and again
+# to pin v4 once v5 existed) -- these are the SHA-256 of the v1/v2/v3/v4
+# checklist files as they existed once each was finalized. v1-v4 must never
+# be modified again; only a new (v5, v6, ...) file is ever added.
 EXPECTED_V1_CHECKLIST_SHA256 = '97edbb27ea247f8710c1d71689465854369550d98e22ea80f4c69dd9c8dec92d'
 EXPECTED_V2_CHECKLIST_SHA256 = 'f468fafc20306c3879808db83c47c8fc324b72b72f406005ef2de3c9429f2315'
 EXPECTED_V3_CHECKLIST_SHA256 = '91f54d6c72f017a3644a840bf90c3625fb6bfeebbc0f6b15edc4dc5fe58fb6a6'
+EXPECTED_V4_CHECKLIST_SHA256 = '26e700a51f1a39fabcd8372451d1f10830c8b87be7fd0214694c18ec35bc8ff8'
+# The formal token-length audit's OWN internal source_template_sha256 is
+# pinned here rather than compared to "whatever the template hash is right
+# now" -- the audit was run against the template while its top-level
+# `status` field still read HUMAN_REVIEWED_READY_FOR_TOKEN_AUDIT; accepting
+# those results and then bumping `status` to
+# HUMAN_AND_TOKEN_AUDITED_READY_FOR_ACTIVATION_PILOT (this same round)
+# necessarily changes the whole-file hash even though none of the 16
+# templates' wording changed (status is metadata, never tokenized). A
+# "must equal the current file" check would therefore fail forever, by
+# construction, the moment admission is granted -- this is a provenance
+# pin (like the v1-v4 checklist hashes above), not a staleness check.
+EXPECTED_TOKEN_AUDIT_SOURCE_TEMPLATE_SHA256 = 'd1ea8a382f49f62e95694e41e2f3e8eb799b8b69a7980b58eb46bf45993f6231'
 
 # Substrings that would overclaim empirical validation from a pilot
 # approval. Checked case-sensitively against the all-caps status vocabulary
@@ -273,7 +293,9 @@ def main(args):
     # a new checklist without regenerating the old one -- that's expected
     # staleness for an archived snapshot, not a bug. Checking "the latest one
     # that exists" keeps the invariant meaningful across rounds.
-    if os.path.exists(V4_CHECKLIST_PATH):
+    if os.path.exists(V5_CHECKLIST_PATH):
+        latest_checklist_path = V5_CHECKLIST_PATH
+    elif os.path.exists(V4_CHECKLIST_PATH):
         latest_checklist_path = V4_CHECKLIST_PATH
     elif os.path.exists(V3_CHECKLIST_PATH):
         latest_checklist_path = V3_CHECKLIST_PATH
@@ -308,26 +330,27 @@ def main(args):
             print(f"  {latest_checklist_path} source_template_sha256={latest.get('source_template_sha256')} "
                   f"does not match current templates_context_v1.json sha256={current_template_sha256}")
     else:
-        print(f"  neither {V3_CHECKLIST_PATH} nor {V4_CHECKLIST_PATH} exists yet")
+        print(f"  none of {V5_CHECKLIST_PATH}, {V4_CHECKLIST_PATH}, {V3_CHECKLIST_PATH} exist yet")
     check('13_latest_checklist_continuation_overlap_is_prefix_injection', latest_overlap_ok)
     check('15_latest_checklist_source_hash_matches_current_template', latest_hash_ok)
 
-    # ---- 14. v1, v2, and v3 checklists were never modified by this or any
-    # later round -- only new files (v4, v5, ...) are ever added ----
-    v1_v2_v3_unmodified_ok = True
+    # ---- 14. v1, v2, v3, and v4 checklists were never modified by this or
+    # any later round -- only new files (v5, v6, ...) are ever added ----
+    v1_v2_v3_v4_unmodified_ok = True
     for path, expected in [(V1_CHECKLIST_PATH, EXPECTED_V1_CHECKLIST_SHA256),
                             (V2_CHECKLIST_PATH, EXPECTED_V2_CHECKLIST_SHA256),
-                            (V3_CHECKLIST_PATH, EXPECTED_V3_CHECKLIST_SHA256)]:
+                            (V3_CHECKLIST_PATH, EXPECTED_V3_CHECKLIST_SHA256),
+                            (V4_CHECKLIST_PATH, EXPECTED_V4_CHECKLIST_SHA256)]:
         if not os.path.exists(path):
-            v1_v2_v3_unmodified_ok = False
+            v1_v2_v3_v4_unmodified_ok = False
             print(f"  {path} is missing")
             continue
         with open(path, 'rb') as f:
             actual = hashlib.sha256(f.read()).hexdigest()
         if actual != expected:
-            v1_v2_v3_unmodified_ok = False
+            v1_v2_v3_v4_unmodified_ok = False
             print(f"  {path} sha256={actual} does not match expected={expected} -- file was modified")
-    check('14_v1_v2_v3_checklists_unmodified', v1_v2_v3_unmodified_ok)
+    check('14_v1_v2_v3_v4_checklists_unmodified', v1_v2_v3_v4_unmodified_ok)
 
     # ---- 16. the decision sidecar (if present) contains exactly 16 unique
     # template_ids, matching the 16 real template_ids derived from the
@@ -378,6 +401,120 @@ def main(args):
         if not no_overclaim_ok:
             print(f"  status string(s) overclaiming empirical validation: {offenders}")
     check('18_no_validation_claim_language_in_latest_checklist', no_overclaim_ok)
+
+    # ---- 19-23: validate the FORMAL (real, non-mock) token-length audit
+    # report against the current template file and its own metadata ----
+    token_audit = None
+    if os.path.exists(TOKEN_AUDIT_PATH):
+        with open(TOKEN_AUDIT_PATH, encoding='utf-8') as f:
+            token_audit = json.load(f)
+    else:
+        print(f"  {TOKEN_AUDIT_PATH} does not exist")
+
+    # 19. formal token audit's source_template_sha256 matches the pinned
+    # provenance hash (the template as it existed when the audit actually
+    # ran) -- see the constant's comment above for why this is pinned
+    # rather than compared against "the current file"
+    audit_hash_ok = False
+    if token_audit is not None:
+        audit_hash_ok = token_audit.get('source_template_sha256') == EXPECTED_TOKEN_AUDIT_SOURCE_TEMPLATE_SHA256
+        if not audit_hash_ok:
+            print(f"  token audit source_template_sha256={token_audit.get('source_template_sha256')} "
+                  f"does not match pinned provenance hash={EXPECTED_TOKEN_AUDIT_SOURCE_TEMPLATE_SHA256}")
+    check('19_formal_token_audit_source_hash_matches_pinned_provenance', audit_hash_ok)
+
+    # 20. formal token audit has 16 records (12 positive + 4 neutral) for
+    # each of the 3 models
+    audit_counts_ok = False
+    if token_audit is not None:
+        per_model = token_audit.get('per_model_family_stats', {})
+        audit_counts_ok = len(per_model) == 3
+        for alias, fam_stats in per_model.items():
+            n = sum(len(v.get('positive_token_lengths', {})) + 1 for v in fam_stats.values())
+            if len(fam_stats) != 4 or n != 16:
+                audit_counts_ok = False
+                print(f"  {alias}: {len(fam_stats)} families, {n} total template records (expected 4, 16)")
+    check('20_formal_token_audit_16_records_per_model', audit_counts_ok)
+
+    # 21. formal token audit is not a mock result -- structural markers a
+    # hand-rolled/mock report would be unlikely to carry correctly: the
+    # script's own non-result marker, a parseable generated_at timestamp,
+    # and real per-variant integer token counts (not float/placeholder)
+    audit_not_mock_ok = False
+    if token_audit is not None:
+        try:
+            datetime.datetime.fromisoformat(token_audit.get('generated_at', ''))
+            generated_at_ok = True
+        except ValueError:
+            generated_at_ok = False
+        all_lengths_are_ints = all(
+            isinstance(v, int)
+            for fam_stats in token_audit.get('per_model_family_stats', {}).values()
+            for entry in fam_stats.values()
+            for v in list(entry.get('positive_token_lengths', {}).values()) + [entry.get('neutral_token_length')]
+        )
+        audit_not_mock_ok = (
+            token_audit.get('result_status') == 'STATIC_AUDIT_NON_RESULT'
+            and generated_at_ok
+            and all_lengths_are_ints
+        )
+        if not audit_not_mock_ok:
+            print(f"  result_status={token_audit.get('result_status')}  "
+                  f"generated_at_parseable={generated_at_ok}  all_lengths_are_ints={all_lengths_are_ints}")
+    check('21_formal_token_audit_not_a_mock_result', audit_not_mock_ok)
+
+    # 22. Python and transformers versions are present and look like real
+    # version strings (not empty, not a placeholder)
+    audit_versions_ok = False
+    if token_audit is not None:
+        py_v = token_audit.get('python_version', '')
+        tf_v = token_audit.get('transformers_version', '')
+        version_pattern = re.compile(r'^\d+\.\d+')
+        audit_versions_ok = bool(version_pattern.match(py_v)) and bool(version_pattern.match(tf_v))
+        if not audit_versions_ok:
+            print(f"  python_version={py_v!r}  transformers_version={tf_v!r}")
+    check('22_formal_token_audit_python_transformers_versions_present', audit_versions_ok)
+
+    # 23. tokenizer_paths metadata present for exactly the 3 expected model
+    # aliases, each a non-empty path string
+    audit_tok_paths_ok = False
+    if token_audit is not None:
+        tok_paths = token_audit.get('tokenizer_paths', {})
+        expected_aliases = {'Qwen2.5-7B-Instruct', 'Meta-Llama-3.1-8B-Instruct', 'gemma-2-9b-it'}
+        audit_tok_paths_ok = (
+            set(tok_paths.keys()) == expected_aliases
+            and all(isinstance(p, str) and p for p in tok_paths.values())
+        )
+        if not audit_tok_paths_ok:
+            print(f"  tokenizer_paths={tok_paths}")
+    check('23_formal_token_audit_tokenizer_paths_present', audit_tok_paths_ok)
+
+    # ---- 24. the PRE_CONTINUATION_REVISION snapshot is documented in the
+    # protocol as superseded (the file itself lives only on the cluster and
+    # is never committed -- this checks the documentation obligation, which
+    # is checkable from this repo) ----
+    pre_continuation_documented_ok = False
+    if os.path.exists(PROTOCOL_PATH):
+        with open(PROTOCOL_PATH, encoding='utf-8') as f:
+            protocol_text = f.read()
+        pre_continuation_documented_ok = (
+            'SUPERSEDED_TEMPLATE_QC_SNAPSHOT' in protocol_text
+            and 'PRE_CONTINUATION_REVISION' in protocol_text
+        )
+        if not pre_continuation_documented_ok:
+            print(f"  protocol does not document the PRE_CONTINUATION_REVISION snapshot as superseded")
+    else:
+        print(f"  {PROTOCOL_PATH} does not exist")
+    check('24_pre_continuation_snapshot_documented_as_superseded', pre_continuation_documented_ok)
+
+    # ---- 25. the template file's own top-level status field does not
+    # overclaim empirical validation of the C dimension ----
+    template_status_ok = False
+    template_status = data.get('status', '')
+    template_status_ok = not any(sub in template_status for sub in VALIDATION_CLAIM_SUBSTRINGS)
+    if not template_status_ok:
+        print(f"  templates_context_v1.json status={template_status!r} contains a validation-claim substring")
+    check('25_template_status_no_validation_claim', template_status_ok)
 
     print()
     if failed == 0:

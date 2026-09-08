@@ -184,11 +184,15 @@ def main(args):
     data = load_context_templates()
 
     decisions_by_id = None
-    if args.schema_version == 'v4':
+    if args.schema_version in ('v4', 'v5'):
         if not args.decisions_path:
-            print("--decisions_path is required for --schema_version v4")
+            print(f"--decisions_path is required for --schema_version {args.schema_version}")
             sys.exit(1)
         decisions_by_id = load_decisions(args.decisions_path)
+
+    if args.schema_version == 'v5' and not args.token_audit_path:
+        print("--token_audit_path is required for --schema_version v5")
+        sys.exit(1)
 
     checklist = []
     for fam_name, vkey, text in all_template_strings(data):
@@ -204,7 +208,7 @@ def main(args):
         entry.update(analyze(text))
         entry['most_likely_canonical_overlap'] = CANONICAL_OVERLAP_JUDGMENT[fam_name]
 
-        if args.schema_version in ('v3', 'v4'):
+        if args.schema_version in ('v3', 'v4', 'v5'):
             entry['contains_semantic_answer_prefill'] = contains_semantic_answer_prefill(text)
             entry['contains_format_or_role_prefix'] = contains_format_or_role_prefix(text)
             entry['changes_output_format'] = CHANGES_OUTPUT_FORMAT[fam_name][ptype]
@@ -213,12 +217,15 @@ def main(args):
             entry['template_level_overlap'] = TEMPLATE_LEVEL_OVERLAP[fam_name][ptype]
             entry['family_level_overlap'] = FAMILY_LEVEL_OVERLAP[fam_name]
 
-        if args.schema_version == 'v4':
-            # v4 takes reviewer_status/reviewer_notes from the external
+        if args.schema_version in ('v4', 'v5'):
+            # v4/v5 take reviewer_status/reviewer_notes from the external
             # decision sidecar (not from hardcoded dicts in this script) so
             # that later review rounds never require hand-editing a
             # previously-generated checklist file -- only a new/updated
-            # sidecar plus a fresh regeneration.
+            # sidecar plus a fresh regeneration. v5 reuses the SAME sidecar
+            # as v4 -- the token-length audit did not change any per-
+            # template human review decision, only added a token-length
+            # QC gate on top of the existing decisions.
             if template_id not in decisions_by_id:
                 print(f"FATAL: no decision found for template_id={template_id} in {args.decisions_path}")
                 sys.exit(1)
@@ -252,7 +259,7 @@ def main(args):
         print(f"  {e['template_id']:28s} perm_removal={e['contains_permission_removal_claim']}  "
               f"prefilled={e['contains_prefilled_answer']}  encoding={e['contains_encoding_or_payload_split']}  "
               f"steps={e['contains_step_by_step']}  placeholder_count={e['instruction_placeholder_count']}"
-              + (f"  reviewer_status={e['reviewer_status']}" if args.schema_version in ('v3', 'v4') else ''))
+              + (f"  reviewer_status={e['reviewer_status']}" if args.schema_version in ('v3', 'v4', 'v5') else ''))
 
     if args.write_report:
         if os.path.exists(args.write_report):
@@ -297,6 +304,35 @@ def main(args):
                 'generated_at': datetime.datetime.now(datetime.timezone.utc).isoformat(),
                 'entries': checklist,
             }
+        elif args.schema_version == 'v5':
+            with open(TEMPLATES_PATH, 'rb') as f:
+                source_sha256 = hashlib.sha256(f.read()).hexdigest()
+            with open(args.decisions_path, 'rb') as f:
+                decisions_sha256 = hashlib.sha256(f.read()).hexdigest()
+            with open(args.token_audit_path, 'rb') as f:
+                token_audit_sha256 = hashlib.sha256(f.read()).hexdigest()
+            with open(os.path.abspath(__file__), 'rb') as f:
+                generator_sha256 = hashlib.sha256(f.read()).hexdigest()
+            report = {
+                'checklist_version': 'v5',
+                'result_status': 'HUMAN_AND_TOKEN_AUDITED_READY_FOR_ACTIVATION_PILOT',
+                'source_template_path': 'templates/templates_context_v1.json',
+                'source_template_sha256': source_sha256,
+                'decision_sidecar_path': os.path.relpath(args.decisions_path,
+                                                          os.path.join(SCRIPT_DIR, '..', '..')),
+                'decision_sidecar_sha256': decisions_sha256,
+                'token_length_audit_path': os.path.relpath(args.token_audit_path,
+                                                            os.path.join(SCRIPT_DIR, '..', '..')),
+                'token_length_audit_sha256': token_audit_sha256,
+                'generator_path': 'scripts/audits/generate_context_templates_review_checklist.py',
+                'generator_sha256': generator_sha256,
+                'generated_at': datetime.datetime.now(datetime.timezone.utc).isoformat(),
+                'note': 'result_status reflects that template wording has completed human review AND a '
+                        'tokenizer-only length QC pass -- it does NOT mean any C (context-reconfiguration) '
+                        'direction, family independence, or canonical-mechanism distinction has been '
+                        'empirically validated. See EXPERIMENT2_CONTEXT_RECONFIGURATION_PROTOCOL.md.',
+                'entries': checklist,
+            }
         else:
             report = {'result_status': 'HUMAN_REVIEW_CHECKLIST_PENDING', 'entries': checklist}
 
@@ -308,15 +344,20 @@ def main(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--write_report', type=str, default=None)
-    parser.add_argument('--schema_version', type=str, default='v1', choices=['v1', 'v3', 'v4'],
+    parser.add_argument('--schema_version', type=str, default='v1', choices=['v1', 'v3', 'v4', 'v5'],
                          help="'v1' reproduces the original 5-field-plus-status schema (used for both "
                               "the v1 and v2 checklists). 'v3' adds the 7 extended fields and the "
                               "curated reviewer_status/reviewer_notes for that round's human review. "
                               "'v4' also adds the 7 extended fields, but sources "
                               "reviewer_status/reviewer_notes/reviewed_at/review_scope from an external "
                               "--decisions_path sidecar file instead of a hardcoded dict, and records "
-                              "source/decision/generator SHA-256 provenance.")
+                              "source/decision/generator SHA-256 provenance. 'v5' reuses v4's sidecar "
+                              "(no per-template decision changed) and additionally records the "
+                              "--token_audit_path report's own SHA-256, marking pilot admission as "
+                              "human-AND-token-audited.")
     parser.add_argument('--decisions_path', type=str, default=None,
-                         help="Path to a human-review decision sidecar JSON (required for --schema_version v4).")
+                         help="Path to a human-review decision sidecar JSON (required for --schema_version v4/v5).")
+    parser.add_argument('--token_audit_path', type=str, default=None,
+                         help="Path to the real token-length audit report JSON (required for --schema_version v5).")
     args = parser.parse_args()
     main(args)

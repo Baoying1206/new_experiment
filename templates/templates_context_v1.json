@@ -1,6 +1,6 @@
 {
   "taxonomy_version": "context_v1",
-  "status": "HUMAN_REVIEWED_READY_FOR_TOKEN_AUDIT",
+  "status": "HUMAN_AND_TOKEN_AUDITED_READY_FOR_ACTIVATION_PILOT",
   "source_note": "Candidate templates drafted by LLM, presented for human review per the project's frozen decision that context-reconfiguration templates must be human-designed or LLM-drafted-then-human-reviewed, never auto-generated-and-used directly. NOT yet used for any generation, activation extraction, or result.",
   "scope_note": "Completely isolated from templates/templates_en.json and the wei_canonical_v2 taxonomy -- no script in the existing Experiment 1 / R-H rebuild pipeline reads this file. active_mechanisms in templates_en.json is unchanged by this file's existence.",
   "notes": {
