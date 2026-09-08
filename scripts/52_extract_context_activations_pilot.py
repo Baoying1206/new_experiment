@@ -65,8 +65,12 @@ REPO_ROOT = os.path.abspath(os.path.join(SCRIPT_DIR, '..'))
 # manual sys.path manipulation.
 from utils.context_template_provenance import template_content_sha256  # noqa: E402
 from utils.token_positions import (  # noqa: E402
-    get_instruction_end_position, get_post_instruction_position, PositionResult,
+    get_post_instruction_position, PositionResult, _chat_template_hash,
 )
+# _chat_template_hash is a "private" (underscore-prefixed) helper in
+# token_positions.py, but scripts/23_extract_reference_directions.py
+# already imports it directly the same way -- an established, accepted
+# pattern in this codebase, not a new convention introduced here.
 # utils.direction_metadata is imported lazily inside save_outputs() -- it
 # imports torch at module level, and everything ABOVE save_outputs in this
 # script (condition/id loading, gate checks, the Phase 0 position audit)
@@ -205,35 +209,86 @@ def render(template_text, instruction):
 # depend on that module unchanged) -- this wrapper lives only here.
 # ---------------------------------------------------------------------------
 
-def locate_instruction_end(tokenizer, instruction, model_family, full_ids):
-    """get_instruction_end_position, with one fallback retry.
+def locate_instruction_end(tokenizer, rendered_text, instr_char_end, full_ids, model_family):
+    """Finds t_inst via longest-common-prefix comparison, NOT by matching a
+    separately/isolated-encoded instruction as a token subsequence.
 
-    Root cause (confirmed on the real Llama tokenizer, 2026-09-08): every
-    context/canonical template in this pilot places {instruction} right
-    after a literal space character (e.g. "...consultation. {instruction}",
-    "Request: {instruction}") -- except 'plain', which has no wrapper at
-    all and is preceded only by the chat template's own newline. A BPE
-    tokenizer merges a leading space into the first word's token (e.g.
-    Llama-3: token 40 decodes to 'I', token 358 decodes to ' I' -- two
-    different ids for the same word). get_instruction_end_position encodes
-    the RAW instruction with no leading space, so for every space-preceded
-    template the resulting instr_ids never matches the actual token
-    sequence inside the rendered prompt, and the search raises.
+    History: the first version of this function retried
+    get_instruction_end_position with a leading space prepended, which
+    fixed 10/12 Phase-0 audit samples (the leading-space BPE boundary
+    effect: Llama token 40 decodes to 'I', token 358 decodes to ' I').
+    It did NOT fix ctx_continuation's 2 samples, which have a DIFFERENT
+    boundary effect at the TRAILING edge -- {instruction} is immediately
+    followed by '\\n' (no space) in those templates, e.g. "...Request:
+    {instruction}\\nResponse:", and that trailing newline merges with the
+    instruction's own last token differently than it would in isolation.
+    Rather than enumerate every possible leading/trailing boundary
+    character (fragile, template-specific), this version sidesteps
+    boundary-merging entirely: it tokenizes the REAL rendered prompt
+    truncated right after the instruction ends
+    (rendered_text[:instr_char_end]) and compares it token-by-token
+    against the REAL full tokenization (full_ids). Because both start
+    from IDENTICAL real text, BPE's local-context merging guarantees they
+    agree everywhere except possibly the last 1-2 tokens near the
+    truncation point -- the longest common prefix directly gives t_inst,
+    with no guessing about what character precedes or follows.
 
-    Fix: try the unmodified instruction first (this is what actually
-    succeeds for 'plain'); if that raises, retry with a single leading
-    space prepended to the instruction text passed to
-    get_instruction_end_position. Since only the FIRST token of instr_ids
-    changes (the space merges into it), the sequence length is unchanged
-    and the resulting position_index -- the LAST token of the instruction
-    span -- is identical to what a correct match would have given; this
-    retry only fixes the match, it does not shift the semantic answer.
+    Raises ValueError if the two tokenizations diverge implausibly early
+    (more than 2 tokens before the truncation boundary), rather than
+    silently accepting a wrong position -- that would indicate something
+    more fundamental than a local BPE boundary effect.
     """
-    try:
-        return get_instruction_end_position(tokenizer, instruction, model_family, full_ids=full_ids)
-    except ValueError:
-        pass
-    return get_instruction_end_position(tokenizer, ' ' + instruction, model_family, full_ids=full_ids)
+    prefix_ids = tokenizer(rendered_text[:instr_char_end], add_special_tokens=True).input_ids
+    common_len = 0
+    for a, b in zip(prefix_ids, full_ids):
+        if a != b:
+            break
+        common_len += 1
+    if common_len == 0:
+        raise ValueError(
+            f"No common prefix at all between the truncated-prompt tokenization and the full-prompt "
+            f"tokenization for model_family={model_family!r} -- prefix_ids[:5]={prefix_ids[:5]} "
+            f"full_ids[:5]={full_ids[:5]}")
+    divergence_from_boundary = len(prefix_ids) - common_len
+    if divergence_from_boundary > 2:
+        raise ValueError(
+            f"prefix/full tokenization diverge {divergence_from_boundary} tokens before the truncation "
+            f"boundary for model_family={model_family!r} (expected <=2, a local BPE boundary effect) -- "
+            f"this looks like more than a boundary-merge mismatch, refusing to guess. "
+            f"prefix_ids={prefix_ids} full_ids={full_ids}")
+    idx = common_len - 1
+
+    # Trailing-merge extension: a single mismatch at the boundary does not
+    # always mean "one full_ids token differs from one prefix_ids token" --
+    # it can mean the LAST 1+ tokens of full_ids near the boundary jointly
+    # cover text that prefix_ids represented differently (e.g. prefix_ids'
+    # last token is 'thing?' as one unit, but full_ids splits that same
+    # span into 'thing' + a separate token that merges '?' with the
+    # following '\n'). Rather than assume a fixed 1-token shift, extend
+    # idx one token at a time (bounded to a few tokens past the boundary)
+    # and stop as soon as decoding full_ids[:idx+1] covers AT LEAST the
+    # full target (truncated) text -- that is the first point at which the
+    # full sequence has "caught up" to fully representing the instruction.
+    target_text = rendered_text[:instr_char_end]
+    max_extension = 3
+    extended = idx
+    while (extended + 1 < len(full_ids) and (extended - idx) < max_extension
+           and len(tokenizer.decode(full_ids[:extended + 1])) < len(target_text)):
+        extended += 1
+    if extended > idx and len(tokenizer.decode(full_ids[:extended + 1])) >= len(target_text):
+        idx = extended
+    elif idx < 0:
+        raise ValueError(f"resolved idx < 0 for model_family={model_family!r} -- "
+                          f"common_len={common_len}, this should not happen given the common_len==0 "
+                          f"check above; investigate.")
+
+    token_id = full_ids[idx]
+    return PositionResult(
+        position_index=idx, semantic_name='t_inst', token_id=token_id,
+        decoded_token=tokenizer.decode([token_id]), model_family=model_family,
+        chat_template_hash=_chat_template_hash(tokenizer),
+        method='longest_common_prefix_of_truncated_vs_full_tokenization',
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -313,10 +368,11 @@ def audit_token_positions(tokenizer, sample_instruction, context_data, canonical
             row['anomaly'] = 'instruction_char_span_not_found'
             audit_rows.append(row)
             continue
-        row['instruction_char_span'] = [instr_start_char, instr_start_char + len(sample_instruction)]
+        instr_end_char = instr_start_char + len(sample_instruction)
+        row['instruction_char_span'] = [instr_start_char, instr_end_char]
 
         try:
-            t_inst = locate_instruction_end(tokenizer, sample_instruction, MODEL_FAMILY, full_ids)
+            t_inst = locate_instruction_end(tokenizer, rendered, instr_end_char, full_ids, MODEL_FAMILY)
             t_post = get_post_instruction_position(tokenizer, sample_instruction, MODEL_FAMILY, full_ids=full_ids)
         except ValueError as e:
             anomalies.append(f"{sample_id}: position-finding raised {e}")
@@ -509,6 +565,11 @@ def run_real_pilot(instruction_ids, instructions_by_id, context_conditions, cano
             batch = rows[batch_start:batch_start + batch_size]
             for iid, label, rendered_text in batch:
                 instr = instructions_by_id[iid]
+                instr_start_char = rendered_text.find(instr)
+                if instr_start_char == -1:
+                    raise GateViolation(f"{iid}/{label}: instruction not found as a literal substring of "
+                                        f"rendered prompt -- render() bug?")
+                instr_end_char = instr_start_char + len(instr)
                 full_ids = tokenizer(rendered_text, add_special_tokens=True, return_tensors='pt').input_ids.to(device)
                 outputs = model(input_ids=full_ids, output_hidden_states=True)
                 hidden_states = outputs.hidden_states  # tuple(n_layers_total) of [1, seq, hidden]
@@ -516,7 +577,7 @@ def run_real_pilot(instruction_ids, instructions_by_id, context_conditions, cano
                     raise GateViolation(f"model returned {len(hidden_states)} hidden_states, "
                                         f"expected {n_layers_total}")
                 full_ids_list = full_ids[0].tolist()
-                t_inst = locate_instruction_end(tokenizer, instr, MODEL_FAMILY, full_ids_list)
+                t_inst = locate_instruction_end(tokenizer, rendered_text, instr_end_char, full_ids_list, MODEL_FAMILY)
                 t_post = get_post_instruction_position(tokenizer, instr, MODEL_FAMILY, full_ids=full_ids_list)
                 per_layer = torch.stack([
                     torch.stack([hs[0, t_inst.position_index, :], hs[0, t_post.position_index, :]])

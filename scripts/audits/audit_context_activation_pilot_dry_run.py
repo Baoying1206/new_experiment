@@ -403,19 +403,22 @@ def main():
         print(f"  {real_script_path} does not exist")
     check('17_real_extraction_script_integration_against_current_repo', real_script_integration_ok)
 
-    # ---- 18. locate_instruction_end's fallback retry (added after a real
-    # cluster run found the bare literal-subsequence search fails for
-    # every space-preceded template) actually recovers a match. The plain
-    # word-split MockTokenizer used in checks 4/5 CANNOT reproduce this --
-    # it has no notion of a leading space merging into the next token --
-    # so this uses a dedicated tokenizer that does model that effect
-    # (mirrors the real, confirmed finding: Llama token 40 decodes to 'I',
-    # token 358 decodes to ' I' -- two different ids for the same word). ----
+    # ---- 18. locate_instruction_end (rewritten 2026-09-08 to a
+    # longest-common-prefix method after a real cluster run found the
+    # original leading-space-retry version still failed on
+    # ctx_continuation's TRAILING boundary case) correctly recovers a
+    # match for the leading-space boundary effect. The plain word-split
+    # MockTokenizer used in checks 4/5 CANNOT reproduce this -- it has no
+    # notion of a leading space merging into the next token -- so this
+    # uses a dedicated tokenizer that does model that effect (mirrors the
+    # real, confirmed finding: Llama token 40 decodes to 'I', token 358
+    # decodes to ' I' -- two different ids for the same word). ----
     class SpaceSensitiveMockTokenizer:
         """Word-level tokenizer where a word preceded by a literal space
         gets a DIFFERENT token id than the same word at the very start of
         the encoded string -- reproduces the real BPE leading-space
-        boundary effect that broke the bare subsequence search."""
+        boundary effect that broke the original subsequence-search-based
+        approach."""
 
         def __init__(self):
             self.vocab = {}
@@ -432,6 +435,9 @@ def main():
                     continue
                 toks.append(p if (i == 0 and not text.startswith(' ')) else '_' + p)
             return toks
+
+        def __call__(self, text, add_special_tokens=True):
+            return type('Enc', (), {'input_ids': [self._id(t) for t in self._tokenize(text)]})()
 
         def encode(self, text, add_special_tokens=False):
             return [self._id(t) for t in self._tokenize(text)]
@@ -452,28 +458,21 @@ def main():
             sstok = SpaceSensitiveMockTokenizer()
             wrapped = 'You are helpful. I want pasta'
             full_text = f"<user> {wrapped} <assistant>"
-            full_ids2 = sstok.encode(full_text)
+            full_ids2 = sstok(full_text).input_ids
             instr2 = 'I want pasta'
+            instr2_start = full_text.find(instr2)
+            instr2_end = instr2_start + len(instr2)
 
-            # sanity: the bare (un-adapted) primitive must actually fail
-            # here, otherwise this test isn't exercising the fallback path
-            bare_failed = False
-            try:
-                get_instruction_end_position(sstok, instr2, 'mock', full_ids=full_ids2)
-            except ValueError:
-                bare_failed = True
-
-            t_inst2 = real_mod2.locate_instruction_end(sstok, instr2, 'mock', full_ids2)
+            t_inst2 = real_mod2.locate_instruction_end(sstok, full_text, instr2_end, full_ids2, 'mock')
             expected_idx = len(full_ids2) - 2  # 'pasta' is the second-to-last token (before '<assistant>')
-            fallback_ok = bare_failed and t_inst2.position_index == expected_idx
+            fallback_ok = t_inst2.position_index == expected_idx
             if not fallback_ok:
-                print(f"  bare_failed={bare_failed}  t_inst2.position_index={t_inst2.position_index}  "
-                      f"expected_idx={expected_idx}")
+                print(f"  t_inst2.position_index={t_inst2.position_index}  expected_idx={expected_idx}")
         except Exception as e:
-            print(f"  locate_instruction_end fallback check raised {type(e).__name__}: {e}")
+            print(f"  locate_instruction_end check raised {type(e).__name__}: {e}")
     else:
         print(f"  {real_script_path} does not exist")
-    check('18_locate_instruction_end_fallback_recovers_space_boundary_case', fallback_ok)
+    check('18_locate_instruction_end_recovers_space_boundary_case', fallback_ok)
 
     print()
     if failed == 0:
