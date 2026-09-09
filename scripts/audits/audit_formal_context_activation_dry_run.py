@@ -124,8 +124,15 @@ def main():
     check('4b_non_special_canonical_mechanisms_contain_raw_instruction', non_special_ok)
 
     # ---- 4. Phase 0 audit runs cleanly (mock tokenizer) for all 3 model
-    # families, with the 2 special mechanisms correctly using the
-    # structural (not literal-substring) position method ----
+    # families, with the 2 special mechanisms EACH using their OWN
+    # corrected t_inst method (2026-09-09 fix, found via the first real
+    # cluster dry_run): encoding_obfuscation -> t_inst_equals_t_post (the
+    # b64 payload is the final template content); payload_splitting ->
+    # the SAME longest-common-prefix method as ordinary conditions, just
+    # targeting payload_b's span. Neither relies on an end-of-turn token
+    # existing in full_ids (this script never wraps text in a chat
+    # template, so no such token is ever present). The old
+    # structural_end_of_turn_boundary method is gone.----
     class MockEncoding:
         def __init__(self, ids):
             self.input_ids = ids
@@ -173,10 +180,25 @@ def main():
             audit_ok = False
             print(f"  {fam}: expected 2 special-encoding rows, got {len(special_rows)}")
         for r in special_rows:
-            if 'structural_end_of_turn_boundary' not in r.get('t_inst_method', ''):
-                audit_ok = False
-                print(f"  {fam}: {r['sample_id']} did not use the structural t_inst method: "
-                      f"{r.get('t_inst_method')}")
+            method = r.get('t_inst_method', '')
+            if r['sample_id'] == 'encoding_obfuscation':
+                if 't_inst_equals_t_post_by_construction' not in method:
+                    audit_ok = False
+                    print(f"  {fam}: encoding_obfuscation did not use t_inst_equals_t_post_by_construction: {method}")
+                if r.get('t_inst') != r.get('t_post'):
+                    audit_ok = False
+                    print(f"  {fam}: encoding_obfuscation t_inst != t_post despite the by-construction method: "
+                          f"t_inst={r.get('t_inst')}, t_post={r.get('t_post')}")
+            elif r['sample_id'] == 'payload_splitting':
+                if 'longest_common_prefix_of_truncated_vs_full_tokenization' not in method:
+                    audit_ok = False
+                    print(f"  {fam}: payload_splitting did not use the longest-common-prefix method: {method}")
+                if 'targeting payload_b' not in method:
+                    audit_ok = False
+                    print(f"  {fam}: payload_splitting method does not indicate it targeted payload_b: {method}")
+                if 'structural_end_of_turn_boundary' in method:
+                    audit_ok = False
+                    print(f"  {fam}: payload_splitting incorrectly still uses the removed structural method: {method}")
     check('5_phase0_audit_16_samples_0_anomalies_all_3_families', audit_ok)
 
     # ---- 5. no generation/judge-model-loading symbols in either formal

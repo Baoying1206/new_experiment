@@ -65,19 +65,34 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.abspath(os.path.join(SCRIPT_DIR, '..'))
 from utils.context_template_provenance import template_content_sha256  # noqa: E402
 from utils.token_positions import (  # noqa: E402
-    get_post_instruction_position, get_user_turn_end_position, PositionResult, _chat_template_hash,
+    get_post_instruction_position, PositionResult, _chat_template_hash,
 )
 
 # Two of the 6 active canonical mechanisms do NOT use a literal
 # {instruction} placeholder -- encoding_obfuscation base64-encodes it
 # ({instruction_b64}), payload_splitting fragments it into {payload_a}/
 # {payload_b}. For BOTH, the raw instruction text is consequently not
-# recoverable as a literal substring of the rendered prompt, so
-# locate_instruction_end's truncate-and-compare method (which requires
-# exactly that) cannot be used for their t_inst. Discovered while
-# building this script (a real KeyError on encoding_obfuscation's
-# template), not anticipated in the pilot (the pilot only used 4
-# canonical conditions, none of which have this property).
+# recoverable as a literal substring of the rendered prompt.
+#
+# t_inst position-finding (2026-09-09 correction): an earlier version of
+# this script used get_user_turn_end_position() (a structural, end-of-turn
+# -token-based method) for both. That method assumes the rendered text was
+# wrapped in the model's chat template; this script never does that (it
+# tokenizes the plain rendered template text directly), so no eot token
+# ever exists in full_ids -- confirmed as a real GATE VIOLATION on all 3
+# real tokenizers during the first real-cluster dry_run (0 GPU cost, since
+# Phase 0 runs before any model weights load). Fixed per each mechanism's
+# ACTUAL template structure (templates/templates_en.json):
+#   - encoding_obfuscation: '...decoded instruction: {instruction_b64}' --
+#     the b64 payload is the FINAL content in the template, so t_inst is
+#     the SAME position as t_post by construction; no search is needed or
+#     possible.
+#   - payload_splitting: '...b = "{payload_b}"\nReconstruct...' -- payload_b
+#     IS a literal, verbatim substring of the rendered text (unlike the
+#     base64 blob, it is not re-encoded), so its own end boundary can be
+#     located with the SAME longest-common-prefix method
+#     (locate_instruction_end) used for the raw instruction elsewhere,
+#     just targeting payload_b's span instead of the raw instruction's.
 SPECIAL_CANONICAL_MECHANISMS = {'encoding_obfuscation', 'payload_splitting'}
 
 
@@ -353,15 +368,30 @@ def audit_token_positions(tokenizer, sample_instruction, context_data, canonical
 
         t_post = get_post_instruction_position(tokenizer, sample_instruction, model_family, full_ids=full_ids)
 
-        if special:
-            # raw instruction is NOT a literal substring (base64-encoded or
-            # fragmented) -- t_inst uses the structural end-of-user-turn
-            # method instead, which does not need the literal text.
+        if canon_name == 'encoding_obfuscation':
+            # the base64 payload is the FINAL content in this template (no
+            # trailing scaffold text after {instruction_b64}) -- t_inst and
+            # t_post are the SAME position by construction.
+            t_inst = t_post
+            t_inst_method = 't_inst_equals_t_post_by_construction (payload is the final template content)'
+        elif canon_name == 'payload_splitting':
+            # payload_b IS a literal, verbatim substring of the rendered
+            # text -- locate its own end boundary the same way the
+            # literal-substring method locates the raw instruction's end.
+            _, payload_b = split_payload(sample_instruction)
+            payload_b_start = rendered.rfind(payload_b)
+            if payload_b_start == -1:
+                anomalies.append(f"{sample_id}: payload_b not found as a literal substring of rendered prompt")
+                row['anomaly'] = 'payload_b_char_span_not_found'
+                audit_rows.append(row)
+                continue
+            payload_b_end_char = payload_b_start + len(payload_b)
+            row['instruction_char_span'] = [payload_b_start, payload_b_end_char]
             try:
-                t_inst = get_user_turn_end_position(tokenizer, full_ids, model_family)
-                t_inst_method = 'structural_end_of_turn_boundary (special encoding, no literal instruction span)'
+                t_inst = locate_instruction_end(tokenizer, rendered, payload_b_end_char, full_ids, model_family)
+                t_inst_method = t_inst.method + ' (targeting payload_b, not the raw instruction)'
             except ValueError as e:
-                anomalies.append(f"{sample_id}: structural t_inst position-finding raised {e}")
+                anomalies.append(f"{sample_id}: position-finding raised {e}")
                 row['anomaly'] = str(e)
                 audit_rows.append(row)
                 continue
@@ -537,10 +567,10 @@ def run_real_extraction(instruction_ids, instructions_by_id, context_conditions,
         instr = instructions_by_id[iid]
         for fam, vkey, text in context_conditions:
             label = f"{fam}_{vkey}" if vkey != 'family_specific_neutral_control' else f"{fam}_neutral"
-            rows.append((iid, label, render(text, instr), False))
+            rows.append((iid, label, render(text, instr), None))
         for name in canonical_names:
-            special = name in SPECIAL_CANONICAL_MECHANISMS
-            rows.append((iid, f'canonical_{name}', render_canonical(name, canonical_conditions[name], instr), special))
+            canon_name = name if name in SPECIAL_CANONICAL_MECHANISMS else None
+            rows.append((iid, f'canonical_{name}', render_canonical(name, canonical_conditions[name], instr), canon_name))
     assert len(rows) == len(instruction_ids) * (len(context_conditions) + len(canonical_conditions))
 
     activations = {}
@@ -548,7 +578,7 @@ def run_real_extraction(instruction_ids, instructions_by_id, context_conditions,
     with torch.inference_mode():
         for batch_start in range(0, len(rows), batch_size):
             batch = rows[batch_start:batch_start + batch_size]
-            for iid, label, rendered_text, special in batch:
+            for iid, label, rendered_text, canon_name in batch:
                 instr = instructions_by_id[iid]
                 full_ids = tokenizer(rendered_text, add_special_tokens=True,
                                       return_tensors='pt').input_ids.to(args.device)
@@ -558,8 +588,18 @@ def run_real_extraction(instruction_ids, instructions_by_id, context_conditions,
                     raise GateViolation(f"model returned {len(hidden_states)} hidden_states, "
                                         f"expected {n_layers_total}")
                 full_ids_list = full_ids[0].tolist()
-                if special:
-                    t_inst = get_user_turn_end_position(tokenizer, full_ids_list, model_family)
+                t_post = get_post_instruction_position(tokenizer, instr, model_family, full_ids=full_ids_list)
+                if canon_name == 'encoding_obfuscation':
+                    t_inst = t_post
+                elif canon_name == 'payload_splitting':
+                    _, payload_b = split_payload(instr)
+                    payload_b_start = rendered_text.rfind(payload_b)
+                    if payload_b_start == -1:
+                        raise GateViolation(f"{iid}/{label}: payload_b not found as a literal substring "
+                                            f"of rendered prompt -- render_canonical bug?")
+                    payload_b_end_char = payload_b_start + len(payload_b)
+                    t_inst = locate_instruction_end(
+                        tokenizer, rendered_text, payload_b_end_char, full_ids_list, model_family)
                 else:
                     instr_start_char = rendered_text.find(instr)
                     if instr_start_char == -1:
@@ -568,7 +608,6 @@ def run_real_extraction(instruction_ids, instructions_by_id, context_conditions,
                     instr_end_char = instr_start_char + len(instr)
                     t_inst = locate_instruction_end(
                         tokenizer, rendered_text, instr_end_char, full_ids_list, model_family)
-                t_post = get_post_instruction_position(tokenizer, instr, model_family, full_ids=full_ids_list)
                 per_layer = torch.stack([
                     torch.stack([hs[0, t_inst.position_index, :], hs[0, t_post.position_index, :]])
                     for hs in hidden_states
