@@ -1,3 +1,17 @@
+> **SUPERSEDED (2026-09-09).** Replaced by
+> `EXPERIMENT2_CONTEXT_REPRESENTATION_PROTOCOL.md`, which incorporates:
+> the corrected Experiment 1 conclusion (CO/MG geometric validity is
+> model-dependent, not "fails in all 3 models"), the frozen CO/MG
+> prototype construction (per-mechanism normalize-then-average), the
+> frozen random-subspace null (Holm-corrected), and instruction-cluster
+> (not per-instruction) bootstrap resampling to account for duplicate
+> normalized-text instructions in `direction_ids`. This document's
+> 21,600-forward extraction design (Sec 2-3) and script references
+> (`scripts/54`/`55`) remain the basis for the current design -- only the
+> analysis-side statistics and the Experiment 1 framing changed. Kept for
+> history; do not delete or revert. Do not read the rest of this file as
+> current guidance without cross-checking the superseding document.
+
 # Formal C-Direction Estimation Protocol -- Design Stage
 
 Extends `EXPERIMENT2_CONTEXT_ACTIVATION_PILOT_PROTOCOL.md` (the "pilot

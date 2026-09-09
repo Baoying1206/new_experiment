@@ -685,7 +685,7 @@ def save_outputs(context_diffs, canonical_acts, instruction_ids, context_conditi
         'dtype': str(context_diffs.dtype),
         'estimator': 'mean',
         'bootstrap_resamples': BOOTSTRAP_RESAMPLES,
-        'bootstrap_resample_unit': 'instruction',
+        'bootstrap_resample_unit': 'instruction_normalized_text_cluster',
         'random_seed': args.random_seed,
         'batch_size': args.batch_size,
         'context_paired_diffs_path': os.path.relpath(paths['context_paired_diffs'], REPO_ROOT),
