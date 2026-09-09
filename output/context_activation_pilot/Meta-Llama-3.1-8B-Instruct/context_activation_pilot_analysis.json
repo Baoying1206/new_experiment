@@ -295,9 +295,9 @@
       "ctx_persona_x_ctx_authority": 0.4393307848439069,
       "ctx_persona_x_ctx_fictional": -0.05598916573533647,
       "ctx_persona_x_ctx_continuation": 0.047804899819862134,
-      "ctx_authority_x_ctx_fictional": 0.022365449122474013,
-      "ctx_authority_x_ctx_continuation": 0.07790385755344874,
-      "ctx_fictional_x_ctx_continuation": 0.03896232070835049
+      "ctx_authority_x_ctx_fictional": 0.12633812692066712,
+      "ctx_authority_x_ctx_continuation": -0.01886645311832273,
+      "ctx_fictional_x_ctx_continuation": 0.0732460842846982
     },
     "svd_descriptive_only_n_family_4": {
       "singular_values": [
@@ -308,9 +308,9 @@
       ],
       "variance_explained": [
         0.8381130025747917,
-        0.28808637873488163,
-        0.23705378663031013,
-        3.694577062561858e-15
+        0.10092426074416,
+        0.060962736680899195,
+        1.491843971869561e-13
       ],
       "k2_preregistered_primary": true,
       "note": "n_family=4 -- far too few points for formal statistical evidence; k is not re-selected after seeing these values."
