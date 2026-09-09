@@ -364,6 +364,20 @@ def main():
           sens['n_valid'] == 2 and sens['n_excluded'] == 1 and abs(sens['asr_prompt_harmful_only'] - 0.5) < 1e-9,
           f"sens={sens}")
 
+    # ---- 22. run_dry_run()'s metadata literal includes ids_key --
+    # regression test for a real bug found via the actual cluster formal
+    # dry-run (2026-09-09): run_dry_run's fake-data metadata omitted
+    # ids_key entirely (main()'s real-run metadata always had it), so a
+    # formal dry-run reported ids_key=None instead of 'validation_ids'.
+    # Can't call run_dry_run() itself locally (needs transformers via
+    # script03), so this is a source-level regression check. ----
+    with open(DRIVER_PATH, encoding='utf-8') as f:
+        driver_src_full = f.read()
+    run_dry_run_src = driver_src_full[driver_src_full.index('def run_dry_run('):]
+    metadata_block = run_dry_run_src[:run_dry_run_src.index('_atomic_json_save(metadata, meta_path)')]
+    check('22_run_dry_run_metadata_includes_ids_key', "'ids_key':" in metadata_block,
+          "ids_key assignment not found in run_dry_run's metadata dict literal")
+
     print()
     if failed == 0:
         print("ALL BEHAVIORAL TEST DRY-RUN CHECKS PASSED.")

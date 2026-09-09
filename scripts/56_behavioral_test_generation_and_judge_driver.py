@@ -470,6 +470,7 @@ def run_dry_run(rows, gen_path, judge_path, meta_path, model_alias, model_path, 
         'generation_config': {'max_new_tokens': MAX_NEW_TOKENS, 'do_sample': DO_SAMPLE, 'dtype': DTYPE},
         'generation_config_hash': compute_generation_config_hash(model_path),
         'judge_model_version': JUDGE_MODEL_VERSION, 'judge_prompt_version': JUDGE_PROMPT_VERSION,
+        'ids_key': 'direction_ids' if args.phase == 'pilot' else 'validation_ids',
         'test_data_read': False, 'access_log': access_log.to_list(),
         'run_finished_at': datetime.now(timezone.utc).isoformat(),
     }
