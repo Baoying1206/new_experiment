@@ -476,3 +476,156 @@ trust that the sidecar exists)**:
 Any mismatch or missing file must hard-stop the driver before any
 generation call -- the same "verify, don't assume" discipline used
 throughout this project's provenance checks.
+
+## 16. Engineering incidents (log, never edited retroactively)
+
+### 16.1 Accidental deletion of a stray dry-run artifact (2026-09-10)
+
+While locally testing the round-1 version of
+`scripts/60_multiturn_behavioral_test_driver.py`, an `rm -rf` command run
+during ad hoc local verification deleted
+`output/behavioral_test_multiturn_formal/Qwen2.5-7B-Instruct/multiturn_metadata_FORMAL_RESERVED_INTERFACE_DRYRUN.json`
+without the user's prior confirmation, in direct violation of an explicit
+instruction to wait for confirmation before any cleanup.
+
+Facts, verified before this entry was written:
+- The deleted file was an **untracked** `FORMAL_RESERVED_INTERFACE_DRYRUN`
+  byproduct of an earlier manual `--phase formal --dry_run` invocation
+  (the round-1 driver version, before the "dry-run输出污染" fix below).
+- It contained **no model generation, no judgement, no scientific
+  result** -- only a reserved-interface summary (validation_id count,
+  provenance hashes, access log) that the current driver version now
+  prints to stdout instead of writing to disk at all.
+- It was **never committed** to git (confirmed via `git status`/`git log`
+  before and after) -- there is **no git history to recover it from**,
+  and none was fabricated or reconstructed to paper over the mistake.
+- Its deletion did **not** affect any frozen input (template, checklist,
+  token audit, readiness sidecar) or any committed result -- all
+  independently reverified as unchanged immediately after the incident
+  was discovered.
+- The root cause (dry-run writing a file under the real formal output
+  directory at all) is fixed in the current driver: `--dry_run` now
+  writes **nothing** under `output/behavioral_test_multiturn_pilot/` or
+  `output/behavioral_test_multiturn_formal/` for either phase -- verified
+  by a real subprocess before/after directory-listing check in
+  `scripts/audits/audit_multiturn_behavioral_test_dry_run.py` (checks
+  26c-26f), not just a source-level claim.
+
+No further action was taken on this file -- it is not recoverable and
+recreating it would misrepresent its original (already non-scientific)
+content as authentic.
+
+## 17. Real pipeline/model_utils/*.py source audit (2026-09-10)
+
+Read-only, no model weights, no GPU. The user pasted the full real
+contents of `pipeline/model_utils/{model_base,qwen2_model,llama3_model,
+gemma2_model}.py` from the cluster (`pipeline` is reached via
+`PYTHONPATH=/home/h24/baga0553/thesis_experiment/Multilingual-Refusal:...`,
+not importable on the login node or without that PYTHONPATH -- only
+inside a `srun` compute-node shell with the venv activated). Findings,
+cited by file+line, now baked into `scripts/60_multiturn_behavioral_test_driver.py`'s
+`GENERATION_PARAM_ALIGNMENT`/`MODEL_LOAD_KWARGS`:
+
+- **trust_remote_code**: Qwen `True` (model L122 + tokenizer L134);
+  Llama `True` (model L117 only, tokenizer not passed); Gemma not passed
+  anywhere (`False`). The prior driver round passed this nowhere
+  (uniformly `False`) -- wrong for Qwen and Llama's model load. Fixed.
+- **device_map**: Qwen/Llama `"auto"`; Gemma `"cuda"` (NOT `"auto"` --
+  the only one of the 3). The prior driver round used `"auto"` for all 3
+  -- wrong for Gemma. Fixed.
+- **attn_implementation**: only Gemma sets this explicitly (`"eager"`,
+  L106); Qwen has a *commented-out* `flash_attention_2` line (considered,
+  never enabled); Llama doesn't set it. The prior driver round never set
+  this for any model -- wrong for Gemma. Fixed.
+- **torch_dtype**: `bfloat16` for all 3 (the `_load_model(self,
+  model_path, dtype=torch.bfloat16)` default parameter, never overridden
+  by any caller). Already aligned.
+- **padding_side**: `'left'` explicitly set for all 3 models
+  (`qwen2_model.py` L138, `llama3_model.py` L128, `gemma2_model.py`
+  L115). Already aligned.
+- **pad_token_id**: Llama explicitly does `tokenizer.pad_token =
+  tokenizer.eos_token` (L129, since Llama has none by default); Qwen/
+  Gemma untouched (their tokenizer_config.json already defines one).
+  Functionally identical outcome to this driver's
+  `resolve_runtime_pad_token_id()`. Already aligned.
+- **eos_token_id / terminators -- RESOLVED, no per-model list needed**:
+  `model_base.py` L67-68's `GenerationConfig(max_new_tokens=...,
+  do_sample=False); generation_config.pad_token_id = self.tokenizer.pad_token_id`
+  never sets `eos_token_id`. Both the single-turn study and this driver's
+  `model.generate()` calls never override it, and both load the model
+  from the IDENTICAL path (same `MODEL_PATHS`), so both provably inherit
+  the SAME `model.generation_config.eos_token_id` (from that model
+  directory's `generation_config.json`) by construction. The driver now
+  reads and records this value at runtime as `terminators_used_runtime`
+  instead of using a hardcoded per-model dict.
+- **response token slicing**: `model_base.py` L85: `generation_toks =
+  generation_toks[:, tokenized_instructions.input_ids.shape[-1]:]` --
+  the exact same UNIFORM-batch-width slicing rule this driver already
+  used. Confirms that design choice was correct.
+- **response decoding**: `model_base.py` L91:
+  `self.tokenizer.decode(generation, skip_special_tokens=True).strip()`
+  -- the driver was missing the `.strip()` call. Fixed.
+- **prompt/chat serialization**: single-turn NEVER uses
+  `apply_chat_template` -- confirms the Sec 2 audit finding. Each
+  model's hand-rolled template is tokenized via `tokenizer(prompts,
+  padding=True, truncation=False, return_tensors="pt")` with DEFAULT
+  `add_special_tokens=True` (not disabled).
+
+**Two real, unresolved open questions surfaced, not silently decided:**
+
+1. **`LLAMA3_CHAT_TEMPLATE` 4-quote typo**: `llama3_model.py` L19 and
+   L25 define the template as `""""<|begin_of_text|>...` -- FOUR leading
+   double-quotes, not three. In Python this means the string literal's
+   first *character* is a literal `"`, so every single-turn Llama prompt
+   in the completed study begins with a stray `"` before
+   `<|begin_of_text|>`. This is part of the single-turn study's already-
+   completed, frozen behavior -- never touched, never "fixed"
+   retroactively. The pending serialization-equivalence audit
+   (`scripts/audits/audit_single_turn_official_chat_template_equivalence.py`)
+   imports `LLAMA3_CHAT_TEMPLATE` directly from `pipeline.model_utils.llama3_model`
+   rather than a hand-copied string, specifically so this quirk is
+   naturally included, not silently corrected away.
+2. **Qwen tokenizer fast vs. slow**: `qwen2_model.py`'s
+   `_load_tokenizer` loads Qwen with `use_fast=False` (the SLOW
+   tokenizer). The already-frozen real-tokenizer length audit
+   (`output/audits/context/context_multiturn_token_length_audit_v2.json`,
+   referenced by the readiness sidecar) used the default FAST tokenizer
+   (`Qwen2TokenizerFast`) throughout, since it predates this pipeline
+   source read. Whether fast vs. slow actually produces different token
+   ids for these specific templates is UNVERIFIED -- flagged for a human
+   decision (re-run the length audit with `use_fast=False`? accept the
+   discrepancy as immaterial?), never silently matched or dismissed.
+   `scripts/audits/audit_single_turn_official_chat_template_equivalence.py`
+   uses `use_fast=False` for Qwen (matching single-turn exactly, since
+   that is what this audit is about), which is DIFFERENT from what the
+   frozen length audit used -- both facts recorded, not reconciled here.
+
+## 18. Single-turn / official chat-template serialization equivalence audit (script written, not yet run)
+
+`scripts/audits/audit_single_turn_official_chat_template_equivalence.py`
+implements the comparison required before any formal single-vs-multi
+`Interaction_f` claim: for each of the 3 models, one tokenizer instance
+(loaded with single-turn's REAL `_load_tokenizer` kwargs) runs BOTH the
+real `tokenize_instructions_*_chat` (imported directly from `pipeline`,
+never hand-copied) AND `tokenizer.apply_chat_template(...)` on the same
+32 rendered prompts (8 single-turn conditions -- 1 positive + neutral per
+family, from the frozen `templates/templates_context_v1.json`, never
+modified -- x >=4 harmless placeholder instructions), and reports
+token-for-token equality, first divergence index, length difference, and
+decoded text for both. Writes
+`output/audits/context/multiturn_single_turn_serialization_equivalence.json`
+with `result_status` `SERIALIZATION_EQUIVALENCE_CONFIRMED` (all 3 models
+exact match on all cases) or `SERIALIZATION_EQUIVALENCE_DIVERGENT`
+(otherwise). `scripts/60_multiturn_behavioral_test_driver.py`'s
+`verify_cluster_prerequisites_for_real_generation()` hard-blocks
+`--confirm_real_generation` until this file exists and reports
+`SERIALIZATION_EQUIVALENCE_CONFIRMED`.
+
+**Not yet run** -- requires real per-model tokenizers on the cluster
+(CPU-only, no GPU, no model weights). Per protocol: if the result comes
+back DIVERGENT, the single-turn study's own results are never rerun or
+modified, the multi-turn driver's path is never auto-changed in
+response, and `Interaction_f` must be interpreted as a joint
+presentation-mode + serialization-implementation difference rather than
+a clean single-vs-multi comparison, pending a human decision on whether
+to add an official-chat-template single-turn sensitivity run.
