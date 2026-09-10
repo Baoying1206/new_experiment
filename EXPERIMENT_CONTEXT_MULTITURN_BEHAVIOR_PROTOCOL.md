@@ -406,3 +406,32 @@ generation driver will ever ask a model to produce.
      `Interaction_f` must be described as a **presentation-mode effect**,
      not as a "pure context-accumulation causal effect," in every
      write-up of this extension's results.
+
+## 14. Future generation-driver constraints from the real-tokenizer audit (frozen, 2026-09-10)
+
+Recorded here as design constraints for the future Phase B driver
+(Sec 2/10) -- **no generation driver is created or run this round.**
+
+1. **`Meta-Llama-3.1-8B-Instruct`'s tokenizer has `pad_token_id = None`**
+   (confirmed by the real-tokenizer audit, `tokenizer_info.pad_token_id`).
+   Any future batched (`batch_size > 1`) generation with this model must
+   explicitly set a pad token before calling `.generate()` (e.g.
+   `tokenizer.pad_token_id = tokenizer.eos_token_id`); the driver must
+   record the **actual runtime value used** in its output metadata, not
+   assume `None` is safe to leave as-is.
+2. **The 3 models do not share one `padding_side`**: `Qwen2.5-7B-Instruct`
+   and `Meta-Llama-3.1-8B-Instruct` are `right`; `gemma-2-9b-it` is
+   `left` (confirmed by the audit). The future driver must **explicitly
+   freeze `padding_side` per model** rather than relying on each
+   tokenizer's loaded default, and must verify that `batch_size=1`
+   generation and batched generation produce consistent results for a
+   given model before that model's batched path is used for anything
+   formal.
+3. **Never modify or overwrite any tokenizer source files** (e.g. to
+   "fix" `pad_token_id` on disk) -- any pad-token assignment is a
+   runtime-only change to the loaded tokenizer object, recorded in
+   output metadata, never persisted back to the model directory.
+4. **Response extraction must slice only the newly generated tokens**,
+   i.e. `output_ids[:, input_ids.shape[1]:]` (or equivalent per-example
+   slicing when batched with padding) -- never decode the full
+   `output_ids` including the echoed input/prompt.
