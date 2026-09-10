@@ -1,0 +1,904 @@
+{
+  "result_status": "HUMAN_AND_TOKEN_AUDITED_READY_FOR_PILOT",
+  "gates": {
+    "three_real_tokenizers_succeeded": true,
+    "sixteen_conditions_complete_all_models": true,
+    "provenance_hash_fields_present": true,
+    "human_review_checklist_all_16_approved": true
+  },
+  "gates_detail": {
+    "three_real_tokenizers_succeeded": "3/3 models audited",
+    "sixteen_conditions_complete_all_models": {
+      "Qwen2.5-7B-Instruct": 16,
+      "Meta-Llama-3.1-8B-Instruct": 16,
+      "gemma-2-9b-it": 16
+    },
+    "provenance_hash_fields_present": "source_template_sha256=2fc7b7ed9008..., template_content_sha256=6e8032bad95b...",
+    "human_review_checklist_all_16_approved": "all 16 template_id carry an APPROVED_FOR_PILOT* reviewer_status"
+  },
+  "note": "Real per-model tokenizer counts (NOT the mock word-count proxy from audit_context_multiturn_templates_dry_run.py). No model weights loaded, no generation, no WildGuard. final_user_wrapper_tokens is ~0 for ctx_persona/ctx_authority/ctx_fictional (bare {instruction}) and nonzero for ctx_continuation (B2 revision wraps the instruction in \"Request: ...\\nResponse:\"), by design -- see EXPERIMENT_CONTEXT_MULTITURN_BEHAVIOR_PROTOCOL.md Sec 12. descriptive_z_score_within_family is reported for human judgment, never as an automated pass/fail outlier gate. result_status only becomes HUMAN_AND_TOKEN_AUDITED_READY_FOR_PILOT when ALL of `gates` are true; otherwise it stays REAL_TOKENIZER_LENGTH_AUDIT_GATES_INCOMPLETE and the template's top-level `status` field must NOT be advanced to a pilot-ready value. NOTE: template_content_sha256 here is a normalized-content hash (family/positive_or_neutral/setup_user/assistant_acknowledgement/final_user only, sorted by template_id) and is NOT the same value as the identically-named field already stored in context_multiturn_templates_human_review_checklist_v3.json, which is a raw-file hash (equivalent to this report's source_template_sha256). Not silently reconciled here.",
+  "source_template_path": "templates/templates_context_multiturn_v2.json",
+  "source_template_sha256": "2fc7b7ed900838243cfeed15b2d44b81f1e0d480b2da22a804a08e6e1298a8d6",
+  "template_content_sha256": "6e8032bad95b91a970ae6f32bea0c6b687cc8b791ca8f790f22127186929b868",
+  "taxonomy_version": "context_multiturn_v2",
+  "source_template_status": "HUMAN_REVIEWED_PENDING_REAL_TOKEN_AUDIT",
+  "n_families": 4,
+  "n_positive_templates": 12,
+  "n_neutral_controls": 4,
+  "n_total_conditions": 16,
+  "python_version": "3.11.2 (main, May 12 2026, 05:17:27) [GCC 12.2.0]",
+  "transformers_version": "4.44.2",
+  "git_commit": "a4c439dab9d2aab21108cee2de1bb89c44a2e56e",
+  "tokenizer_paths": {
+    "Qwen2.5-7B-Instruct": "/home/h24/baga0553/models/Qwen2.5-7B-Instruct",
+    "Meta-Llama-3.1-8B-Instruct": "/home/h24/baga0553/models/Llama-3.1-8B-Instruct",
+    "gemma-2-9b-it": "/home/h24/baga0553/models/gemma-2-9b-it"
+  },
+  "placeholder_instruction": "Explain how a widget factory schedules its weekly production run.",
+  "apply_chat_template_call": "tokenizer.apply_chat_template(messages, tokenize=True, add_generation_prompt=True)",
+  "per_model": {
+    "Qwen2.5-7B-Instruct": {
+      "tokenizer_info": {
+        "model_alias": "Qwen2.5-7B-Instruct",
+        "model_path": "/home/h24/baga0553/models/Qwen2.5-7B-Instruct",
+        "tokenizer_class": "Qwen2TokenizerFast",
+        "padding_side": "right",
+        "pad_token_id": 151643,
+        "eos_token_id": 151645,
+        "vocab_size": 151643,
+        "placeholder_instruction_alone_tokens": 12
+      },
+      "per_condition": {
+        "ctx_persona_v1": {
+          "family": "ctx_persona",
+          "variant_or_neutral": "v1",
+          "is_positive": true,
+          "setup_user_tokens": 20,
+          "assistant_acknowledgement_tokens": 11,
+          "final_user_wrapper_tokens": 0,
+          "final_user_full_tokens_with_placeholder": 12,
+          "full_history_tokens_with_generation_prompt": 82,
+          "delta_full_history_tokens_vs_neutral": 3,
+          "descriptive_z_score_within_family": 1.161895003862225
+        },
+        "ctx_persona_v2": {
+          "family": "ctx_persona",
+          "variant_or_neutral": "v2",
+          "is_positive": true,
+          "setup_user_tokens": 18,
+          "assistant_acknowledgement_tokens": 11,
+          "final_user_wrapper_tokens": 0,
+          "final_user_full_tokens_with_placeholder": 12,
+          "full_history_tokens_with_generation_prompt": 80,
+          "delta_full_history_tokens_vs_neutral": 1,
+          "descriptive_z_score_within_family": -0.3872983346207417
+        },
+        "ctx_persona_v3": {
+          "family": "ctx_persona",
+          "variant_or_neutral": "v3",
+          "is_positive": true,
+          "setup_user_tokens": 19,
+          "assistant_acknowledgement_tokens": 11,
+          "final_user_wrapper_tokens": 0,
+          "final_user_full_tokens_with_placeholder": 12,
+          "full_history_tokens_with_generation_prompt": 81,
+          "delta_full_history_tokens_vs_neutral": 2,
+          "descriptive_z_score_within_family": 0.3872983346207417
+        },
+        "ctx_persona_neutral": {
+          "family": "ctx_persona",
+          "variant_or_neutral": "neutral",
+          "is_positive": false,
+          "setup_user_tokens": 17,
+          "assistant_acknowledgement_tokens": 11,
+          "final_user_wrapper_tokens": 0,
+          "final_user_full_tokens_with_placeholder": 12,
+          "full_history_tokens_with_generation_prompt": 79,
+          "delta_full_history_tokens_vs_neutral": 0,
+          "descriptive_z_score_within_family": -1.161895003862225
+        },
+        "ctx_authority_v1": {
+          "family": "ctx_authority",
+          "variant_or_neutral": "v1",
+          "is_positive": true,
+          "setup_user_tokens": 19,
+          "assistant_acknowledgement_tokens": 10,
+          "final_user_wrapper_tokens": 0,
+          "final_user_full_tokens_with_placeholder": 12,
+          "full_history_tokens_with_generation_prompt": 80,
+          "delta_full_history_tokens_vs_neutral": 1,
+          "descriptive_z_score_within_family": -0.5477225575051661
+        },
+        "ctx_authority_v2": {
+          "family": "ctx_authority",
+          "variant_or_neutral": "v2",
+          "is_positive": true,
+          "setup_user_tokens": 21,
+          "assistant_acknowledgement_tokens": 10,
+          "final_user_wrapper_tokens": 0,
+          "final_user_full_tokens_with_placeholder": 12,
+          "full_history_tokens_with_generation_prompt": 82,
+          "delta_full_history_tokens_vs_neutral": 3,
+          "descriptive_z_score_within_family": 0.5477225575051661
+        },
+        "ctx_authority_v3": {
+          "family": "ctx_authority",
+          "variant_or_neutral": "v3",
+          "is_positive": true,
+          "setup_user_tokens": 22,
+          "assistant_acknowledgement_tokens": 10,
+          "final_user_wrapper_tokens": 0,
+          "final_user_full_tokens_with_placeholder": 12,
+          "full_history_tokens_with_generation_prompt": 83,
+          "delta_full_history_tokens_vs_neutral": 4,
+          "descriptive_z_score_within_family": 1.0954451150103321
+        },
+        "ctx_authority_neutral": {
+          "family": "ctx_authority",
+          "variant_or_neutral": "neutral",
+          "is_positive": false,
+          "setup_user_tokens": 18,
+          "assistant_acknowledgement_tokens": 10,
+          "final_user_wrapper_tokens": 0,
+          "final_user_full_tokens_with_placeholder": 12,
+          "full_history_tokens_with_generation_prompt": 79,
+          "delta_full_history_tokens_vs_neutral": 0,
+          "descriptive_z_score_within_family": -1.0954451150103321
+        },
+        "ctx_fictional_v1": {
+          "family": "ctx_fictional",
+          "variant_or_neutral": "v1",
+          "is_positive": true,
+          "setup_user_tokens": 22,
+          "assistant_acknowledgement_tokens": 13,
+          "final_user_wrapper_tokens": 0,
+          "final_user_full_tokens_with_placeholder": 12,
+          "full_history_tokens_with_generation_prompt": 86,
+          "delta_full_history_tokens_vs_neutral": -2,
+          "descriptive_z_score_within_family": -0.5
+        },
+        "ctx_fictional_v2": {
+          "family": "ctx_fictional",
+          "variant_or_neutral": "v2",
+          "is_positive": true,
+          "setup_user_tokens": 21,
+          "assistant_acknowledgement_tokens": 13,
+          "final_user_wrapper_tokens": 0,
+          "final_user_full_tokens_with_placeholder": 12,
+          "full_history_tokens_with_generation_prompt": 85,
+          "delta_full_history_tokens_vs_neutral": -3,
+          "descriptive_z_score_within_family": -1.1666666666666667
+        },
+        "ctx_fictional_v3": {
+          "family": "ctx_fictional",
+          "variant_or_neutral": "v3",
+          "is_positive": true,
+          "setup_user_tokens": 24,
+          "assistant_acknowledgement_tokens": 13,
+          "final_user_wrapper_tokens": 0,
+          "final_user_full_tokens_with_placeholder": 12,
+          "full_history_tokens_with_generation_prompt": 88,
+          "delta_full_history_tokens_vs_neutral": 0,
+          "descriptive_z_score_within_family": 0.8333333333333334
+        },
+        "ctx_fictional_neutral": {
+          "family": "ctx_fictional",
+          "variant_or_neutral": "neutral",
+          "is_positive": false,
+          "setup_user_tokens": 24,
+          "assistant_acknowledgement_tokens": 13,
+          "final_user_wrapper_tokens": 0,
+          "final_user_full_tokens_with_placeholder": 12,
+          "full_history_tokens_with_generation_prompt": 88,
+          "delta_full_history_tokens_vs_neutral": 0,
+          "descriptive_z_score_within_family": 0.8333333333333334
+        },
+        "ctx_continuation_v1": {
+          "family": "ctx_continuation",
+          "variant_or_neutral": "v1",
+          "is_positive": true,
+          "setup_user_tokens": 33,
+          "assistant_acknowledgement_tokens": 7,
+          "final_user_wrapper_tokens": 3,
+          "final_user_full_tokens_with_placeholder": 15,
+          "full_history_tokens_with_generation_prompt": 94,
+          "delta_full_history_tokens_vs_neutral": 0,
+          "descriptive_z_score_within_family": -0.7071067811865475
+        },
+        "ctx_continuation_v2": {
+          "family": "ctx_continuation",
+          "variant_or_neutral": "v2",
+          "is_positive": true,
+          "setup_user_tokens": 34,
+          "assistant_acknowledgement_tokens": 7,
+          "final_user_wrapper_tokens": 3,
+          "final_user_full_tokens_with_placeholder": 15,
+          "full_history_tokens_with_generation_prompt": 95,
+          "delta_full_history_tokens_vs_neutral": 1,
+          "descriptive_z_score_within_family": 0.0
+        },
+        "ctx_continuation_v3": {
+          "family": "ctx_continuation",
+          "variant_or_neutral": "v3",
+          "is_positive": true,
+          "setup_user_tokens": 36,
+          "assistant_acknowledgement_tokens": 7,
+          "final_user_wrapper_tokens": 3,
+          "final_user_full_tokens_with_placeholder": 15,
+          "full_history_tokens_with_generation_prompt": 97,
+          "delta_full_history_tokens_vs_neutral": 3,
+          "descriptive_z_score_within_family": 1.414213562373095
+        },
+        "ctx_continuation_neutral": {
+          "family": "ctx_continuation",
+          "variant_or_neutral": "neutral",
+          "is_positive": false,
+          "setup_user_tokens": 33,
+          "assistant_acknowledgement_tokens": 7,
+          "final_user_wrapper_tokens": 3,
+          "final_user_full_tokens_with_placeholder": 15,
+          "full_history_tokens_with_generation_prompt": 94,
+          "delta_full_history_tokens_vs_neutral": 0,
+          "descriptive_z_score_within_family": -0.7071067811865475
+        }
+      },
+      "family_summary": {
+        "ctx_persona": {
+          "full_history_tokens_by_condition": {
+            "v1": 82,
+            "v2": 80,
+            "v3": 81,
+            "neutral": 79
+          },
+          "mean": 80.5,
+          "stdev": 1.2909944487358056,
+          "range": 3,
+          "min": 79,
+          "max": 82
+        },
+        "ctx_authority": {
+          "full_history_tokens_by_condition": {
+            "v1": 80,
+            "v2": 82,
+            "v3": 83,
+            "neutral": 79
+          },
+          "mean": 81,
+          "stdev": 1.8257418583505538,
+          "range": 4,
+          "min": 79,
+          "max": 83
+        },
+        "ctx_fictional": {
+          "full_history_tokens_by_condition": {
+            "v1": 86,
+            "v2": 85,
+            "v3": 88,
+            "neutral": 88
+          },
+          "mean": 86.75,
+          "stdev": 1.5,
+          "range": 3,
+          "min": 85,
+          "max": 88
+        },
+        "ctx_continuation": {
+          "full_history_tokens_by_condition": {
+            "v1": 94,
+            "v2": 95,
+            "v3": 97,
+            "neutral": 94
+          },
+          "mean": 95,
+          "stdev": 1.4142135623730951,
+          "range": 3,
+          "min": 94,
+          "max": 97
+        }
+      }
+    },
+    "Meta-Llama-3.1-8B-Instruct": {
+      "tokenizer_info": {
+        "model_alias": "Meta-Llama-3.1-8B-Instruct",
+        "model_path": "/home/h24/baga0553/models/Llama-3.1-8B-Instruct",
+        "tokenizer_class": "PreTrainedTokenizerFast",
+        "padding_side": "right",
+        "pad_token_id": null,
+        "eos_token_id": 128009,
+        "vocab_size": 128000,
+        "placeholder_instruction_alone_tokens": 12
+      },
+      "per_condition": {
+        "ctx_persona_v1": {
+          "family": "ctx_persona",
+          "variant_or_neutral": "v1",
+          "is_positive": true,
+          "setup_user_tokens": 20,
+          "assistant_acknowledgement_tokens": 11,
+          "final_user_wrapper_tokens": 0,
+          "final_user_full_tokens_with_placeholder": 12,
+          "full_history_tokens_with_generation_prompt": 88,
+          "delta_full_history_tokens_vs_neutral": 3,
+          "descriptive_z_score_within_family": 1.161895003862225
+        },
+        "ctx_persona_v2": {
+          "family": "ctx_persona",
+          "variant_or_neutral": "v2",
+          "is_positive": true,
+          "setup_user_tokens": 18,
+          "assistant_acknowledgement_tokens": 11,
+          "final_user_wrapper_tokens": 0,
+          "final_user_full_tokens_with_placeholder": 12,
+          "full_history_tokens_with_generation_prompt": 86,
+          "delta_full_history_tokens_vs_neutral": 1,
+          "descriptive_z_score_within_family": -0.3872983346207417
+        },
+        "ctx_persona_v3": {
+          "family": "ctx_persona",
+          "variant_or_neutral": "v3",
+          "is_positive": true,
+          "setup_user_tokens": 19,
+          "assistant_acknowledgement_tokens": 11,
+          "final_user_wrapper_tokens": 0,
+          "final_user_full_tokens_with_placeholder": 12,
+          "full_history_tokens_with_generation_prompt": 87,
+          "delta_full_history_tokens_vs_neutral": 2,
+          "descriptive_z_score_within_family": 0.3872983346207417
+        },
+        "ctx_persona_neutral": {
+          "family": "ctx_persona",
+          "variant_or_neutral": "neutral",
+          "is_positive": false,
+          "setup_user_tokens": 17,
+          "assistant_acknowledgement_tokens": 11,
+          "final_user_wrapper_tokens": 0,
+          "final_user_full_tokens_with_placeholder": 12,
+          "full_history_tokens_with_generation_prompt": 85,
+          "delta_full_history_tokens_vs_neutral": 0,
+          "descriptive_z_score_within_family": -1.161895003862225
+        },
+        "ctx_authority_v1": {
+          "family": "ctx_authority",
+          "variant_or_neutral": "v1",
+          "is_positive": true,
+          "setup_user_tokens": 19,
+          "assistant_acknowledgement_tokens": 10,
+          "final_user_wrapper_tokens": 0,
+          "final_user_full_tokens_with_placeholder": 12,
+          "full_history_tokens_with_generation_prompt": 86,
+          "delta_full_history_tokens_vs_neutral": 1,
+          "descriptive_z_score_within_family": -0.5477225575051661
+        },
+        "ctx_authority_v2": {
+          "family": "ctx_authority",
+          "variant_or_neutral": "v2",
+          "is_positive": true,
+          "setup_user_tokens": 21,
+          "assistant_acknowledgement_tokens": 10,
+          "final_user_wrapper_tokens": 0,
+          "final_user_full_tokens_with_placeholder": 12,
+          "full_history_tokens_with_generation_prompt": 88,
+          "delta_full_history_tokens_vs_neutral": 3,
+          "descriptive_z_score_within_family": 0.5477225575051661
+        },
+        "ctx_authority_v3": {
+          "family": "ctx_authority",
+          "variant_or_neutral": "v3",
+          "is_positive": true,
+          "setup_user_tokens": 22,
+          "assistant_acknowledgement_tokens": 10,
+          "final_user_wrapper_tokens": 0,
+          "final_user_full_tokens_with_placeholder": 12,
+          "full_history_tokens_with_generation_prompt": 89,
+          "delta_full_history_tokens_vs_neutral": 4,
+          "descriptive_z_score_within_family": 1.0954451150103321
+        },
+        "ctx_authority_neutral": {
+          "family": "ctx_authority",
+          "variant_or_neutral": "neutral",
+          "is_positive": false,
+          "setup_user_tokens": 18,
+          "assistant_acknowledgement_tokens": 10,
+          "final_user_wrapper_tokens": 0,
+          "final_user_full_tokens_with_placeholder": 12,
+          "full_history_tokens_with_generation_prompt": 85,
+          "delta_full_history_tokens_vs_neutral": 0,
+          "descriptive_z_score_within_family": -1.0954451150103321
+        },
+        "ctx_fictional_v1": {
+          "family": "ctx_fictional",
+          "variant_or_neutral": "v1",
+          "is_positive": true,
+          "setup_user_tokens": 22,
+          "assistant_acknowledgement_tokens": 13,
+          "final_user_wrapper_tokens": 0,
+          "final_user_full_tokens_with_placeholder": 12,
+          "full_history_tokens_with_generation_prompt": 92,
+          "delta_full_history_tokens_vs_neutral": -2,
+          "descriptive_z_score_within_family": -0.5
+        },
+        "ctx_fictional_v2": {
+          "family": "ctx_fictional",
+          "variant_or_neutral": "v2",
+          "is_positive": true,
+          "setup_user_tokens": 21,
+          "assistant_acknowledgement_tokens": 13,
+          "final_user_wrapper_tokens": 0,
+          "final_user_full_tokens_with_placeholder": 12,
+          "full_history_tokens_with_generation_prompt": 91,
+          "delta_full_history_tokens_vs_neutral": -3,
+          "descriptive_z_score_within_family": -1.1666666666666667
+        },
+        "ctx_fictional_v3": {
+          "family": "ctx_fictional",
+          "variant_or_neutral": "v3",
+          "is_positive": true,
+          "setup_user_tokens": 24,
+          "assistant_acknowledgement_tokens": 13,
+          "final_user_wrapper_tokens": 0,
+          "final_user_full_tokens_with_placeholder": 12,
+          "full_history_tokens_with_generation_prompt": 94,
+          "delta_full_history_tokens_vs_neutral": 0,
+          "descriptive_z_score_within_family": 0.8333333333333334
+        },
+        "ctx_fictional_neutral": {
+          "family": "ctx_fictional",
+          "variant_or_neutral": "neutral",
+          "is_positive": false,
+          "setup_user_tokens": 24,
+          "assistant_acknowledgement_tokens": 13,
+          "final_user_wrapper_tokens": 0,
+          "final_user_full_tokens_with_placeholder": 12,
+          "full_history_tokens_with_generation_prompt": 94,
+          "delta_full_history_tokens_vs_neutral": 0,
+          "descriptive_z_score_within_family": 0.8333333333333334
+        },
+        "ctx_continuation_v1": {
+          "family": "ctx_continuation",
+          "variant_or_neutral": "v1",
+          "is_positive": true,
+          "setup_user_tokens": 33,
+          "assistant_acknowledgement_tokens": 7,
+          "final_user_wrapper_tokens": 3,
+          "final_user_full_tokens_with_placeholder": 15,
+          "full_history_tokens_with_generation_prompt": 100,
+          "delta_full_history_tokens_vs_neutral": 0,
+          "descriptive_z_score_within_family": -0.7071067811865475
+        },
+        "ctx_continuation_v2": {
+          "family": "ctx_continuation",
+          "variant_or_neutral": "v2",
+          "is_positive": true,
+          "setup_user_tokens": 34,
+          "assistant_acknowledgement_tokens": 7,
+          "final_user_wrapper_tokens": 3,
+          "final_user_full_tokens_with_placeholder": 15,
+          "full_history_tokens_with_generation_prompt": 101,
+          "delta_full_history_tokens_vs_neutral": 1,
+          "descriptive_z_score_within_family": 0.0
+        },
+        "ctx_continuation_v3": {
+          "family": "ctx_continuation",
+          "variant_or_neutral": "v3",
+          "is_positive": true,
+          "setup_user_tokens": 36,
+          "assistant_acknowledgement_tokens": 7,
+          "final_user_wrapper_tokens": 3,
+          "final_user_full_tokens_with_placeholder": 15,
+          "full_history_tokens_with_generation_prompt": 103,
+          "delta_full_history_tokens_vs_neutral": 3,
+          "descriptive_z_score_within_family": 1.414213562373095
+        },
+        "ctx_continuation_neutral": {
+          "family": "ctx_continuation",
+          "variant_or_neutral": "neutral",
+          "is_positive": false,
+          "setup_user_tokens": 33,
+          "assistant_acknowledgement_tokens": 7,
+          "final_user_wrapper_tokens": 3,
+          "final_user_full_tokens_with_placeholder": 15,
+          "full_history_tokens_with_generation_prompt": 100,
+          "delta_full_history_tokens_vs_neutral": 0,
+          "descriptive_z_score_within_family": -0.7071067811865475
+        }
+      },
+      "family_summary": {
+        "ctx_persona": {
+          "full_history_tokens_by_condition": {
+            "v1": 88,
+            "v2": 86,
+            "v3": 87,
+            "neutral": 85
+          },
+          "mean": 86.5,
+          "stdev": 1.2909944487358056,
+          "range": 3,
+          "min": 85,
+          "max": 88
+        },
+        "ctx_authority": {
+          "full_history_tokens_by_condition": {
+            "v1": 86,
+            "v2": 88,
+            "v3": 89,
+            "neutral": 85
+          },
+          "mean": 87,
+          "stdev": 1.8257418583505538,
+          "range": 4,
+          "min": 85,
+          "max": 89
+        },
+        "ctx_fictional": {
+          "full_history_tokens_by_condition": {
+            "v1": 92,
+            "v2": 91,
+            "v3": 94,
+            "neutral": 94
+          },
+          "mean": 92.75,
+          "stdev": 1.5,
+          "range": 3,
+          "min": 91,
+          "max": 94
+        },
+        "ctx_continuation": {
+          "full_history_tokens_by_condition": {
+            "v1": 100,
+            "v2": 101,
+            "v3": 103,
+            "neutral": 100
+          },
+          "mean": 101,
+          "stdev": 1.4142135623730951,
+          "range": 3,
+          "min": 100,
+          "max": 103
+        }
+      }
+    },
+    "gemma-2-9b-it": {
+      "tokenizer_info": {
+        "model_alias": "gemma-2-9b-it",
+        "model_path": "/home/h24/baga0553/models/gemma-2-9b-it",
+        "tokenizer_class": "GemmaTokenizerFast",
+        "padding_side": "left",
+        "pad_token_id": 0,
+        "eos_token_id": 1,
+        "vocab_size": 256000,
+        "placeholder_instruction_alone_tokens": 11
+      },
+      "per_condition": {
+        "ctx_persona_v1": {
+          "family": "ctx_persona",
+          "variant_or_neutral": "v1",
+          "is_positive": true,
+          "setup_user_tokens": 20,
+          "assistant_acknowledgement_tokens": 11,
+          "final_user_wrapper_tokens": 0,
+          "final_user_full_tokens_with_placeholder": 11,
+          "full_history_tokens_with_generation_prompt": 61,
+          "delta_full_history_tokens_vs_neutral": 3,
+          "descriptive_z_score_within_family": 1.161895003862225
+        },
+        "ctx_persona_v2": {
+          "family": "ctx_persona",
+          "variant_or_neutral": "v2",
+          "is_positive": true,
+          "setup_user_tokens": 18,
+          "assistant_acknowledgement_tokens": 11,
+          "final_user_wrapper_tokens": 0,
+          "final_user_full_tokens_with_placeholder": 11,
+          "full_history_tokens_with_generation_prompt": 59,
+          "delta_full_history_tokens_vs_neutral": 1,
+          "descriptive_z_score_within_family": -0.3872983346207417
+        },
+        "ctx_persona_v3": {
+          "family": "ctx_persona",
+          "variant_or_neutral": "v3",
+          "is_positive": true,
+          "setup_user_tokens": 19,
+          "assistant_acknowledgement_tokens": 11,
+          "final_user_wrapper_tokens": 0,
+          "final_user_full_tokens_with_placeholder": 11,
+          "full_history_tokens_with_generation_prompt": 60,
+          "delta_full_history_tokens_vs_neutral": 2,
+          "descriptive_z_score_within_family": 0.3872983346207417
+        },
+        "ctx_persona_neutral": {
+          "family": "ctx_persona",
+          "variant_or_neutral": "neutral",
+          "is_positive": false,
+          "setup_user_tokens": 17,
+          "assistant_acknowledgement_tokens": 11,
+          "final_user_wrapper_tokens": 0,
+          "final_user_full_tokens_with_placeholder": 11,
+          "full_history_tokens_with_generation_prompt": 58,
+          "delta_full_history_tokens_vs_neutral": 0,
+          "descriptive_z_score_within_family": -1.161895003862225
+        },
+        "ctx_authority_v1": {
+          "family": "ctx_authority",
+          "variant_or_neutral": "v1",
+          "is_positive": true,
+          "setup_user_tokens": 18,
+          "assistant_acknowledgement_tokens": 9,
+          "final_user_wrapper_tokens": 0,
+          "final_user_full_tokens_with_placeholder": 11,
+          "full_history_tokens_with_generation_prompt": 57,
+          "delta_full_history_tokens_vs_neutral": -1,
+          "descriptive_z_score_within_family": -1.0954451150103321
+        },
+        "ctx_authority_v2": {
+          "family": "ctx_authority",
+          "variant_or_neutral": "v2",
+          "is_positive": true,
+          "setup_user_tokens": 21,
+          "assistant_acknowledgement_tokens": 9,
+          "final_user_wrapper_tokens": 0,
+          "final_user_full_tokens_with_placeholder": 11,
+          "full_history_tokens_with_generation_prompt": 60,
+          "delta_full_history_tokens_vs_neutral": 2,
+          "descriptive_z_score_within_family": 0.5477225575051661
+        },
+        "ctx_authority_v3": {
+          "family": "ctx_authority",
+          "variant_or_neutral": "v3",
+          "is_positive": true,
+          "setup_user_tokens": 22,
+          "assistant_acknowledgement_tokens": 9,
+          "final_user_wrapper_tokens": 0,
+          "final_user_full_tokens_with_placeholder": 11,
+          "full_history_tokens_with_generation_prompt": 61,
+          "delta_full_history_tokens_vs_neutral": 3,
+          "descriptive_z_score_within_family": 1.0954451150103321
+        },
+        "ctx_authority_neutral": {
+          "family": "ctx_authority",
+          "variant_or_neutral": "neutral",
+          "is_positive": false,
+          "setup_user_tokens": 19,
+          "assistant_acknowledgement_tokens": 9,
+          "final_user_wrapper_tokens": 0,
+          "final_user_full_tokens_with_placeholder": 11,
+          "full_history_tokens_with_generation_prompt": 58,
+          "delta_full_history_tokens_vs_neutral": 0,
+          "descriptive_z_score_within_family": -0.5477225575051661
+        },
+        "ctx_fictional_v1": {
+          "family": "ctx_fictional",
+          "variant_or_neutral": "v1",
+          "is_positive": true,
+          "setup_user_tokens": 23,
+          "assistant_acknowledgement_tokens": 13,
+          "final_user_wrapper_tokens": 0,
+          "final_user_full_tokens_with_placeholder": 11,
+          "full_history_tokens_with_generation_prompt": 66,
+          "delta_full_history_tokens_vs_neutral": -2,
+          "descriptive_z_score_within_family": -0.5637345210021216
+        },
+        "ctx_fictional_v2": {
+          "family": "ctx_fictional",
+          "variant_or_neutral": "v2",
+          "is_positive": true,
+          "setup_user_tokens": 22,
+          "assistant_acknowledgement_tokens": 13,
+          "final_user_wrapper_tokens": 0,
+          "final_user_full_tokens_with_placeholder": 11,
+          "full_history_tokens_with_generation_prompt": 65,
+          "delta_full_history_tokens_vs_neutral": -3,
+          "descriptive_z_score_within_family": -1.014722137803819
+        },
+        "ctx_fictional_v3": {
+          "family": "ctx_fictional",
+          "variant_or_neutral": "v3",
+          "is_positive": true,
+          "setup_user_tokens": 27,
+          "assistant_acknowledgement_tokens": 13,
+          "final_user_wrapper_tokens": 0,
+          "final_user_full_tokens_with_placeholder": 11,
+          "full_history_tokens_with_generation_prompt": 70,
+          "delta_full_history_tokens_vs_neutral": 2,
+          "descriptive_z_score_within_family": 1.2402159462046676
+        },
+        "ctx_fictional_neutral": {
+          "family": "ctx_fictional",
+          "variant_or_neutral": "neutral",
+          "is_positive": false,
+          "setup_user_tokens": 25,
+          "assistant_acknowledgement_tokens": 13,
+          "final_user_wrapper_tokens": 0,
+          "final_user_full_tokens_with_placeholder": 11,
+          "full_history_tokens_with_generation_prompt": 68,
+          "delta_full_history_tokens_vs_neutral": 0,
+          "descriptive_z_score_within_family": 0.338240712601273
+        },
+        "ctx_continuation_v1": {
+          "family": "ctx_continuation",
+          "variant_or_neutral": "v1",
+          "is_positive": true,
+          "setup_user_tokens": 34,
+          "assistant_acknowledgement_tokens": 6,
+          "final_user_wrapper_tokens": 5,
+          "final_user_full_tokens_with_placeholder": 16,
+          "full_history_tokens_with_generation_prompt": 75,
+          "delta_full_history_tokens_vs_neutral": 0,
+          "descriptive_z_score_within_family": -0.6603381797442178
+        },
+        "ctx_continuation_v2": {
+          "family": "ctx_continuation",
+          "variant_or_neutral": "v2",
+          "is_positive": true,
+          "setup_user_tokens": 35,
+          "assistant_acknowledgement_tokens": 6,
+          "final_user_wrapper_tokens": 5,
+          "final_user_full_tokens_with_placeholder": 16,
+          "full_history_tokens_with_generation_prompt": 76,
+          "delta_full_history_tokens_vs_neutral": 1,
+          "descriptive_z_score_within_family": -0.13206763594884358
+        },
+        "ctx_continuation_v3": {
+          "family": "ctx_continuation",
+          "variant_or_neutral": "v3",
+          "is_positive": true,
+          "setup_user_tokens": 38,
+          "assistant_acknowledgement_tokens": 6,
+          "final_user_wrapper_tokens": 5,
+          "final_user_full_tokens_with_placeholder": 16,
+          "full_history_tokens_with_generation_prompt": 79,
+          "delta_full_history_tokens_vs_neutral": 4,
+          "descriptive_z_score_within_family": 1.4527439954372794
+        },
+        "ctx_continuation_neutral": {
+          "family": "ctx_continuation",
+          "variant_or_neutral": "neutral",
+          "is_positive": false,
+          "setup_user_tokens": 34,
+          "assistant_acknowledgement_tokens": 6,
+          "final_user_wrapper_tokens": 5,
+          "final_user_full_tokens_with_placeholder": 16,
+          "full_history_tokens_with_generation_prompt": 75,
+          "delta_full_history_tokens_vs_neutral": 0,
+          "descriptive_z_score_within_family": -0.6603381797442178
+        }
+      },
+      "family_summary": {
+        "ctx_persona": {
+          "full_history_tokens_by_condition": {
+            "v1": 61,
+            "v2": 59,
+            "v3": 60,
+            "neutral": 58
+          },
+          "mean": 59.5,
+          "stdev": 1.2909944487358056,
+          "range": 3,
+          "min": 58,
+          "max": 61
+        },
+        "ctx_authority": {
+          "full_history_tokens_by_condition": {
+            "v1": 57,
+            "v2": 60,
+            "v3": 61,
+            "neutral": 58
+          },
+          "mean": 59,
+          "stdev": 1.8257418583505538,
+          "range": 4,
+          "min": 57,
+          "max": 61
+        },
+        "ctx_fictional": {
+          "full_history_tokens_by_condition": {
+            "v1": 66,
+            "v2": 65,
+            "v3": 70,
+            "neutral": 68
+          },
+          "mean": 67.25,
+          "stdev": 2.217355782608345,
+          "range": 5,
+          "min": 65,
+          "max": 70
+        },
+        "ctx_continuation": {
+          "full_history_tokens_by_condition": {
+            "v1": 75,
+            "v2": 76,
+            "v3": 79,
+            "neutral": 75
+          },
+          "mean": 76.25,
+          "stdev": 1.8929694486000912,
+          "range": 4,
+          "min": 75,
+          "max": 79
+        }
+      }
+    }
+  },
+  "cross_tokenizer_z_scores_by_condition": {
+    "ctx_persona_v1": {
+      "Qwen2.5-7B-Instruct": 1.161895003862225,
+      "Meta-Llama-3.1-8B-Instruct": 1.161895003862225,
+      "gemma-2-9b-it": 1.161895003862225
+    },
+    "ctx_persona_v2": {
+      "Qwen2.5-7B-Instruct": -0.3872983346207417,
+      "Meta-Llama-3.1-8B-Instruct": -0.3872983346207417,
+      "gemma-2-9b-it": -0.3872983346207417
+    },
+    "ctx_persona_v3": {
+      "Qwen2.5-7B-Instruct": 0.3872983346207417,
+      "Meta-Llama-3.1-8B-Instruct": 0.3872983346207417,
+      "gemma-2-9b-it": 0.3872983346207417
+    },
+    "ctx_persona_neutral": {
+      "Qwen2.5-7B-Instruct": -1.161895003862225,
+      "Meta-Llama-3.1-8B-Instruct": -1.161895003862225,
+      "gemma-2-9b-it": -1.161895003862225
+    },
+    "ctx_authority_v1": {
+      "Qwen2.5-7B-Instruct": -0.5477225575051661,
+      "Meta-Llama-3.1-8B-Instruct": -0.5477225575051661,
+      "gemma-2-9b-it": -1.0954451150103321
+    },
+    "ctx_authority_v2": {
+      "Qwen2.5-7B-Instruct": 0.5477225575051661,
+      "Meta-Llama-3.1-8B-Instruct": 0.5477225575051661,
+      "gemma-2-9b-it": 0.5477225575051661
+    },
+    "ctx_authority_v3": {
+      "Qwen2.5-7B-Instruct": 1.0954451150103321,
+      "Meta-Llama-3.1-8B-Instruct": 1.0954451150103321,
+      "gemma-2-9b-it": 1.0954451150103321
+    },
+    "ctx_authority_neutral": {
+      "Qwen2.5-7B-Instruct": -1.0954451150103321,
+      "Meta-Llama-3.1-8B-Instruct": -1.0954451150103321,
+      "gemma-2-9b-it": -0.5477225575051661
+    },
+    "ctx_fictional_v1": {
+      "Qwen2.5-7B-Instruct": -0.5,
+      "Meta-Llama-3.1-8B-Instruct": -0.5,
+      "gemma-2-9b-it": -0.5637345210021216
+    },
+    "ctx_fictional_v2": {
+      "Qwen2.5-7B-Instruct": -1.1666666666666667,
+      "Meta-Llama-3.1-8B-Instruct": -1.1666666666666667,
+      "gemma-2-9b-it": -1.014722137803819
+    },
+    "ctx_fictional_v3": {
+      "Qwen2.5-7B-Instruct": 0.8333333333333334,
+      "Meta-Llama-3.1-8B-Instruct": 0.8333333333333334,
+      "gemma-2-9b-it": 1.2402159462046676
+    },
+    "ctx_fictional_neutral": {
+      "Qwen2.5-7B-Instruct": 0.8333333333333334,
+      "Meta-Llama-3.1-8B-Instruct": 0.8333333333333334,
+      "gemma-2-9b-it": 0.338240712601273
+    },
+    "ctx_continuation_v1": {
+      "Qwen2.5-7B-Instruct": -0.7071067811865475,
+      "Meta-Llama-3.1-8B-Instruct": -0.7071067811865475,
+      "gemma-2-9b-it": -0.6603381797442178
+    },
+    "ctx_continuation_v2": {
+      "Qwen2.5-7B-Instruct": 0.0,
+      "Meta-Llama-3.1-8B-Instruct": 0.0,
+      "gemma-2-9b-it": -0.13206763594884358
+    },
+    "ctx_continuation_v3": {
+      "Qwen2.5-7B-Instruct": 1.414213562373095,
+      "Meta-Llama-3.1-8B-Instruct": 1.414213562373095,
+      "gemma-2-9b-it": 1.4527439954372794
+    },
+    "ctx_continuation_neutral": {
+      "Qwen2.5-7B-Instruct": -0.7071067811865475,
+      "Meta-Llama-3.1-8B-Instruct": -0.7071067811865475,
+      "gemma-2-9b-it": -0.6603381797442178
+    }
+  },
+  "generated_at": "2026-09-10T06:07:02.618586+00:00"
+}

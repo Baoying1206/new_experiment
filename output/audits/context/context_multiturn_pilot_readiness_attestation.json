@@ -1,0 +1,39 @@
+{
+  "attestation_version": "v1",
+  "result_status": "HUMAN_AND_TOKEN_AUDITED_READY_FOR_PILOT",
+  "source_template_path": "templates/templates_context_multiturn_v2.json",
+  "source_template_status_at_audit": "HUMAN_REVIEWED_PENDING_REAL_TOKEN_AUDIT",
+  "source_template_sha256": "2fc7b7ed900838243cfeed15b2d44b81f1e0d480b2da22a804a08e6e1298a8d6",
+  "template_content_sha256": "6e8032bad95b91a970ae6f32bea0c6b687cc8b791ca8f790f22127186929b868",
+  "human_review_checklist_path": "output/audits/context/context_multiturn_templates_human_review_checklist_v3.json",
+  "token_audit_path": "output/audits/context/context_multiturn_token_length_audit_v2.json",
+  "gates": {
+    "human_review_complete": true,
+    "real_tokenizer_audit_complete": true,
+    "three_tokenizers_successful": true,
+    "sixteen_conditions_complete": true,
+    "length_balance_accepted": true,
+    "ready_for_pilot": true
+  },
+  "gates_provenance": {
+    "human_review_complete": "all 16 template_id carry an APPROVED_FOR_PILOT* reviewer_status",
+    "real_tokenizer_audit_complete": "token_audit.result_status == 'HUMAN_AND_TOKEN_AUDITED_READY_FOR_PILOT'",
+    "three_tokenizers_successful": "3/3 models audited",
+    "sixteen_conditions_complete": {
+      "Qwen2.5-7B-Instruct": 16,
+      "Meta-Llama-3.1-8B-Instruct": 16,
+      "gemma-2-9b-it": 16
+    },
+    "length_balance_accepted": "Recorded human decision (2026-09-10): length differences (single-digit tokens per family, no severe cross-tokenizer disagreement) were explicitly accepted without modifying template text -- this is a recorded human judgment, NOT an automatically-computed threshold determination.",
+    "ready_for_pilot": "Logical conclusion of the other 5 gates plus all 6 pre-write verifications in this script (see run_verifications())."
+  },
+  "study_status": "POST_HOC_EXPLORATORY_EXTENSION",
+  "limitations": [
+    "ctx_persona retains conceptual overlap with persona_roleplay",
+    "ctx_fictional uses a family-specific acknowledgement",
+    "ctx_continuation retains a shared artificial response-position cue",
+    "single-versus-multi interaction includes the structural effect of an assistant history turn"
+  ],
+  "attested_at": "2026-09-10T06:54:38.325970+00:00",
+  "git_commit": "9a1176a1512dd92b62594aa8b11c4ff5f95d691a"
+}
