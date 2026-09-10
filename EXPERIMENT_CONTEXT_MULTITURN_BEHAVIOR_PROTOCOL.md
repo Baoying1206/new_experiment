@@ -435,3 +435,44 @@ Recorded here as design constraints for the future Phase B driver
    i.e. `output_ids[:, input_ids.shape[1]:]` (or equivalent per-example
    slicing when batched with padding) -- never decode the full
    `output_ids` including the echoed input/prompt.
+
+## 15. Pilot-readiness admission sidecar (frozen, 2026-09-10)
+
+`templates/templates_context_multiturn_v2.json` is **never modified**,
+including its top-level `status` field, which stays
+`HUMAN_REVIEWED_PENDING_REAL_TOKEN_AUDIT` permanently -- that file is the
+exact frozen input the real-tokenizer audit measured, and any byte
+change would invalidate `source_template_sha256` already recorded in
+`output/audits/context/context_multiturn_token_length_audit_v2.json`.
+The durable "is this ready for a pilot" record instead lives in a
+separate sidecar,
+`output/audits/context/context_multiturn_pilot_readiness_attestation.json`,
+produced by
+`scripts/audits/generate_context_multiturn_pilot_readiness_attestation.py`
+(6 hard-gated pre-write verifications; see that script's docstring).
+
+**Before any future Phase A/B generation driver reads this template
+file, it must independently verify all of the following (not merely
+trust that the sidecar exists)**:
+
+1. `templates/templates_context_multiturn_v2.json`'s current raw-byte
+   SHA-256 matches the sidecar's `source_template_sha256`.
+2. The template's current normalized content SHA-256 (same method as
+   `compute_template_content_sha256()`) matches the sidecar's
+   `template_content_sha256`.
+3. The sidecar file's own SHA-256 is recomputed and merely logged (there
+   is no external reference value to compare it against beyond the
+   driver's own prior run, if any) -- this guards against the sidecar
+   itself having been hand-edited since it was generated.
+4. The sidecar's `result_status` is exactly
+   `HUMAN_AND_TOKEN_AUDITED_READY_FOR_PILOT`.
+5. `output/audits/context/context_multiturn_templates_human_review_checklist_v3.json`'s
+   current SHA-256 is logged and its 16 `reviewer_status` entries are
+   re-checked live (not assumed from the sidecar alone).
+6. `output/audits/context/context_multiturn_token_length_audit_v2.json`'s
+   current SHA-256 is logged and its `result_status`/`gates` are
+   re-checked live (not assumed from the sidecar alone).
+
+Any mismatch or missing file must hard-stop the driver before any
+generation call -- the same "verify, don't assume" discipline used
+throughout this project's provenance checks.
